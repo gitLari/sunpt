@@ -1,0 +1,948 @@
+---
+# ====== Page: per viikko ====================================
+id: 12
+identification: 
+  name: per viikko
+  alias: PER-VIIKKO
+  title: per viikko
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Lukuina =====================================
+  id: 21710629544795763
+  identification: 
+    name: Lukuina
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select trunc(avg(a.paino),1), trunc(avg(a.paino),1) - trunc(avg(b.paino),1) ero,
+      trunc(avg(a.vatsa),1),  trunc(avg(a.vatsa),1) - trunc(avg(b.vatsa),1) eromasu,
+         to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_,'WW')   pvm
+      from paino a, paino b
+      
+      where to_char(a.pvm_, 'YY' ) || '/' ||  to_char((a.pvm_-7),'WW') = to_char(b.pvm_, 'YY' ) || '/' ||  to_char(b.pvm_ ,'WW') 
+      and upper(a.user_id) = :app_user and upper(b.user_id) = :app_user
+      group by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW')
+      order by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW') desc
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 500
+
+    messages: 
+      when-no-data-found: no data found
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: true
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: true
+      link-text: Download
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: TRUNC(AVG(A.PAINO),1) =======================
+    id: 21730461864964203
+    identification: 
+      column-name: TRUNC(AVG(A.PAINO),1)
+      type: Plain Text
+
+    heading: 
+      heading: avg paino
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TRUNC(AVG(A.VATSA),1) =======================
+    id: 21730509360964204
+    identification: 
+      column-name: TRUNC(AVG(A.VATSA),1)
+      type: Plain Text
+
+    heading: 
+      heading: avg vatsa
+      alignment: center
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ERO =========================================
+    id: 21730692693964205
+    identification: 
+      column-name: ERO
+      type: Plain Text
+
+    heading: 
+      heading: Ero
+      alignment: center
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: EROMASU =====================================
+    id: 21730725158964206
+    identification: 
+      column-name: EROMASU
+      type: Plain Text
+
+    heading: 
+      heading: Eromasu
+      alignment: center
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PVM =========================================
+    id: 41480869301253845
+    identification: 
+      column-name: PVM
+      type: Plain Text
+
+    heading: 
+      heading: Viikko
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Laskut nousut pv ============================
+  id: 21730862146964207
+  identification: 
+    name: Laskut nousut pv
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21730975525964208
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Automatic
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Paino =======================================
+      id: 21731018066964209
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  trunc(avg(a.paino),1) - trunc(avg(b.paino),1) ero,
+          trunc(avg(a.vatsa),1) - trunc(avg(b.vatsa),1) eromasu,
+             to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW')   pvm
+          from paino a, paino b
+          where to_char(a.pvm_, 'YY' ) || '/' ||  to_char((a.pvm_-7) ,'WW') = to_char(b.pvm_, 'YY' ) || '/' ||  to_char(b.pvm_ ,'WW') 
+          and upper(a.user_id) = :app_user and upper(b.user_id) = :app_user
+          group by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW')
+          --order by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ - 7/24,'IW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: ERO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Masu ========================================
+      id: 21731428741964213
+      identification: 
+        name: Masu
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  trunc(avg(a.paino),1) - trunc(avg(b.paino),1) ero,
+          trunc(avg(a.vatsa),1) - trunc(avg(b.vatsa),1) eromasu,
+             to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW')   pvm
+          from paino a, paino b
+          where to_char(a.pvm_, 'YY' ) || '/' ||  to_char((a.pvm_-7) ,'WW') = to_char(b.pvm_, 'YY' ) || '/' ||  to_char(b.pvm_ ,'WW') 
+          and upper(a.user_id) = :app_user and upper(b.user_id) = :app_user
+          group by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'WW')
+          --order by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ - 7/24,'IW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: EROMASU
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 21731135968964210
+      identification: 
+        name: x
+        show-axis: true
+        title: Viikko
+
+      value: 
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 21731261313964211
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Laskut nousut kk ============================
+  id: 21731537594964214
+  identification: 
+    name: Laskut nousut kk
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21731630500964215
+    chart: 
+      type: Line
+
+    title: 
+      title: NO LEAD
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Paino =======================================
+      id: 21731714672964216
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  trunc(avg(a.paino),1) - trunc(avg(b.paino),1) ero,
+          trunc(avg(a.vatsa),1) - trunc(avg(b.vatsa),1) eromasu,
+             to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'MON')   pvm,
+             a.pvm_ pvm2
+          from paino a, paino b
+          where to_char(a.pvm_, 'YY' ) || '/' ||  to_char((a.pvm_-30) ,'MON') = to_char(b.pvm_, 'YY' ) || '/' ||  to_char(b.pvm_ ,'MON') 
+          and upper(a.user_id) = :app_user and upper(b.user_id) = :app_user
+          group by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'MON'), a.pvm_
+          order by 3 --to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ - 7/24,'IW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM2
+        value: ERO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Masu ========================================
+      id: 21731821512964217
+      identification: 
+        name: Masu
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  trunc(avg(a.paino),1) - trunc(avg(b.paino),1) ero,
+          trunc(avg(a.vatsa),1) - trunc(avg(b.vatsa),1) eromasu,
+             to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'MON')   pvm, a.pvm_ pvm2
+          from paino a, paino b
+          where to_char(a.pvm_, 'YY' ) || '/' ||  to_char((a.pvm_-30) ,'MON') = to_char(b.pvm_, 'YY' ) || '/' ||  to_char(b.pvm_ ,'MON') 
+          and upper(a.user_id) = :app_user and upper(b.user_id) = :app_user
+          group by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ ,'MON'),a.pvm_
+          order by 3--order by to_char(a.pvm_, 'YY' ) || '/' ||  to_char(a.pvm_ - 7/24,'IW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM2
+        value: EROMASU
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 21731980713964218
+      identification: 
+        name: x
+        show-axis: true
+        title: Kk
+
+      value: 
+        format: Date - Short
+        pattern: yyyy MMM
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 21732064299964219
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Cm viikkotaso ===============================
+  id: 41480289902253839
+  identification: 
+    name: Cm viikkotaso
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 41480336538253840
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: paino =======================================
+      id: 41480417596253841
+      identification: 
+        name: paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select trunc(avg(paino)-100,1), trunc(avg(vatsa)-100,1),   to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW')   pvm
+          from paino
+          where (paino) is not null and vatsa is not null
+          and upper(user_id) = :app_user
+          group by to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW')
+          order by to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: TRUNC(AVG(PAINO)-100,1)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Masu ========================================
+      id: 41480790613253844
+      identification: 
+        name: Masu
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select trunc(avg(paino)-100,1), trunc(avg(vatsa)-100,1),   to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW')   pvm
+          from paino
+          where (paino) is not null and vatsa is not null
+          and upper(user_id) = :app_user
+          group by to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW')
+          order by to_char(pvm_, 'YY' ) || '/' ||  to_char(pvm_ ,'WW') asc
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: TRUNC(AVG(VATSA)-100,1)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 41480519757253842
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 41480603639253843
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+

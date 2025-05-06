@@ -1,0 +1,1143 @@
+---
+# ====== Page: Numerot =======================================
+id: 9
+identification: 
+  name: Numerot
+  alias: NUMEROT
+  title: Päivän numerot
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+  resizable: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    function doWork() {
+      console.log('doWork fired!');
+    }
+  execute-when-page-loads: doWork();
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: tree ========================================
+  id: 8806774104522526
+  identification: 
+    name: tree
+    type: Tree
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select case when connect_by_isleaf = 1 then 0 when level = 1 then 1 else -1 end as status,
+              level,
+              task_name as title,
+              'icon-tree-folder' as icon,
+              id as value,
+              task_name as tooltip,
+              null  as link 
+         from eba_ut_chart_tasks
+        start with parent_task is null
+      connect by prior project = parent_task
+        order siblings by task_name
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      node-label-column: TITLE
+      node-value-column: STATUS
+      hierarchy: Not Computed
+      node-status-column: STATUS
+      hierarchy-level-column: LEVEL
+      tooltip: None
+      activate-node-link-with: Single Click
+      default-icon-css-class: icon-tree-folder
+      icon-type-css-class: a-Icon
+
+    performance: 
+      lazy-loading: false
+
+- # ====== Region: Päivän numerot ==============================
+  id: 18943964990334903
+  identification: 
+    name: Päivän numerot
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_,
+             --CHEER,
+             USER_ID,
+             PAIKKA,
+             PAINO_OMRON,
+             FAT_VISCERAL,
+             MUSCLE,
+             FAT
+        from PAINO
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: num_reg
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+- # ====== Region: Buttons =====================================
+  id: 25293694370212119
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_03
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Buttons Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-ButtonRegion--slimPadding
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P9_PAINO_OMRON ===========================
+  id: 8417287475003104
+  identification: 
+    name: P9_PAINO_OMRON
+    type: Number Field
+
+  label: 
+    label: Paino (Omron)
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 100
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: PAINO_OMRON
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_FAT_VISCERAL ==========================
+  id: 8417346416003105
+  identification: 
+    name: P9_FAT_VISCERAL
+    type: Number Field
+
+  label: 
+    label: Viskeraalirasva
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 140
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: FAT_VISCERAL
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_MUSCLE ================================
+  id: 8417416997003106
+  identification: 
+    name: P9_MUSCLE
+    type: Number Field
+
+  label: 
+    label: Lihas  %
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 120
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: MUSCLE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_FAT ===================================
+  id: 8417568902003107
+  identification: 
+    name: P9_FAT
+    type: Number Field
+
+  label: 
+    label: Rasva %
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 110
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: FAT
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_ID ====================================
+  id: 18944281755334907
+  identification: 
+    name: P9_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_PAINO =================================
+  id: 18944621568334925
+  identification: 
+    name: P9_PAINO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 160
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: PAINO
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_VATSA =================================
+  id: 18945044064334928
+  identification: 
+    name: P9_VATSA
+    type: Number Field
+
+  label: 
+    label: Vatsanympärys cm
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 150
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 255
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: VATSA
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_VASEN =================================
+  id: 18945414014334928
+  identification: 
+    name: P9_VASEN
+    type: Number Field
+
+  label: 
+    label: Vasen hauis
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 170
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 255
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: VASEN
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_OIKEA =================================
+  id: 18945880323334928
+  identification: 
+    name: P9_OIKEA
+    type: Number Field
+
+  label: 
+    label: Oikea hauis
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Text
+
+  layout: 
+    sequence: 180
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 255
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: OIKEA
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_PVM_ ==================================
+  id: 45286201585380149
+  identification: 
+    name: P9_PVM_
+    type: Date Picker
+
+  label: 
+    label: Pvm
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 60
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: PVM_
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: sysdate
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_USER_ID ===============================
+  id: 45869276515834901
+  identification: 
+    name: P9_USER_ID
+    type: Display Only
+
+  label: 
+    label: User Id
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: USER_ID
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9_PAIKKA ================================
+  id: 45869336160834902
+  identification: 
+    name: P9_PAIKKA
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Päivän numerot # 18943964990334903
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Päivän numerot # 18943964990334903
+    column: PAIKKA
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CANCEL ======================================
+  id: 18947746415334930
+  identification: 
+    button-name: CANCEL
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293694370212119
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: DELETE ======================================
+  id: 18948542351334938
+  identification: 
+    button-name: DELETE
+    label: Delete
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293694370212119
+    slot: DELETE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to URL
+    target: "javascript:apex.confirm(htmldb_delete_message,'DELETE');"
+    execute-validations: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL DELETE action
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P9_ID
+
+- # ====== Button: SAVE ========================================
+  id: 18948950229334938
+  identification: 
+    button-name: SAVE
+    label: Apply Changes
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293694370212119
+    slot: CHANGE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL UPDATE action
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P9_ID
+
+- # ====== Button: CREATE ======================================
+  id: 18949398235334938
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293694370212119
+    slot: CREATE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P9_ID
+
+- # ====== Button: Näytä =======================================
+  id: 25294545257212128
+  identification: 
+    button-name: Näytä
+    label: Näytä raportti
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293694370212119
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--primary
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: P9_PAINO change =====================
+  id: 13925479807424420
+  identification: 
+    name: P9_PAINO change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: change
+    selection-type: jQuery Selector
+    jquery-selector: '#P9_PAINO'
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v(this.triggeringElement.id) == ''
+
+  server-side-condition: 
+    type: Never
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 13925533792424421
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#P9_VASEN").hide();
+        $('#P9_VASEN')
+        .closest('.t-Form-fieldContainer')
+        .hide();
+        $("#P9_OIKEA").hide();
+        $('#P9_OIKEA')
+        .closest('.t-Form-fieldContainer')
+        .hide();
+
+    execution: 
+      sequence: 10
+      event: P9_PAINO change # 13925479807424420
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 13925622283424422
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#P9_VASEN").show();
+        $('#P9_VASEN')
+        .closest('.t-Form-fieldContainer')
+        .show();
+        $("#P9_OIKEA").show();
+        $('#P9_OIKEA')
+        .closest('.t-Form-fieldContainer')
+        .show();
+
+    execution: 
+      sequence: 10
+      event: P9_PAINO change # 13925479807424420
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 25294310421212126
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CANCEL # 18947746415334930
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 25294412546212127
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: New # 25294310421212126
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Numerot ====================
+  id: 18949754964334939
+  identification: 
+    name: Initialize form Numerot
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Päivän numerot # 18943964990334903
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Numerot =======================
+  id: 18950103751334940
+  identification: 
+    name: Process form Numerot
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Päivän numerot # 18943964990334903
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+branches: 
+- # ====== Branch: Go To Page 11 ===============================
+  id: 41479289719253829
+  identification: 
+    name: Go To Page 11
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 11 # Kehonkoostumus
+

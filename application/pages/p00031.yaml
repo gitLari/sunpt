@@ -1,0 +1,3482 @@
+---
+# ====== Page: Treenikerta ===================================
+id: 31
+identification: 
+  name: Treenikerta
+  alias: TREENIKERTA
+  title: Treenikerta
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  execute-when-page-loads: |
+    $(".js-rangeDisplay").hide();
+    $("#stats .a-GV-pagination").hide();
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+help: 
+  help-text: |
+    <p>To find data enter a search term into the search dialog, or click on the column headings to limit the records returned.</p>
+    
+    <p>You can perform numerous functions by clicking the <strong>Actions</strong> button. This includes selecting the columns that are displayed / hidden and their display sequence, plus numerous data and format functions.  You can also define additional views of the data using the chart, group by, and pivot options.</p>
+    
+    <p>If you want to save your customizations select report, or click download to unload the data. Enter you email address and time frame under subscription to be sent the data on a regular basis.<p>
+    
+    <p>For additional information click Help at the bottom of the Actions menu.</p> 
+    
+    <p>Click the <strong>Reset</strong> button to reset the interactive report back to the default settings.</p>
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 25293593849212118
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Buttons Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-ButtonRegion--noPadding
+    - t-ButtonRegion--noUI
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Kuorma / liike ==============================
+  id: 46982874902862510
+  identification: 
+    name: Kuorma / liike
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 160
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 46982961252862511
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Tämä päivä ==================================
+      id: 46983068843862512
+      identification: 
+        name: Tämä päivä
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi, 'lime' color, l.id, sum(
+                  case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                      else 
+                      (nvl(rir,0)+toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, paino h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM)) 
+          --or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo --3
+          and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+          and trunc(h.pvm_) = (select max(trunc(pvm_)) from paino where pvm_ <= :p31_pvm )
+          and toistot is not null
+          and tk.treeni_id = :P31_TREENI
+          group by to_char(pvm,'dd.mm.yyyy') , l.nimi, 'lime',l.id
+          order by 2
+          
+          /*select to_char(tk.pvm,'DD.MM.YYYY') pvm, 'lime' color, l.nimi, l.id, sum(
+                  case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*(h.paino+kg)  
+                      else 
+                      (nvl(rir,0)+toistot)*kg           
+                      end ) voluumi
+          from treenikerta tk, liike l, henkilo h
+          where l.id = tk.liike and
+                  trunc(pvm) = trunc(to_date(:P31_PVM)) 
+          and henkilo_id =  :p31_henkilo and henkilo_id = h.id
+          and tk.treeni_id = :p31_treeni
+          group by to_char(tk.pvm,'DD.MM.YYYY'), l.nimi, l.id
+          order by 1*/
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: PVM
+        label: NIMI
+        value: VOLUUMI
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::P34_LIIKE:&ID.'
+          page: 34 # liike kehitys chart
+          values: 
+            p34_liike: '&ID.'
+
+      label: 
+        show: false
+
+    - # ====== Series: Edellinen päivä =============================
+      id: 46983560831862517
+      identification: 
+        name: Edellinen päivä
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi, 'black' color,l.id, sum(
+                  case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                      else 
+                      (nvl(rir,0)+toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, paino h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA)) 
+          --or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo --3
+          and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+          and trunc(h.pvm_) = (select max(trunc(pvm_)) from paino where pvm_ <= :P31_PVM_VERRATTAVA )
+          and toistot is not null
+          and tk.treeni_id = :P31_TREENI
+          group by to_char(pvm,'dd.mm.yyyy') , 'black', l.nimi,l.id
+          order by 2
+          
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM_VERRATTAVA
+        - P31_PVM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: PVM
+        label: NIMI
+        value: VOLUUMI
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::P34_LIIKE:&LIIKE.'
+          page: 34 # liike kehitys chart
+          values: 
+            p34_liike: '&LIIKE.'
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 46983171281862513
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 46983212156862514
+      identification: 
+        name: y
+        show-axis: true
+        title: Kuorma
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Voima / liike ===============================
+  id: 46983740618862519
+  identification: 
+    name: Voima / liike
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 140
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 46983892817862520
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Edellinen päivä =============================
+      id: 46983969075862521
+      identification: 
+        name: Edellinen päivä
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi, 'black' color,l.id, max(
+                  case when l.kehonpainoliike = 1 then
+                      (toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                      else 
+                      (+toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, paino h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA)) 
+          --or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo --3
+          and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+          and trunc(h.pvm_) = (select max(trunc(pvm_)) from paino where pvm_ <= :P31_PVM_VERRATTAVA )
+          and toistot is not null
+          and tk.treeni_id = :P31_TREENI
+          group by to_char(pvm,'dd.mm.yyyy') , 'black', l.nimi,l.id
+          order by 2
+          
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM_VERRATTAVA
+        - P31_PVM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: PVM
+        label: NIMI
+        value: VOLUUMI
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::P34_LIIKE:&LIIKE.'
+          page: 34 # liike kehitys chart
+          values: 
+            p34_liike: '&LIIKE.'
+
+      label: 
+        show: false
+
+    - # ====== Series: Tämä päivä ==================================
+      id: 46984038648862522
+      identification: 
+        name: Tämä päivä
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi, 'lime' color,l.id, max(
+                  case when l.kehonpainoliike = 1 then
+                      (toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                      else 
+                      (toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, paino h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM)) 
+          --or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo --3
+          and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+          and trunc(h.pvm_) = (select max(trunc(pvm_)) from paino where pvm_ <= :p31_pvm )
+          and toistot is not null
+          and tk.treeni_id = :P31_TREENI
+          group by to_char(pvm,'dd.mm.yyyy') , l.nimi, 'lime',l.id
+          order by 2
+          
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: PVM
+        label: NIMI
+        value: VOLUUMI
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::P34_LIIKE:&ID.'
+          page: 34 # liike kehitys chart
+          values: 
+            p34_liike: '&ID.'
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 46984141968862523
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 46984247743862524
+      identification: 
+        name: y
+        show-axis: true
+        title: Max voima
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Voimataso ===================================
+  id: 59428026803314907
+  identification: 
+    name: Voimataso
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 170
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 59428157991314908
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Päivä =======================================
+      id: 59428289532314909
+      identification: 
+        name: Päivä
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select  trunc(pvm) pvm, l.nimi, max(
+                  case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*(h.paino+kg)  *.0333  +h.paino+kg
+                      else 
+                      (nvl(rir,0)+toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, henkilo h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM)) or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo and henkilo_id = h.id and toistot is not null
+          group by trunc(pvm) , l.nimi)
+          select pvm, sum(voluumi) yht from kysely
+          group by pvm
+          order by 1
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM
+        - P31_PVM_VERRATTAVA
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: YHT
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 59428869266314915
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 59428917525314916
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Kuorma ======================================
+  id: 59429062608314917
+  identification: 
+    name: Kuorma
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 180
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 59429129167314918
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Päivä =======================================
+      id: 59429296047314919
+      identification: 
+        name: Päivä
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select  trunc(pvm) pvm,
+                  l.nimi, sum(
+                  case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*(h.paino+kg)  *.0333  +h.paino+kg
+                      else 
+                      (nvl(rir,0)+toistot)*kg       *.0333  +kg --+h.paino    
+                      end ) voluumi
+          from treenikerta tk, liike l, henkilo h
+          where l.id = tk.liike and
+          (        trunc(pvm) = trunc(to_date(:P31_PVM)) or trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA) )
+          )
+          and henkilo_id =  :p31_henkilo and henkilo_id = h.id and toistot is not null
+          group by trunc(pvm) , l.nimi)
+          select pvm, case when 
+              trunc(pvm) = trunc(to_date(:P31_PVM_VERRATTAVA))
+              then 'grey' else 'lime' end color, 
+              sum(voluumi) yht from kysely
+          group by pvm
+          order by 1
+        page-items-to-submit: 
+        - P31_HENKILO
+        - P31_TREENI
+        - P31_PVM
+        - P31_PVM_VERRATTAVA
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: YHT
+
+      appearance: 
+        color: '&COLOR.'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 59429375932314920
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 59429447411314921
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Voima vs verrattava % =======================
+  id: 59429827706314925
+  identification: 
+    name: Voima vs verrattava %
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with kysely as (
+      select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi,  max(
+              case when l.kehonpainoliike = 1 then
+                  (toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                  else 
+                  (toistot)*kg       *.0333  +kg --+h.paino    
+                  end ) voluumi
+      from treenikerta tk, liike l, paino h
+      where l.id = tk.liike and
+      (        trunc(pvm) = (to_date(:P31_PVM,'dd.mm.yyyy')) or 
+               trunc(pvm) = (to_date(:P31_PVM_VERRATTAVA,'dd.mm.yyyy'))
+      )
+      and henkilo_id =  :p31_henkilo --3
+      and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+      and trunc(h.pvm_) = trunc( (select max(pvm_) from paino where trunc(pvm_) <= :p31_pvm ) )
+      and toistot is not null
+      and tk.treeni_id = :P31_TREENI
+      group by to_char(pvm,'dd.mm.yyyy') , l.nimi, 'lime',l.id
+      order by 2
+      )
+      
+      , tama as (
+      select sum(voluumi) yht from kysely k1
+      where trunc(to_date(pvm,'dd.mm.yyyy')) = trunc(to_date(:P31_PVM,'dd.mm.yyyy'))
+      and (select count(*) from kysely where nimi = k1.nimi)  > 1
+      )
+      , edellinen as (
+          select sum(voluumi) yht from kysely kys
+      where trunc(to_date(pvm,'dd.mm.yyyy'))  = trunc(to_date (:P31_PVM_VERRATTAVA,'dd.mm.yyyy') )
+      and (select count(*) from kysely where nimi = kys.nimi)  > 1
+      --and exists (select 1 from kysely where nimi = kys.nimi) -- and trunc(pvm) = trunc(to_date(:P31_PVM) ))
+      )
+      select case when t.yht - e.yht > 0 then '+' else '' end || round((t.yht - e.yht )/t.yht *100) as prossaa
+      --,case when t.yht - e.yht > 0 then 'green' else 'grey' end as vari
+        from tama t, edellinen e
+      
+    page-items-to-submit: 
+    - P31_HENKILO
+    - P31_TREENI
+    - P31_PVM
+    - P31_PVM_VERRATTAVA
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Kehitys # 59430479978314931
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - t-BadgeList--large
+      - t-BadgeList--fixed
+      - t-BadgeList--circular
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: PROSSAA =====================================
+    id: 59430206967314929
+    identification: 
+      column-name: PROSSAA
+      type: Plain Text
+
+    heading: 
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Kuorma vs verrattava % ======================
+  id: 59430053601314927
+  identification: 
+    name: Kuorma vs verrattava %
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with kysely as (
+      select  to_char(pvm,'dd.mm.yyyy') pvm, l.nimi,  sum(
+              case when l.kehonpainoliike = 1 then
+                  (toistot)*( nvl(h.paino_omron, h.paino)+kg)  *.0333  +nvl(h.paino_omron, h.paino)+kg
+                  else 
+                  (toistot)*kg       *.0333  +kg --+h.paino    
+                  end ) voluumi
+      from treenikerta tk, liike l, paino h
+      where l.id = tk.liike and
+      (        trunc(pvm) = (to_date(:P31_PVM,'dd.mm.yyyy')) or 
+               trunc(pvm) = (to_date(:P31_PVM_VERRATTAVA,'dd.mm.yyyy'))
+      )
+      and henkilo_id =  :p31_henkilo --3
+      and lower(h.user_id) = (select lower(nimi) from henkilo where id =  :p31_henkilo)
+      and trunc(h.pvm_) = trunc( (select max(pvm_) from paino where trunc(pvm_) <= :p31_pvm ) )
+      and toistot is not null
+      and tk.treeni_id = :P31_TREENI
+      group by to_char(pvm,'dd.mm.yyyy') , l.nimi, 'lime',l.id
+      order by 2
+      )
+      
+      , tama as (
+      select sum(voluumi) yht from kysely k1
+      where trunc(to_date(pvm,'dd.mm.yyyy')) = trunc(to_date(:P31_PVM,'dd.mm.yyyy'))
+      --and (select count(*) from kysely where nimi = k1.nimi)  > 1
+      )
+      , edellinen as (
+          select sum(voluumi) yht from kysely kys
+      where trunc(to_date(pvm,'dd.mm.yyyy'))  = trunc(to_date (:P31_PVM_VERRATTAVA,'dd.mm.yyyy') )
+      --and (select count(*) from kysely where nimi = kys.nimi)  > 1
+      --and exists (select 1 from kysely where nimi = kys.nimi) -- and trunc(pvm) = trunc(to_date(:P31_PVM) ))
+      )
+      select case when t.yht - e.yht > 0 then '+' else '' end || round((t.yht - e.yht )/t.yht *100) as prossaa
+      --,case when t.yht - e.yht > 0 then 'green' else 'grey' end as vari
+        from tama t, edellinen e
+      
+    page-items-to-submit: 
+    - P31_HENKILO
+    - P31_TREENI
+    - P31_PVM
+    - P31_PVM_VERRATTAVA
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Kehitys # 59430479978314931
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - t-BadgeList--large
+      - t-BadgeList--fixed
+      - t-BadgeList--circular
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: PROSSAA =====================================
+    id: 59430389064314930
+    identification: 
+      column-name: PROSSAA
+      type: Plain Text
+
+    heading: 
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Kehitys =====================================
+  id: 59430479978314931
+  identification: 
+    name: Kehitys
+    type: Static Content
+
+  layout: 
+    sequence: 130
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Treenikerta =================================
+  id: 84018405632306801
+  identification: 
+    name: Treenikerta
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TREENIKERTA
+    include-rowid-column: false
+    where-clause: |
+      (:P31_TREENI IS NULL OR treeni_id = :P31_TREENI)
+      and
+      (:P31_PVM IS NULL OR trunc(PVM) = :P31_PVM)
+      
+    order-by-clause: id
+    page-items-to-submit: 
+    - P31_PVM
+    - P31_TREENI
+
+  layout: 
+    sequence: 200
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 85137994886413212
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 86257599270249270
+      identification: 
+        name: Primary Report
+        alias: 393088
+
+  column-groups: 
+  - # ====== Column Group: Meso jutut ============================
+    id: 15028520051669207
+    heading: 
+      heading: Meso jutut
+
+  columns: 
+  - # ====== Column: DELOAD ======================================
+    id: 46986159261862543
+    identification: 
+      column-name: DELOAD
+      type: Number Field
+
+    heading: 
+      heading: Deload
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 120
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DELOAD
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TREENIN_KERTA ===============================
+    id: 46986260740862544
+    identification: 
+      column-name: TREENIN_KERTA
+      type: Number Field
+
+    heading: 
+      heading: Treenin Kerta
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 130
+      column-alignment: end
+      group: Meso jutut # 15028520051669207
+      use-group-for: Both
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TREENIN_KERTA
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: MESO_ID =====================================
+    id: 49167359948350750
+    identification: 
+      column-name: MESO_ID
+      type: Number Field
+
+    heading: 
+      heading: Meso Id
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 140
+      column-alignment: end
+      group: Meso jutut # 15028520051669207
+      use-group-for: Both
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: MESO_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 50130109122109801
+    identification: 
+      column-name: BLOCK
+      type: Number Field
+
+    heading: 
+      heading: Block
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 150
+      column-alignment: end
+      group: Meso jutut # 15028520051669207
+      use-group-for: Both
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK_TREENI_NRO ============================
+    id: 50130256791109802
+    identification: 
+      column-name: BLOCK_TREENI_NRO
+      type: Number Field
+
+    heading: 
+      heading: Block Treeni Nro
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 160
+      column-alignment: end
+      group: Meso jutut # 15028520051669207
+      use-group-for: Both
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK_TREENI_NRO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TREENI_ID ===================================
+    id: 85138087782413213
+    identification: 
+      column-name: TREENI_ID
+      type: Select List
+
+    heading: 
+      heading: Treeni Id
+      alignment: start
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: TREENI_NIMI_LOV # 45789437350207699
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: TREENI_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: HENKILO_ID ==================================
+    id: 85138134178413214
+    identification: 
+      column-name: HENKILO_ID
+      type: Select List
+
+    heading: 
+      heading: Henkilo Id
+      alignment: start
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: HENKILO.NIMI # 45731410854922463
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: HENKILO_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ID ==========================================
+    id: 85138313928413215
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: LIIKE =======================================
+    id: 85138345242413216
+    identification: 
+      column-name: LIIKE
+      type: Select List
+
+    heading: 
+      heading: Liike
+      alignment: start
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: LIIKE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: RIR =========================================
+    id: 86251329933246367
+    identification: 
+      column-name: RIR
+      type: Number Field
+
+    heading: 
+      heading: Rir
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: RIR
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: SARJANUMERO =================================
+    id: 86251502789246368
+    identification: 
+      column-name: SARJANUMERO
+      type: Number Field
+
+    heading: 
+      heading: Sarjanumero
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SARJANUMERO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: KG ==========================================
+    id: 86251518226246369
+    identification: 
+      column-name: KG
+      type: Number Field
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: KG
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 86251630341246370
+    identification: 
+      column-name: TOISTOT
+      type: Number Field
+
+    heading: 
+      heading: Toistot
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 100
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOISTOT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: PVM =========================================
+    id: 86251760664246371
+    identification: 
+      column-name: PVM
+      type: Display Only
+
+    heading: 
+      heading: Pvm
+      alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: DD.MM.YYYY
+
+    source: 
+      type: Database Column
+      database-column: PVM
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 86251887265246372
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 86251952027246373
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Treenikerta
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Treenikerta Stats ===========================
+  id: 84910681229287195
+  identification: 
+    name: Treenikerta Stats
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+             count(*) sarjoja --sarjanumero
+             from TREENIKERTA
+       where (:P31_TREENI IS NULL OR treeni_id = :P31_TREENI)
+              and
+              (:P31_PVM IS NULL OR trunc(PVM) = :P31_PVM)
+              and toistot is not null
+    page-items-to-submit: 
+    - P31_TREENI
+    - P31_PVM
+
+  layout: 
+    sequence: 190
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-IRR-region--noBorders
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: stats
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 46985675831862538
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Page
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: None
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 48746504342892914
+      identification: 
+        name: Primary Report
+        alias: 487466
+
+  columns: 
+  - # ====== Column: SARJOJA =====================================
+    id: 46985781318862539
+    identification: 
+      column-name: SARJOJA
+      type: Number Field
+
+    heading: 
+      heading: Sarjoja
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SARJOJA
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+page-items: 
+- # ====== Page Item: P31_HENKILO ==============================
+  id: 46956951268297757
+  identification: 
+    name: P31_HENKILO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P31_TREENI ===============================
+  id: 46957354790297759
+  identification: 
+    name: P31_TREENI
+    type: Select List
+
+  label: 
+    label: Treeni
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select '(M'||meso_id||') B'||block||'.T'||block_treeni_nro||' '||kuvaus ||
+      case when aktiivinen = 0 then ' valmis' else null end d,
+       id r  from treeni t
+      where henkilo_id = :p31_HENKILO
+      and exists (select 1 from treenikerta where treeni_id = t.id )
+      ORDER BY meso_id desc, block desc, block_treeni_nro desc  
+      --1 desc
+    display-extra-values: false
+    display-null-value: true
+    null-display-value: '-valitse-'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P31_PVM ==================================
+  id: 46957711076297761
+  identification: 
+    name: P31_PVM
+    type: Select List
+
+  label: 
+    label: Pvm
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select  distinct  to_char(PVM,'DD.MM.YYYY') ||' B'||block||'T'||block_treeni_nro||'.'||TREENIN_KERTA d, trunc(pvm) r 
+      from treeniKERTA
+      where treeni_id = :p31_TREENI and henkilo_id = :P31_HENKILO --and deload is null
+      ORDER BY 2 desc
+    display-extra-values: false
+    display-null-value: false
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P31_TREENI
+    items-to-submit: 
+    - P31_TREENI
+    - P31_HENKILO
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P31_PVM_VERRATTAVA =======================
+  id: 46984496837862526
+  identification: 
+    name: P31_PVM_VERRATTAVA
+    type: Select List
+
+  label: 
+    label: Pvm verrattava
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select  distinct  '(M'||tk.meso_id ||') '||t.kuvaus ||' '||pvm ||' B'||tk.block||'T'
+          ||tk.block_treeni_nro||'.'||TREENIN_KERTA d, trunc(pvm) r 
+          from treeniKERTA tk, treeni t
+          where tk.henkilo_id = :P31_HENKILO and trunc(pvm) < :P31_PVM
+          and t.id = tk.treeni_id 
+          and tk.block_treeni_nro  =
+          (select distinct block_treeni_nro from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm)
+          --tarpeen?
+          and 
+            liike in 
+            (select distinct liike from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm)
+      
+          
+      union 
+      select  distinct  '(M'||tk.meso_id ||') '||t.kuvaus ||' '||pvm ||' B'||tk.block||'T'
+          ||tk.block_treeni_nro||'.'||TREENIN_KERTA d, trunc(pvm) r 
+          from treeniKERTA tk, treeni t
+          where tk.henkilo_id = :P31_HENKILO and trunc(pvm) < :P31_PVM
+          and t.id = tk.treeni_id 
+          and tk.block not in
+          (select distinct block from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm)
+           and 
+            liike in 
+            (select distinct liike from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm)
+      /*   and block_treeni_nro = 
+          (select distinct block_treeni_nro from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm)
+          and deload is null
+          
+           (select count(distinct liike) from treenikerta where treeni_id = :p31_TREENI and trunc(pvm) = :p31_pvm 
+            and kg is not null) > 3*/
+          order by 2 desc
+    display-extra-values: false
+    display-null-value: false
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P31_PVM
+    items-to-submit: 
+    - P31_HENKILO
+    - P31_TREENI
+    - P31_PVM
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: PoistaTreeni ================================
+  id: 15028690792669208
+  identification: 
+    button-name: PoistaTreeni
+    label: Poista treeni &P31_PVM.
+
+  layout: 
+    sequence: 30
+    region: Buttons # 25293593849212118
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - t-Button--danger
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--pillEnd
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  confirmation: 
+    message: Olet poistamassa &P31_PVM. treeniä, haluatko jatkaa?
+    style: Danger
+
+- # ====== Button: CREATE ======================================
+  id: 46955547243297734
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 10
+    region: Treenikerta # 84018405632306801
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:11:&APP_SESSION.::&DEBUG.:11::'
+      page: 11 # Kehonkoostumus
+      clear-cache: 11
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: NÄYTÄ_TREENI ================================
+  id: 49165808281350735
+  identification: 
+    button-name: NÄYTÄ_TREENI
+    label: Näytä
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25293593849212118
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - t-Button--success
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--pillStart
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:41:&SESSION.::&DEBUG.:41::'
+      page: 41 # Katso treeni
+      clear-cache: 41
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Muunna_Deload ===============================
+  id: 59431014493314937
+  identification: 
+    button-name: Muunna_Deload
+    label: '-> Deload'
+
+  layout: 
+    sequence: 20
+    region: Buttons # 25293593849212118
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - t-Button--warning
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--pill
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: ClickPoista =========================
+  id: 15028702472669209
+  identification: 
+    name: ClickPoista
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PoistaTreeni # 15028690792669208
+
+  server-side-condition: 
+    type: Never
+
+  actions: 
+  - # ====== Action: SS ==========================================
+    id: 15028818246669210
+    identification: 
+      name: SS
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        delete from treenikerta where 
+        trunc(pvm) = trunc(to_date(:P31_pvm))
+            and treeni_id = :P31_treeni
+            and henkilo_id = :p31_HENKILO;
+        
+      items-to-submit: 
+      - P31_HENKILO
+      - P31_TREENI
+      - P31_PVM
+
+    execution: 
+      sequence: 20
+      event: ClickPoista # 15028702472669209
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Varmista ====================================
+    id: 15028976646669211
+    identification: 
+      name: Varmista
+      action: Confirm
+
+    settings: 
+      message: Olet poistamassa &P31_PVM. treeniä, haluatko jatkaa?
+      style: Default
+      confirm-label: Kyllä
+      cancel-label: En
+
+    execution: 
+      sequence: 10
+      event: ClickPoista # 15028702472669209
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: ChangeTreeniPvmCHARTS ===============
+  id: 46958126230297764
+  identification: 
+    name: ChangeTreeniPvmCHARTS
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P31_PVM
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 46958612638297767
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta # 84018405632306801
+
+    execution: 
+      sequence: 80
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 46959162336297768
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta Stats # 84910681229287195
+
+    execution: 
+      sequence: 70
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 46983622616862518
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma / liike # 46982874902862510
+
+    execution: 
+      sequence: 50
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 46984305160862525
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima / liike # 46983740618862519
+
+    execution: 
+      sequence: 60
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 58327363547491548
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P31_PVM_VERRATTAVA
+
+    execution: 
+      sequence: 90
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59428663734314913
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voimataso # 59428026803314907
+
+    execution: 
+      sequence: 30
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59429543958314922
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma # 59429062608314917
+
+    execution: 
+      sequence: 40
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59430507916314932
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima vs verrattava % # 59429827706314925
+
+    execution: 
+      sequence: 10
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59430782315314934
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma vs verrattava % # 59430053601314927
+
+    execution: 
+      sequence: 20
+      event: ChangeTreeniPvmCHARTS # 46958126230297764
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Edit Report - Dialog Closed =========
+  id: 46959530650297768
+  identification: 
+    name: Edit Report - Dialog Closed
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Treenikerta # 84018405632306801
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 46960028034297768
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta # 84018405632306801
+
+    execution: 
+      sequence: 10
+      event: Edit Report - Dialog Closed # 46959530650297768
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: ChangeTreeniPvmCHARTS_1 =============
+  id: 58326809656491543
+  identification: 
+    name: ChangeTreeniPvmCHARTS_1
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P31_PVM_VERRATTAVA
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 58326987360491544
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma / liike # 46982874902862510
+
+    execution: 
+      sequence: 50
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 58327086472491545
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima / liike # 46983740618862519
+
+    execution: 
+      sequence: 60
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 58327184856491546
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta Stats # 84910681229287195
+
+    execution: 
+      sequence: 70
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 58327297136491547
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta # 84018405632306801
+
+    execution: 
+      sequence: 80
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59428753066314914
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voimataso # 59428026803314907
+
+    execution: 
+      sequence: 30
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59429696211314923
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma # 59429062608314917
+
+    execution: 
+      sequence: 40
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59430883299314935
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima vs verrattava % # 59429827706314925
+
+    execution: 
+      sequence: 10
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59430964461314936
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma vs verrattava % # 59430053601314927
+
+    execution: 
+      sequence: 20
+      event: ChangeTreeniPvmCHARTS_1 # 58326809656491543
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: ClickMuunna =========================
+  id: 59431191392314938
+  identification: 
+    name: ClickMuunna
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Muunna_Deload # 59431014493314937
+
+  client-side-condition: 
+    type: Item is not null
+    item: P31_PVM
+
+  actions: 
+  - # ====== Action: Confirm =====================================
+    id: 15029052682669212
+    identification: 
+      action: Confirm
+
+    settings: 
+      message: 'Olet muuttamassa &P31_PVM. treeniä deload:iksi -> RIR 3, tyhjät pois, oletko varma?'
+      style: Default
+      confirm-label: Kyllä
+      cancel-label: En
+
+    execution: 
+      sequence: 10
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 59431275978314939
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        update treenikerta
+        set rir =3
+        where trunc(pvm) = trunc(to_date(:P31_pvm))
+            and treeni_id = :P31_treeni
+            and henkilo_id = :p31_HENKILO
+            and toistot is not null;
+        
+        delete from treenikerta where toistot is null 
+        and trunc(pvm) = trunc(to_date(:P31_pvm))
+            and treeni_id = :P31_treeni
+            and henkilo_id = :p31_HENKILO;
+        
+      items-to-submit: 
+      - P31_HENKILO
+      - P31_TREENI
+      - P31_PVM
+
+    execution: 
+      sequence: 20
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 59431355700314940
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima vs verrattava % # 59429827706314925
+
+    execution: 
+      sequence: 40
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 59431432626314941
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma vs verrattava % # 59430053601314927
+
+    execution: 
+      sequence: 50
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 59431541592314942
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima / liike # 46983740618862519
+
+    execution: 
+      sequence: 60
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 59431608699314943
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kuorma / liike # 46982874902862510
+
+    execution: 
+      sequence: 70
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 59431790396314944
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta Stats # 84910681229287195
+
+    execution: 
+      sequence: 80
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 59431802900314945
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenikerta # 84018405632306801
+
+    execution: 
+      sequence: 90
+      event: ClickMuunna # 59431191392314938
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Show tai hide =======================
+  id: 59431966583314946
+  identification: 
+    name: Show tai hide
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P31_PVM
+
+  client-side-condition: 
+    type: Item is not null
+    item: P31_PVM
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 59432087909314947
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: Muunna_Deload # 59431014493314937
+
+    execution: 
+      sequence: 10
+      event: Show tai hide # 59431966583314946
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 59432127594314948
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Muunna_Deload # 59431014493314937
+
+    execution: 
+      sequence: 10
+      event: Show tai hide # 59431966583314946
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+computations: 
+- # ====== Computation: P31_HENKILO ============================
+  id: 45872755830834936
+  identification: 
+    item-name: P31_HENKILO
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo
+      where lower(nimi) = lower(:app_user)
+
+processes: 
+- # ====== Process: DeleteTreeni ===============================
+  id: 25294641822212129
+  identification: 
+    name: DeleteTreeni
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      delete from treenikerta where 
+      trunc(pvm) = trunc(to_date(:P31_pvm))
+          and treeni_id = :P31_treeni
+          and henkilo_id = :p31_HENKILO;
+      
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: PoistaTreeni # 15028690792669208
+
+- # ====== Process: Treenikerta - Save Interactive Grid Data ===
+  id: 46955937487297735
+  identification: 
+    name: Treenikerta - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Treenikerta # 84018405632306801
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

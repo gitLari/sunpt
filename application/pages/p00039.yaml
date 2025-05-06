@@ -1,0 +1,2911 @@
+---
+# ====== Page: Meso ==========================================
+id: 39
+identification: 
+  name: Meso
+  alias: MESO
+  title: Meso
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Toteutunut toistoja viikkotasolla ===========
+  id: 35247740116136840
+  identification: 
+    name: Toteutunut toistoja viikkotasolla
+    type: Chart
+
+  source: 
+    location: None
+    page-items-to-submit: 
+    - P39_MESO_ID
+    - P39_HENKILO_ID
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35247802437136841
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Viikot
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: kysely ======================================
+      id: 35247975247136842
+      identification: 
+        name: kysely
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+           select   
+           kl.kehonosa, -- meso_id, block,, block_treeni_nro, --tk.treeni_id,
+          to_char(block) || '-'|| to_char(tk.treenin_kerta) treenit,
+            sum(tk.toistot) 
+                          from TREENIKERTA TK, LIIKE L, KEHONOSA_LOOKUP kl
+                              WHERE MESO_ID = :P39_MESO_ID AND TK.LIIKE = L.ID 
+                              AND tk.henkilo_id = :P39_HENKILO_ID and deload is null
+                              AND kl.KEHONOSA_ID = l.kehonosa_id  
+              group by   kl.kehonosa, to_char(block) || '-'|| to_char(tk.treenin_kerta)
+              order by 1,2
+        page-items-to-submit: 
+        - P39_MESO_ID
+        - P39_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: TREENIT
+        label: KEHONOSA
+        value: SUM(TK.TOISTOT)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 35248081505136843
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 35248156330136844
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Pääliikkeet =================================
+  id: 50132978402109829
+  identification: 
+    name: Pääliikkeet
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select  l.kehonosa, l.nimi, tl.RIR, tl.SARJAKUVAUS, tl.TOISTOT,
+      t.meso_id, t.block, t.BLOCK_TREENI_NRO, t.id 
+      from treeni t, treeniliike tl, liike l
+      where t.id = tl.treeni_id 
+      AND tl.liike_id = l.id
+      AND t.HENKILO_ID = :P39_HENKILO_ID
+      and (:P39_MESO_ID is null or t.meso_id = :P39_MESO_ID)
+      and tl.sarjakuvaus not in ('2222','3333')
+      group by kehonosa, l.nimi, tl.RIR, tl.SARJAKUVAUS, tl.TOISTOT,
+      t.meso_id, t.block, t.BLOCK_TREENI_NRO, t.id 
+      order by l.nimi, t.block, t.block_treeni_nro
+    page-items-to-submit: 
+    - P39_HENKILO_ID
+    - P39_MESO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: NIMI ========================================
+    id: 50133013017109830
+    identification: 
+      column-name: NIMI
+      type: Plain Text
+
+    heading: 
+      heading: Nimi
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RIR =========================================
+    id: 50133154455109831
+    identification: 
+      column-name: RIR
+      type: Plain Text
+
+    heading: 
+      heading: Rir
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: SARJAKUVAUS =================================
+    id: 50133291684109832
+    identification: 
+      column-name: SARJAKUVAUS
+      type: Plain Text
+
+    heading: 
+      heading: Sarjakuvaus
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 50133390396109833
+    identification: 
+      column-name: TOISTOT
+      type: Plain Text
+
+    heading: 
+      heading: Toistot
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MESO_ID =====================================
+    id: 50133494219109834
+    identification: 
+      column-name: MESO_ID
+      type: Plain Text
+
+    heading: 
+      heading: Meso Id
+      alignment: center
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 50133543995109835
+    identification: 
+      column-name: BLOCK
+      type: Plain Text
+
+    heading: 
+      heading: Block
+      alignment: center
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BLOCK_TREENI_NRO ============================
+    id: 50133642782109836
+    identification: 
+      column-name: BLOCK_TREENI_NRO
+      type: Plain Text
+
+    heading: 
+      heading: Block Treeni Nro
+      alignment: center
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ID ==========================================
+    id: 50133715456109837
+    identification: 
+      column-name: ID
+      type: Plain Text
+
+    heading: 
+      heading: Id
+      alignment: center
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KEHONOSA ====================================
+    id: 50133804173109838
+    identification: 
+      column-name: KEHONOSA
+      type: Plain Text
+
+    heading: 
+      heading: Kehonosa
+      alignment: center
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Meso ========================================
+  id: 50340754611133259
+  identification: 
+    name: Meso
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select  l.kehonosa_id, l.nimi, tl.RIR, tl.SARJAKUVAUS, tl.TOISTOT,
+      t.meso_id, t.block, t.BLOCK_TREENI_NRO, t.id 
+      from treeni t, treeniliike tl, liike l
+      where t.id = tl.treeni_id 
+      AND tl.liike_id = l.id
+      AND t.HENKILO_ID = :P39_HENKILO_ID
+      and (:P39_MESO_ID is null or t.meso_id = :P39_MESO_ID)
+      and tl.sarjakuvaus not in ('2222','3333')
+      
+    page-items-to-submit: 
+    - P39_HENKILO_ID
+    - P39_MESO_ID
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 50341261194133262
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - PDF
+      - Excel
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 50341664610133262
+      identification: 
+        name: Primary Report
+        alias: 503417
+
+  columns: 
+  - # ====== Column: NIMI ========================================
+    id: 50132886248109828
+    identification: 
+      column-name: NIMI
+      type: Textarea
+
+    heading: 
+      heading: Nimi
+      alignment: start
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: NIMI
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 50342047589133265
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 50342531121133266
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: RIR =========================================
+    id: 50344575248133270
+    identification: 
+      column-name: RIR
+      type: Text Field
+
+    heading: 
+      heading: Rir
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 20
+
+    source: 
+      type: Database Column
+      database-column: RIR
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: SARJAKUVAUS =================================
+    id: 50345526107133271
+    identification: 
+      column-name: SARJAKUVAUS
+      type: Text Field
+
+    heading: 
+      heading: Sarjakuvaus
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: SARJAKUVAUS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 50346546260133272
+    identification: 
+      column-name: TOISTOT
+      type: Text Field
+
+    heading: 
+      heading: Toistot
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: TOISTOT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: MESO_ID =====================================
+    id: 50347539423133273
+    identification: 
+      column-name: MESO_ID
+      type: Number Field
+
+    heading: 
+      heading: Meso
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: MESO_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 50348534920133274
+    identification: 
+      column-name: BLOCK
+      type: Number Field
+
+    heading: 
+      heading: Block
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK_TREENI_NRO ============================
+    id: 50349545376133274
+    identification: 
+      column-name: BLOCK_TREENI_NRO
+      type: Number Field
+
+    heading: 
+      heading: Block Treeni Nro
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK_TREENI_NRO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ID ==========================================
+    id: 50350567267133275
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 100
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: KEHONOSA_ID =================================
+    id: 51287219905067041
+    identification: 
+      column-name: KEHONOSA_ID
+      type: Select List
+
+    heading: 
+      heading: Kehonosa
+      alignment: start
+
+    layout: 
+      sequence: 120
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: KEHONOSA_LOV # 51495298061574512
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: KEHONOSA_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Meso
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Sarjoja =====================================
+  id: 50915174337505823
+  identification: 
+    name: Sarjoja
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: Function Body returning SQL Query
+    language: PL/SQL
+    pl/sql-function-body-returning-sql-query: |
+      declare
+        sql_stmt     clob;
+        pivot_clause clob;
+        L_RETURN VARCHAR2(20000);
+      begin
+        l_RETURN := 
+      
+         'select * from ( select meso_id, block, block_treeni_nro,kehonosa , tk.sarjanumero
+                      from TREENIKERTA TK, LIIKE L
+                          WHERE MESO_ID = :P39_MESO_ID AND TK.LIIKE = L.ID AND kehonosa IS NOT NULL 
+                          AND tk.henkilo_id = :P39_HENKILO_ID)
+          pivot ( count(sarjanumero) for kehonosa in (''etu hartia'' as "etu hartia",''etureidet'' as "etureidet",''hauis'' as "hauis",''ojentaja'' as "ojentaja",''pakara'' as "pakara",''pohje'' as "pohje",''rinta'' as "rinta",''selkä'' as "selkä",''sivu olkapää'' as "sivu olkapää",''taka olkapää'' as "taka olkapää",''takareidet'' as "takareidet",''ulkokiertäjä'' as "ulkokiertäjä",''vatsa'' as "vatsa") 
+          )
+          order by 1,2,3';
+      
+      RETURN   l_RETURN;
+      
+      /*
+      IF :P39_MESO_ID is null then
+        select listagg('''' || kehonosa || ''' as "' ||kehonosa || '"', ',') within group (order by kehonosa) 
+        into
+           pivot_clause
+        from   (select distinct kehonosa 
+        from TREENIKERTA  TK, LIIKE L
+        WHERE TK.LIIKE = L.ID
+         AND kehonosa IS NOT NULL and tk.henkilo_id = 3);-- AND TK.MESO_ID = 2); --:); --AND TK.MESO_ID = 2 and  P39_MESO_ID 
+      
+        l_RETURN := 
+      --  'SELECT * FROM TREENIKERTA WHERE LIIKE IN ('||pivot_clause||')';
+         'select * from ( select meso_id, block, block_treeni_nro, l.kehonosa, sarjanumero
+                           from TREENIKERTA TK, LIIKE L
+                          WHERE MESO_ID = 1 AND TK.LIIKE = L.ID AND kehonosa IS NOT NULL 
+                          AND tk.henkilo_id is not null)
+          pivot ( count(sarjanumero) for kehonosa in (' || pivot_clause || ') )
+          ';
+      
+      --execute immediate sql_stmt;
+      else
+        select listagg('''' || kehonosa || ''' as "' ||kehonosa || '"', ',') within group (order by kehonosa) 
+        into
+           pivot_clause
+        from   (select distinct kehonosa 
+        from TREENIKERTA  TK, LIIKE L
+        WHERE TK.LIIKE = L.ID
+         AND kehonosa IS NOT NULL );--AND TK.MESO_ID = :P39_MESO_ID and tk.henkilo_id = :P39_HENKILO_ID); 
+         --:P39_MESO_ID 
+      
+        l_RETURN := 
+      --  'SELECT * FROM TREENIKERTA WHERE LIIKE IN ('||pivot_clause||')';
+         'select * from ( select meso_id, block, block_treeni_nro,kehonosa , tk.sarjanumero
+                      from TREENIKERTA TK, LIIKE L
+                          WHERE MESO_ID = '||:P39_MESO_ID||' AND TK.LIIKE = L.ID AND kehonosa IS NOT NULL 
+                          AND tk.henkilo_id = '||:P39_HENKILO_ID||')
+          pivot ( count(sarjanumero) for kehonosa in (' || pivot_clause || ') )
+          order by 1,2,3';
+      
+      end if;
+      RETURN L_RETURN;*/
+      end;
+      
+    page-items-to-submit: 
+    - P39_MESO_ID
+    - P39_HENKILO_ID
+    use-generic-column-names: false
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: MESO_ID =====================================
+    id: 51026461660548523
+    identification: 
+      column-name: MESO_ID
+      type: Plain Text
+
+    heading: 
+      heading: Meso Id
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 51026518425548524
+    identification: 
+      column-name: BLOCK
+      type: Plain Text
+
+    heading: 
+      heading: Block
+      alignment: center
+
+    layout: 
+      sequence: 270
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: etu hartia ==================================
+    id: 51190092797788129
+    identification: 
+      column-name: etu hartia
+      type: Plain Text
+
+    heading: 
+      heading: Etu Hartia
+      alignment: center
+
+    layout: 
+      sequence: 290
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: etureidet ===================================
+    id: 51190138050788130
+    identification: 
+      column-name: etureidet
+      type: Plain Text
+
+    heading: 
+      heading: Etureidet
+      alignment: center
+
+    layout: 
+      sequence: 300
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: hauis =======================================
+    id: 51190261814788131
+    identification: 
+      column-name: hauis
+      type: Plain Text
+
+    heading: 
+      heading: Hauis
+      alignment: center
+
+    layout: 
+      sequence: 310
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ojentaja ====================================
+    id: 51190372622788132
+    identification: 
+      column-name: ojentaja
+      type: Plain Text
+
+    heading: 
+      heading: Ojentaja
+      alignment: center
+
+    layout: 
+      sequence: 320
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: pakara ======================================
+    id: 51190494707788133
+    identification: 
+      column-name: pakara
+      type: Plain Text
+
+    heading: 
+      heading: Pakara
+      alignment: center
+
+    layout: 
+      sequence: 330
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: pohje =======================================
+    id: 51190588929788134
+    identification: 
+      column-name: pohje
+      type: Plain Text
+
+    heading: 
+      heading: Pohje
+      alignment: center
+
+    layout: 
+      sequence: 340
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: rinta =======================================
+    id: 51190622755788135
+    identification: 
+      column-name: rinta
+      type: Plain Text
+
+    heading: 
+      heading: Rinta
+      alignment: center
+
+    layout: 
+      sequence: 350
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: selkä =======================================
+    id: 51190763232788136
+    identification: 
+      column-name: selkä
+      type: Plain Text
+
+    heading: 
+      heading: Selkä
+      alignment: center
+
+    layout: 
+      sequence: 360
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: sivu olkapää ================================
+    id: 51190846534788137
+    identification: 
+      column-name: sivu olkapää
+      type: Plain Text
+
+    heading: 
+      heading: Sivu Olkapää
+      alignment: center
+
+    layout: 
+      sequence: 370
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: taka olkapää ================================
+    id: 51190996958788138
+    identification: 
+      column-name: taka olkapää
+      type: Plain Text
+
+    heading: 
+      heading: Taka Olkapää
+      alignment: center
+
+    layout: 
+      sequence: 380
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: takareidet ==================================
+    id: 51191057412788139
+    identification: 
+      column-name: takareidet
+      type: Plain Text
+
+    heading: 
+      heading: Takareidet
+      alignment: center
+
+    layout: 
+      sequence: 390
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ulkokiertäjä ================================
+    id: 51191122312788140
+    identification: 
+      column-name: ulkokiertäjä
+      type: Plain Text
+
+    heading: 
+      heading: Ulkokiertäjä
+      alignment: center
+
+    layout: 
+      sequence: 400
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BLOCK_TREENI_NRO ============================
+    id: 51191362247788142
+    identification: 
+      column-name: BLOCK_TREENI_NRO
+      type: Plain Text
+
+    heading: 
+      heading: Block Treeni Nro
+      alignment: center
+
+    layout: 
+      sequence: 280
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: vatsa =======================================
+    id: 51191451700788143
+    identification: 
+      column-name: vatsa
+      type: Plain Text
+
+    heading: 
+      heading: Vatsa
+      alignment: center
+
+    layout: 
+      sequence: 410
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Sarjoja viikkotasolla =======================
+  id: 51191584440788144
+  identification: 
+    name: Sarjoja viikkotasolla
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select * from ( select   meso_id, block, to_char(pvm,'WW') viikko-- meso_id, block,, block_treeni_nro, --tk.treeni_id,
+       ,kehonosa 
+                      from TREENIKERTA TK, LIIKE L
+                          WHERE MESO_ID = :P39_MESO_ID AND TK.LIIKE = L.ID 
+                          AND tk.henkilo_id = :P39_HENKILO_ID and deload is null
+                          )
+          pivot ( count(kehonosa) for kehonosa in ('etu hartia' as "etu hartia",'etureidet' as "etureidet",'hauis' as "hauis",'ojentaja' as "ojentaja",'pakara' as "pakara",'pohje' as "pohje",'rinta' as "rinta",'selkä' as "selkä",'sivu olkapää' as "sivu olkapää",'taka olkapää' as "taka olkapää",'takareidet' as "takareidet",'ulkokiertäjä' as "ulkokiertäjä",'vatsa' as "vatsa") 
+          )
+          order by 1,2,3
+      
+    page-items-to-submit: 
+    - P39_MESO_ID
+    - P39_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      report-sum-label: yht
+      break-columns: First Column
+      style: Default Break Formatting
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: MESO_ID =====================================
+    id: 51191602464788145
+    identification: 
+      column-name: MESO_ID
+      type: Hidden
+
+    layout: 
+      sequence: 20
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 51191737470788146
+    identification: 
+      column-name: BLOCK
+      type: Plain Text
+
+    heading: 
+      heading: Block
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: etu hartia ==================================
+    id: 51191908379788148
+    identification: 
+      column-name: etu hartia
+      type: Plain Text
+
+    heading: 
+      heading: Etu Hartia
+      alignment: center
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: etureidet ===================================
+    id: 51192032973788149
+    identification: 
+      column-name: etureidet
+      type: Plain Text
+
+    heading: 
+      heading: Etureidet
+      alignment: center
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: hauis =======================================
+    id: 51192109337788150
+    identification: 
+      column-name: hauis
+      type: Plain Text
+
+    heading: 
+      heading: Hauis
+      alignment: center
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ojentaja ====================================
+    id: 51283218090067001
+    identification: 
+      column-name: ojentaja
+      type: Plain Text
+
+    heading: 
+      heading: Ojentaja
+      alignment: center
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: pakara ======================================
+    id: 51283325347067002
+    identification: 
+      column-name: pakara
+      type: Plain Text
+
+    heading: 
+      heading: Pakara
+      alignment: center
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: pohje =======================================
+    id: 51283471174067003
+    identification: 
+      column-name: pohje
+      type: Plain Text
+
+    heading: 
+      heading: Pohje
+      alignment: center
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: rinta =======================================
+    id: 51283563900067004
+    identification: 
+      column-name: rinta
+      type: Plain Text
+
+    heading: 
+      heading: Rinta
+      alignment: center
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: selkä =======================================
+    id: 51283650547067005
+    identification: 
+      column-name: selkä
+      type: Plain Text
+
+    heading: 
+      heading: Selkä
+      alignment: center
+
+    layout: 
+      sequence: 120
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: sivu olkapää ================================
+    id: 51283748510067006
+    identification: 
+      column-name: sivu olkapää
+      type: Plain Text
+
+    heading: 
+      heading: Sivu Olkapää
+      alignment: center
+
+    layout: 
+      sequence: 130
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: taka olkapää ================================
+    id: 51283847102067007
+    identification: 
+      column-name: taka olkapää
+      type: Plain Text
+
+    heading: 
+      heading: Taka Olkapää
+      alignment: center
+
+    layout: 
+      sequence: 140
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: takareidet ==================================
+    id: 51283944130067008
+    identification: 
+      column-name: takareidet
+      type: Plain Text
+
+    heading: 
+      heading: Takareidet
+      alignment: center
+
+    layout: 
+      sequence: 150
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ulkokiertäjä ================================
+    id: 51284042685067009
+    identification: 
+      column-name: ulkokiertäjä
+      type: Plain Text
+
+    heading: 
+      heading: Ulkokiertäjä
+      alignment: center
+
+    layout: 
+      sequence: 160
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: vatsa =======================================
+    id: 51284185005067010
+    identification: 
+      column-name: vatsa
+      type: Plain Text
+
+    heading: 
+      heading: Vatsa
+      alignment: center
+
+    layout: 
+      sequence: 170
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VIIKKO ======================================
+    id: 51284669026067015
+    identification: 
+      column-name: VIIKKO
+      type: Plain Text
+
+    heading: 
+      heading: Viikko
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Toteutunut sarjoja viikkotasolla ============
+  id: 51284716256067016
+  identification: 
+    name: Toteutunut sarjoja viikkotasolla
+    type: Chart
+
+  source: 
+    location: None
+    page-items-to-submit: 
+    - P39_MESO_ID
+    - P39_HENKILO_ID
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 51286453499067033
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Viikot
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: kysely ======================================
+      id: 51286502708067034
+      identification: 
+        name: kysely
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+           select   
+           kl.kehonosa, -- meso_id, block,, block_treeni_nro, --tk.treeni_id,
+          to_char(block) || '-'|| to_char(tk.treenin_kerta) treenit,
+            count(tk.liike) 
+                          from TREENIKERTA TK, LIIKE L, KEHONOSA_LOOKUP kl
+                              WHERE MESO_ID = :P39_MESO_ID AND TK.LIIKE = L.ID 
+                              AND tk.henkilo_id = :P39_HENKILO_ID and deload is null
+                              AND kl.KEHONOSA_ID = l.kehonosa_id  
+              group by   kl.kehonosa, to_char(block) || '-'|| to_char(tk.treenin_kerta)
+              order by 1,2
+        page-items-to-submit: 
+        - P39_MESO_ID
+        - P39_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: TREENIT
+        label: KEHONOSA
+        value: COUNT(TK.LIIKE)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 51286682225067035
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 51286747637067036
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P39_HENKILO_ID ===========================
+  id: 50132446058109824
+  identification: 
+    name: P39_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P39_MESO_ID ==============================
+  id: 50132503655109825
+  identification: 
+    name: P39_MESO_ID
+    type: Select List
+
+  label: 
+    label: Meso
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: 'select distinct meso_id d, meso_id r from treeni where henkilo_id = :P39_HENKILO_ID order by 1 desc'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      
+      select max(meso_id) from treeni where henkilo_id = :P39_HENKILO_ID 
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: ValittuPaivita ======================
+  id: 50132645070109826
+  identification: 
+    name: ValittuPaivita
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P39_MESO_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 35248216937136845
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Toteutunut toistoja viikkotasolla # 35247740116136840
+
+    execution: 
+      sequence: 40
+      event: ValittuPaivita # 50132645070109826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 50132794252109827
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Toteutunut sarjoja viikkotasolla # 51284716256067016
+
+    execution: 
+      sequence: 10
+      event: ValittuPaivita # 50132645070109826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 51028320892548542
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Meso # 50340754611133259
+
+    execution: 
+      sequence: 50
+      event: ValittuPaivita # 50132645070109826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 51284226057067011
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Sarjoja viikkotasolla # 51191584440788144
+
+    execution: 
+      sequence: 30
+      event: ValittuPaivita # 50132645070109826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 51286806767067037
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Sarjoja # 50915174337505823
+
+    execution: 
+      sequence: 20
+      event: ValittuPaivita # 50132645070109826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P39_HENKILO_ID =========================
+  id: 50351943229145479
+  identification: 
+    item-name: P39_HENKILO_ID
+
+  execution: 
+    sequence: 40
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo
+      where lower(nimi) = lower(:app_user)
+
+processes: 
+- # ====== Process: Meso - Save Interactive Grid Data ==========
+  id: 50351517339133278
+  identification: 
+    name: Meso - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Meso # 50340754611133259
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

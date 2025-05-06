@@ -1,0 +1,13 @@
+---
+- # ====== REST Data Source Server: www-googleapis-com-youtube-v
+  id: 1397979956497838575
+  identification: 
+    name: www-googleapis-com-youtube-v3
+
+  endpoint-url: 
+    url: 'https://www.googleapis.com/youtube/v3/'
+
+  advanced: 
+    static-id: www_googleapis_com_youtube_v3
+    prompt-on-install: false
+

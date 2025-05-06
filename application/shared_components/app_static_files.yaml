@@ -1,0 +1,73 @@
+---
+- # ====== Static Application File: pwa/sport1.png =============
+  id: 8401880917745611
+  identification: 
+    file-name: pwa/sport1.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: pwa/sport2.png =============
+  id: 8402402410746901
+  identification: 
+    file-name: pwa/sport2.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: sample-db-app.js ===========
+  id: 14108792684718897
+  identification: 
+    file-name: sample-db-app.js
+
+  attributes: 
+    mime-type: application/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: app-icon.svg ===============
+  id: 41967575365081652
+  identification: 
+    file-name: app-icon.svg
+
+  attributes: 
+    mime-type: image/svg+xml
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: app-icon.css ===============
+  id: 41967782356081656
+  identification: 
+    file-name: app-icon.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-32.png ======
+  id: 46922185884834376
+  identification: 
+    file-name: icons/app-icon-32.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-192.png =====
+  id: 46922309309834399
+  identification: 
+    file-name: icons/app-icon-192.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-512.png =====
+  id: 46922660912834449
+  identification: 
+    file-name: icons/app-icon-512.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+

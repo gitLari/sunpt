@@ -1,0 +1,519 @@
+---
+# ====== Page: Liikkeet ======================================
+id: 30
+identification: 
+  name: Liikkeet
+  alias: LIIKKEET
+  title: Liikkeet
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+help: 
+  help-text: |
+    <p>To find data enter a search term into the search dialog, or click on the column headings to limit the records returned.</p>
+    
+    <p>You can perform numerous functions by clicking the <strong>Actions</strong> button. This includes selecting the columns that are displayed / hidden and their display sequence, plus numerous data and format functions.  You can also define additional views of the data using the chart, group by, and pivot options.</p>
+    
+    <p>If you want to save your customizations select report, or click download to unload the data. Enter you email address and time frame under subscription to be sent the data on a regular basis.<p>
+    
+    <p>For additional information click Help at the bottom of the Actions menu.</p> 
+    
+    <p>Click the <strong>Reset</strong> button to reset the interactive report back to the default settings.</p>
+
+regions: 
+- # ====== Region: Liikkeet ====================================
+  id: 82779685659097586
+  identification: 
+    name: Liikkeet
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select id, ID||' '||
+             NIMI idnimi,
+             NIMI,
+             KUVA,
+             KUVA_FILENAME,
+             KUVA_MIMETYPE,
+             KUVA_CHARSET,
+             KUVA_LASTUPD,
+             LINKKI,
+             KEHONPAINOLIIKE,
+             SELITE,
+             KEHONOSA_ID
+        from LIIKE
+      order by nimi
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 45757454176090207
+    appearance: 
+      layout: Grid
+      grid-columns: Auto
+
+    card: 
+      primary-key-column-1: ID
+
+    title: 
+      advanced-formatting: false
+      column: IDNIMI
+
+    subtitle: 
+      advanced-formatting: false
+
+    body: 
+      advanced-formatting: false
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: Image BLOB Column
+      image-column: KUVA
+      icon-position: Start
+
+    media: 
+      advanced-formatting: false
+      source: No Media
+
+    blob-attributes: 
+      mime-type-column: KUVA_MIMETYPE
+      last-updated-column: KUVA_LASTUPD
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    actions: 
+    - # ====== Action: Full Card ===================================
+      id: 45757968942090208
+      identification: 
+        type: Full Card
+
+      layout: 
+        sequence: 10
+
+      link: 
+        type: Redirect to Page in this Application
+        target: 
+          url: 'f?p=&APP_ID.:32:&SESSION.::&DEBUG.:32:P32_ID:&ID.'
+          page: 32 # Liike Edit
+          clear-cache: 32
+          values: 
+            p32_id: '&ID.'
+
+- # ====== Region: Search ======================================
+  id: 91040148764470329
+  identification: 
+    name: Search
+    type: Faceted Search
+
+  source: 
+    filtered-region: Liikkeet # 82779685659097586
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      batch-facet-changes: false
+      compact-numbers-threshold: 10000
+      show-current-facets: No
+      show-total-row-count: No
+      show-charts: Dialog
+      display-chart-for-top-n-values: 10
+
+  facets: 
+  - # ====== Facet: P30_SEARCH ===================================
+    id: 45760326044090213
+    identification: 
+      name: P30_SEARCH
+      type: Search
+
+    label: 
+      label: Search
+
+    settings: 
+      search-type: Row Search
+      input-field: Top of Faceted Search Region
+
+    layout: 
+      sequence: 10
+
+    security: 
+      store-value-encrypted-in-session-state: true
+
+  - # ====== Facet: P30_KEHONOSA =================================
+    id: 45760725536090214
+    identification: 
+      name: P30_KEHONOSA
+      type: Checkbox Group
+
+    label: 
+      label: Kehonosa
+      show-label-for-current-facet: true
+
+    layout: 
+      sequence: 20
+
+    appearance: 
+      display: Inline
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: |
+        select distinct KEHONOSA d, l.KEHONOSA_id r from liike l, KEHONOSA_LOOKUP k 
+        where  l.KEHONOSA_ID = k.KEHONOSA_ID
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: true
+      show-selected-first: false
+      maximum-displayed-entries: 12
+      display-filter-initially: false
+
+    actions-menu: 
+      filter: true
+      chart: true
+
+    advanced: 
+      show-chart-initially: false
+      collapsible: false
+
+    source: 
+      database-column: KEHONOSA_ID
+      data-type: VARCHAR2
+
+    multiple-values: 
+      type: No
+
+    security: 
+      store-value-encrypted-in-session-state: true
+      escape-special-characters: true
+
+  filters: 
+  - # ====== Filter: P30_SEARCH ==================================
+    id: 45760326044090213
+    identification: 
+      name: P30_SEARCH
+      type: Search
+
+    label: 
+      label: Search
+
+    settings: 
+      search-type: Row Search
+      collapsed-search-field: false
+
+    layout: 
+      sequence: 10
+
+    security: 
+      store-value-encrypted-in-session-state: true
+
+  - # ====== Filter: P30_KEHONOSA ================================
+    id: 45760725536090214
+    identification: 
+      name: P30_KEHONOSA
+      type: Checkbox Group
+
+    label: 
+      label: Kehonosa
+
+    layout: 
+      sequence: 20
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: |
+        select distinct KEHONOSA d, l.KEHONOSA_id r from liike l, KEHONOSA_LOOKUP k 
+        where  l.KEHONOSA_ID = k.KEHONOSA_ID
+      include-null-option: false
+
+    list-entries: 
+      compute-counts: true
+      show-counts: true
+      zero-count-entries: Hide
+      sort-by-top-counts: true
+      show-selected-first: false
+      client-side-filtering: false
+
+    suggestions: 
+      type: None
+
+    source: 
+      database-column: KEHONOSA_ID
+      data-type: VARCHAR2
+
+    multiple-values: 
+      type: No
+
+    security: 
+      store-value-encrypted-in-session-state: true
+      escape-special-characters: true
+
+buttons: 
+- # ====== Button: CREATE ======================================
+  id: 45758588286090209
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 10
+    region: Liikkeet # 82779685659097586
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:5:&APP_SESSION.::&DEBUG.:5::'
+      page: 5 # Paino
+      clear-cache: 5
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: LUO_UUSI ====================================
+  id: 45759963139090213
+  identification: 
+    button-name: LUO_UUSI
+    label: Luo uusi
+
+  layout: 
+    sequence: 10
+    region: Search # 91040148764470329
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:32:&SESSION.::&DEBUG.:::'
+      page: 32 # Liike Edit
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Edit Report - Dialog Closed =========
+  id: 45761400220090215
+  identification: 
+    name: Edit Report - Dialog Closed
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Liikkeet # 82779685659097586
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 45761943437090215
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Liikkeet # 82779685659097586
+
+    execution: 
+      sequence: 10
+      event: Edit Report - Dialog Closed # 45761400220090215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: LiikeModalCLosed ====================
+  id: 49166515149350742
+  identification: 
+    name: LiikeModalCLosed
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: LUO_UUSI # 45759963139090213
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 49166696183350743
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 91040148764470329
+
+    execution: 
+      sequence: 10
+      event: LiikeModalCLosed # 49166515149350742
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 49166858052350745
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Liikkeet # 82779685659097586
+
+    execution: 
+      sequence: 20
+      event: LiikeModalCLosed # 49166515149350742
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Liike - Save Interactive Grid Data =========
+  id: 45758921327090209
+  identification: 
+    name: Liike - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Liikkeet # 82779685659097586
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

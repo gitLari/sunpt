@@ -1,0 +1,928 @@
+---
+# ====== Page: Kehonosa kehitys chart ========================
+id: 38
+identification: 
+  name: Kehonosa kehitys chart
+  alias: KEHONOSA-KEHITYS-CHART
+  title: Kehonosa kehitys chart
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Box plot1 viimeisin kerta ===================
+  id: 50131746322109817
+  identification: 
+    name: Box plot1 viimeisin kerta
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 50131826475109818
+    chart: 
+      type: Box Plot
+
+    appearance: 
+      orientation: Vertical
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: New =========================================
+      id: 50131990847109819
+      identification: 
+        name: New
+        type: Box Plot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+           select l.nimi, case when l.kehonpainoliike = 1 then
+                      ((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg             
+                      --(nvl(rir,0)+toistot)*(h.paino+nvl(kg,0)*.0333)+(h.paino+kg) 
+                      else 
+                      ((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg             
+                      end  maxkg
+                from liike l, treenikerta tk, henkilo h
+                where l.id = tk.liike
+                and (:p38_kehonosa_ID is null or l.KEHONOSA_ID = :p38_kehonosa_ID) 
+                and tk.henkilo_id = h.id and tk.henkilo_id = :p38_HENKILO_ID
+                and l.id in 
+                (select distinct liike from treenikerta where henkilo_id =  :p38_HENKILO_ID
+                and trunc(pvm) =  (select max(pvm) from treenikerta where henkilo_id =  :p38_HENKILO_ID))
+                -- (select max(pvm) from treenikerta 
+                  --where henkilo_id = :p38_HENKILO_ID)
+        page-items-to-submit: 
+        - P38_HENKILO_ID
+        - P38_KEHONOSA_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: NIMI
+        label: NIMI
+        value: MAXKG
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: New_1 =======================================
+      id: 50132289677109822
+      identification: 
+        name: New_1
+        type: Box Plot
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as( select l.nimi, case when l.kehonpainoliike = 1 then
+                     (nvl(rir,0)+toistot)*(h.paino+nvl(kg,0)*.0333)+(h.paino+kg) 
+                      else 
+                      ((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg             
+                      end  maxkg
+                from liike l, treenikerta tk, henkilo h
+                where l.id = tk.liike
+                and (:p38_kehonosa_ID is null or l.KEHONOSA_id = :p38_kehonosa_id) 
+                and tk.henkilo_id = h.id and tk.henkilo_id = :p38_HENKILO_ID
+                and trunc(pvm)=  trunc(sysdate-1)
+                -- (select max(pvm) from treenikerta 
+                  --where henkilo_id = :p38_HENKILO_ID)
+                  )
+                  select nimi NAME, 'edellinen' otsikko, max(maxkg)  from kysely
+                  group by nimi
+        page-items-to-submit: 
+        - P38_HENKILO_ID
+        - P38_KEHONOSA_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: NAME
+        label: NAME
+        value: MAX(MAXKG)
+        custom-tooltip: OTSIKKO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+      server-side-condition: 
+        type: Never
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 50132031855109820
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 50132198177109821
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Kehitys =====================================
+  id: 135378004810629061
+  identification: 
+    name: Kehitys
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 50288367600453385
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Kehitys % ===================================
+      id: 50290082476453386
+      identification: 
+        name: Kehitys %
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select 
+                 liike,   PVM, 
+                   max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+             
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where (:p38_HENKILO_ID  is null or henkilo_id = :p38_HENKILO_ID)
+              and (:p38_kehonosa_id is null or kehonosa_id = :p38_kehonosa_id)
+             and kg is not null
+             and t.liike = l.id and t.henkilo_id = h.id
+             group by liike,pvm
+             order by pvm
+          )
+          
+          
+          select to_char(sysdate,'DD.MM.YYYY') pvm, (max(maxkg) - min(maxkg)) / max(maxkg) erotus,
+          min(pvm)||'-'||max(pvm) ajanjakso
+             
+              from kysely
+          
+        page-items-to-submit: 
+        - P38_KEHONOSA_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: AJANJAKSO
+        value: EROTUS
+
+      appearance: 
+        color: '#a4d7a4'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 50288863696453385
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 50289485875453386
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Percent
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Box plot ====================================
+  id: 135401961211677626
+  identification: 
+    name: Box plot
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 50285159374453370
+    chart: 
+      type: Box Plot
+
+    title: 
+      title: xx
+
+    appearance: 
+      orientation: Vertical
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: New =========================================
+      id: 50131686405109816
+      identification: 
+        name: New
+        type: Box Plot
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+           select l.nimi, case when l.kehonpainoliike = 1 then
+                      (nvl(rir,0)+toistot)*(h.paino+nvl(kg,0)*.0333)+(h.paino+kg) 
+                      else 
+                      ((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg             
+                      end  maxkg
+                from liike l, treenikerta tk, henkilo h
+                where l.id = tk.liike
+                and tk.henkilo_id = h.id and tk.henkilo_id = :p38_HENKILO_ID
+        page-items-to-submit: 
+        - P38_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: NIMI
+        label: NIMI
+        value: MAXKG
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Volume (esitetty /10) =======================
+      id: 50286846679453375
+      identification: 
+        name: Volume (esitetty /10)
+        type: Box Plot
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 liike,
+                    to_char(pvm,'WW'), 
+             sum (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) /10
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             /10
+                      end ) maxkg
+              
+            from TREENIKERTA t, HENKILO h, LIIKE l 
+            where (:p38_HENKILO_ID  is null or henkilo_id = :p38_HENKILO_ID)
+             and (:p38_kehonosa is null or kehonosa = :p38_kehonosa)
+             and kg is not null
+             and t.liike = l.id and t.henkilo_id = h.id
+             group by  liike
+             ,to_char(pvm,'WW')
+             order by to_char(pvm,'WW')
+          
+        page-items-to-submit: 
+        - P38_KEHONOSA_ID
+        - P38_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM,'WW')
+        value: MAXKG
+
+      appearance: 
+        color: '#e6d4d4'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+      server-side-condition: 
+        type: Never
+
+    - # ====== Series: Calculated 1RM max ==========================
+      id: 50287465995453377
+      identification: 
+        name: Calculated 1RM max
+        type: Box Plot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 liike,
+                 to_char(pvm,'WW'), --,   PVM, 
+              max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where (:p38_HENKILO_ID  is null or henkilo_id = :p38_HENKILO_ID)
+             and (:p38_kehonosa is null or kehonosa = :p38_kehonosa)
+             and t.liike = l.id and t.henkilo_id = h.id
+             and kg is not null
+             group by liike,
+             to_char(pvm,'WW')
+             --,pvm
+             order by to_char(pvm,'WW')
+          
+        page-items-to-submit: 
+        - P38_KEHONOSA_ID
+        - P38_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM,'WW')
+        value: MAXKG
+
+      appearance: 
+        color: '#c7c7de'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+      server-side-condition: 
+        type: Never
+
+    axes: 
+    - # ====== Axis: y =============================================
+      id: 50285663328453372
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+    - # ====== Axis: x =============================================
+      id: 50286298922453374
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: dd.MM.yy
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+page-items: 
+- # ====== Page Item: P38_KEHONOSA_ID ==========================
+  id: 50290687765453403
+  identification: 
+    name: P38_KEHONOSA_ID
+    type: Select List
+
+  label: 
+    label: Kehonosa Id
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: KEHONOSA_LOV # 51495298061574512
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_HENKILO_ID ===========================
+  id: 50291017669453405
+  identification: 
+    name: P38_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: LiikeMuuttuu ========================
+  id: 50291832792453408
+  identification: 
+    name: LiikeMuuttuu
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P38_KEHONOSA_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 50292310145453411
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Box plot1 viimeisin kerta # 50131746322109817
+
+    execution: 
+      sequence: 10
+      event: LiikeMuuttuu # 50291832792453408
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Refresh =====================================
+    id: 50292861129453412
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kehitys # 135378004810629061
+
+    execution: 
+      sequence: 20
+      event: LiikeMuuttuu # 50291832792453408
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P38_HENKILO_ID =========================
+  id: 50291581260453407
+  identification: 
+    item-name: P38_HENKILO_ID
+
+  execution: 
+    sequence: 50
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo 
+      where lower(nimi) = lower(:app_user)
+

@@ -1,0 +1,273 @@
+---
+- # ====== List of Values: BODYPARTS_LOV =======================
+  id: 22031072850403672
+  identification: 
+    name: BODYPARTS_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: BODYPARTS
+
+  column-mapping: 
+    return: BODYPART_ID
+    display: BODYPART
+    default-sort: BODYPART
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: WORKOUT_EXERCISES_LOV ===============
+  id: 22032583761457242
+  identification: 
+    name: WORKOUT_EXERCISES_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: WORKOUT_EXERCISES
+
+  column-mapping: 
+    return: EXERCISE_ID
+    display: EXERCISE
+    default-sort: EXERCISE
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: WORKOUT_PROGRAM_LOV =================
+  id: 22596992233583595
+  identification: 
+    name: WORKOUT_PROGRAM_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: select workout_name ||' '|| workout_block || ' '||workout_week as d, WORKOUT_PROGRAM_ID as r from workout_program
+
+  column-mapping: 
+    return: R
+    display: D
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: WORKOUT_WEEDAYS_LOV =================
+  id: 22605588786645225
+  identification: 
+    name: WORKOUT_WEEDAYS_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: WORKOUT_WEEKDAYS
+
+  column-mapping: 
+    return: DAYNUMBER
+    display: DAYNAME
+    default-sort: DAYNUMBER
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: WORKOUT_SETS_LOV ====================
+  id: 22717125422879314
+  identification: 
+    name: WORKOUT_SETS_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: select distinct workout_sets D, workout_sets R from workouts
+
+  column-mapping: 
+    return: R
+    display: R
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: WORKOUT_RIR_LOV =====================
+  id: 22718734725919843
+  identification: 
+    name: WORKOUT_RIR_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: select distinct workout_rir D, workout_rir R from workouts
+
+  column-mapping: 
+    return: R
+    display: D
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: WORKOUT_REPS_LOV ====================
+  id: 22741815283089347
+  identification: 
+    name: WORKOUT_REPS_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: select distinct workout_reps D, workout_reps R from workouts
+
+  column-mapping: 
+    return: R
+    display: D
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: WORKOUT_TYPE_LOV ====================
+  id: 23580408288752135
+  identification: 
+    name: WORKOUT_TYPE_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: WORKOUT_TYPES
+
+  column-mapping: 
+    return: TYPE_ID
+    display: TYPE_NAME
+    default-sort: TYPE_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: APEX_USERS ==========================
+  id: 23960634512415153
+  identification: 
+    name: APEX_USERS
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: 'select * from WWV_FLOW_USERS '
+
+  column-mapping: 
+    return: USER_NAME
+    display: USER_NAME
+    default-sort: USER_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: LOGIN_REMEMBER_USERNAME =============
+  id: 41972349306081687
+  identification: 
+    name: LOGIN_REMEMBER_USERNAME
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Static Values
+
+  entries: 
+  - # ====== Entry: Remember username ============================
+    id: 41972749833081689
+    entry: 
+      sequence: 10
+      display: Remember username
+      return: Y
+
+- # ====== List of Values: HENKILO.NIMI ========================
+  id: 45731410854922463
+  identification: 
+    name: HENKILO.NIMI
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: HENKILO
+
+  column-mapping: 
+    return: ID
+    display: NIMI
+    default-sort: NIMI
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: LIIKE_LOV ===========================
+  id: 45788335313183272
+  identification: 
+    name: LIIKE_LOV
+
+  subscription: 
+    version-number: 41486868347147
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select (k.kehonosa)||': '||l.nimi as liikenimi, l.id from LIIKe l, kehonosa_lookup k
+      where k.kehonosa_id = l.kehonosa_id
+
+  column-mapping: 
+    return: ID
+    display: LIIKENIMI
+    default-sort: LIIKENIMI
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: TREENI_NIMI_LOV =====================
+  id: 45789437350207699
+  identification: 
+    name: TREENI_NIMI_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TREENI
+    where-clause: 'HENKILO_ID = (select id from henkilo where upper(nimi) = :app_user)'
+
+  column-mapping: 
+    return: ID
+    display: KUVAUS
+    default-sort: KUVAUS
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: KEHONOSA_LOV ========================
+  id: 51495298061574512
+  identification: 
+    name: KEHONOSA_LOV
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: KEHONOSA_LOOKUP
+
+  column-mapping: 
+    return: KEHONOSA_ID
+    display: KEHONOSA
+    default-sort: KEHONOSA
+    sort-direction: Ascending (Nulls Last)
+

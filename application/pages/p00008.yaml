@@ -1,0 +1,199 @@
+---
+# ====== Page: Uusi ==========================================
+id: 8
+identification: 
+  name: Uusi
+  alias: UUSI
+  title: Uusi
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  execute-when-page-loads: |
+    function _autoDismissSuccessMessage() {
+        var  page_body_sel      = '#t_PageBody';
+    
+        //auto hide success messages after 5 seconds
+        //Note: The previous name for this API, apex.theme42.configureSuccessMessages, is deprecated and will be removed in a future release.
+        apex.theme42.util.configAPEXMsgs({
+            autoDismiss: true,
+            duration: 2000  // duration is optional (Default is 3000 milliseconds)
+        });
+    
+        $(page_body_sel)
+            .addClass('js-autoDismissSuccessMessage');
+    }
+    
+    /*
+     * Document ready logic
+     */
+    $( function() {
+        _autoDismissSuccessMessage();
+    
+       
+    });
+    
+    
+
+security: 
+  authorization-scheme: Must Not Be Public User
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: New =========================================
+  id: 42032728007110215
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+buttons: 
+- # ====== Button: Numbers =====================================
+  id: 41479968941253836
+  identification: 
+    button-name: Numbers
+    label: Numbers
+
+  layout: 
+    sequence: 10
+    region: New # 42032728007110215
+    slot: HELP
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:9:&SESSION.::&DEBUG.:::'
+      page: 9 # Numerot
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: New =========================================
+  id: 42032836521110216
+  identification: 
+    button-name: New
+    label: New
+
+  layout: 
+    sequence: 20
+    region: New # 42032728007110215
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.:7::'
+      page: 7 # syota
+      clear-cache: 7
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Chart =======================================
+  id: 44560174369544812
+  identification: 
+    button-name: Chart
+    label: Chart
+
+  layout: 
+    sequence: 30
+    region: New # 42032728007110215
+    slot: HELP
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:::'
+      page: 6 # chartti
+
+    warn-on-unsaved-changes: Do Not Check
+

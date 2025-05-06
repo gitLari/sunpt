@@ -1,0 +1,663 @@
+---
+# ====== Page: testi kädet sarjat ============================
+id: 42
+identification: 
+  name: testi kädet sarjat
+  alias: TESTI-KADET-SARJAT
+  title: Testi kädet sarjat
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Testi kädet sarjat ==========================
+  id: 51953426522634584
+  identification: 
+    name: Testi kädet sarjat
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 51953862119634585
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Cm ==========================================
+      id: 51955502562634586
+      identification: 
+        name: Cm
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select to_char(pvm_, 'YY.WW') viikko,avg((vasen+oikea)) sentteja from paino
+          where lower(user_id) = 'lari' and trunc(pvm_) > '01.01.2022' 
+          and to_char(pvm_, 'YY.WW') IN (select to_char(pvm, 'YY.WW') from treenikerta tk, liike l where tk.liike = l.id and l.kehonosa_id in (1,11))
+          group by to_char(pvm_, 'YY.WW')
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: SENTTEJA
+        label-tooltip: VIIKKO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Sarjoja =====================================
+      id: 51956184739635001
+      identification: 
+        name: Sarjoja
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select to_char(pvm, 'YY.WW') viikko, count(tk.id) sarjoja 
+          from treenikerta tk, liike l 
+           where  tk.liike = l.id and kehonosa_id in (1,11)
+           and  henkilo_id = 3 and trunc(pvm) > '01.01.2022' and kg is not null
+           group by to_char(pvm, 'YY.WW')
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: SARJOJA
+        label-tooltip: VIIKKO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Voima =======================================
+      id: 51956298443635002
+      identification: 
+        name: Voima
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select 
+                 to_char(pvm, 'YY.WW') viikko, l.id
+              , max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where  t.henkilo_id = 3 --(:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+             and kehonosa_id in (1,11) --(:p34_liike is null or liike = :p34_liike)
+             and t.liike = l.id and t.henkilo_id = h.id
+             and kg is not null and trunc(pvm) > '01.01.2022' 
+              
+             group by pvm, l.id
+             order by pvm)
+             select viikko, avg(maxkg) from kysely  
+             group by viikko 
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: AVG(MAXKG)
+        label-tooltip: VIIKKO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 51954309024634585
+      identification: 
+        name: x
+        show-axis: true
+        title: Viikko
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 51954995538634586
+      identification: 
+        name: y
+        show-axis: true
+        title: x kg cm
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Treenit ja paino ============================
+  id: 51957515944635015
+  identification: 
+    name: Treenit ja paino
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 51957628037635016
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Treenejä ====================================
+      id: 51957735039635017
+      identification: 
+        name: Treenejä
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select to_char(pvm, 'YY.WW') viikko, count(distinct pvm), avg(p.paino) 
+          from treenikerta tk, paino p
+          where henkilo_id = 3 and user_id = 'lari' and
+              trunc(tk.pvm) = trunc (p.pvm_)
+          group by to_char(pvm, 'YY.WW')
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: COUNT(DISTINCTPVM)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    - # ====== Series: Paino =======================================
+      id: 51958002977635020
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select to_char(pvm, 'YY.WW') viikko, count(distinct pvm), avg(p.paino) 
+          from treenikerta tk, paino p
+          where henkilo_id = 3 and user_id = 'lari' and
+              trunc(tk.pvm) = trunc (p.pvm_)
+          group by to_char(pvm, 'YY.WW')
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: AVG(P.PAINO)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 51957895404635018
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 51957965977635019
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P42_KEHONOSA =============================
+  id: 51957458098635014
+  identification: 
+    name: P42_KEHONOSA
+    type: Select List
+
+  label: 
+    label: Kehonosa
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: KEHONOSA_LOV # 51495298061574512
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: New =========================================
+  id: 8416987497003101
+  identification: 
+    button-name: New
+    label: New
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 8417079944003102
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: New # 8416987497003101
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 8417118524003103
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        begin
+            apex_pwa.send_push_notification (
+                p_application_id => 172,
+                p_user_name      => 'LARI',
+                p_title          => 'Notification Title',
+                p_body           => 'Notification Body' );
+        end;
+
+    execution: 
+      sequence: 10
+      event: New # 8417079944003102
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Refresh =============================
+  id: 51958170990635021
+  identification: 
+    name: Refresh
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P42_KEHONOSA
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 51958235247635022
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Testi kädet sarjat # 51953426522634584
+
+    execution: 
+      sequence: 10
+      event: Refresh # 51958170990635021
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

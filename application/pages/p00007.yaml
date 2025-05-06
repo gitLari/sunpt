@@ -1,0 +1,822 @@
+---
+# ====== Page: syota =========================================
+id: 7
+identification: 
+  name: syota
+  alias: SYOTA
+  title: syota
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+    
+    
+  execute-when-page-loads: |
+    var slider = document.getElementById("kg");
+    var output = document.getElementById("vkg");
+    output.innerHTML = slider.value; // Display the default slider value
+    // Update the current slider value (each time you drag the slider handle)
+    slider.oninput = function() {
+       var num0 = parseFloat(this.value / 10); 
+       output.innerHTML = num0.toFixed(1);;
+    } 
+    
+    var slider2 = document.getElementById("cm");
+    var output2 = document.getElementById("vcm");
+    output2.innerHTML = slider2.value; // Display the default slider value
+    // Update the current slider value (each time you drag the slider handle)
+    slider2.oninput = function() {
+       var num0 = parseFloat(this.value / 10); 
+       output2.innerHTML = num0.toFixed(1);;
+    } 
+    
+    var slider3 = document.getElementById("vasen");
+    var output3 = document.getElementById("vvasen");
+    output3.innerHTML = slider3.value; // Display the default slider value
+    // Update the current slider value (each time you drag the slider handle)
+    slider3.oninput = function() {
+       var num0 = parseFloat(this.value / 10); 
+       output3.innerHTML = num0.toFixed(1);;
+    } 
+    
+    var slider4 = document.getElementById("oikea");
+    var output4 = document.getElementById("voikea");
+    output4.innerHTML = slider4.value; // Display the default slider value
+    // Update the current slider value (each time you drag the slider handle)
+    slider4.oninput = function() {
+       var num0 = parseFloat(this.value / 10); 
+       output4.innerHTML = num0.toFixed(1);;
+    } 
+    
+    
+
+css: 
+  inline: |
+    .slidecontainer {
+      width: 100%;
+    
+    }
+    
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 25px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider:hover {
+      opacity: 1;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      background: #04AA6D;
+      cursor: pointer;
+    }
+    input {
+        width: 280px !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Custom Range Slider =========================
+  id: 42033759257110225
+  identification: 
+    name: Custom Range Slider
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="slidecontainer">
+        <p>Paino range slider:</p>
+        <input type="range" min="900" max="1200" value="1000" id="kg">
+        <p id="vkg">
+      </div>
+        
+      <div class="slidecontainer2">
+        <p>Cm range slider:</p>
+        <input type="range" min="0" max="1200" value="0" id="cm">
+        <p id="vcm"></p>
+      </div>
+      
+      <div class="slidecontainer3">
+        <p>vasen range slider:</p>
+        <input type="range" min="0" max="460" value="0" id="vasen">
+        <p id="vvasen"></p>
+      </div>
+      
+      <div class="slidecontainer4">
+        <p>oikea range slider:</p>
+        <input type="range" min="0" max="460" value="0" id="oikea">
+        <p id="voikea"></p>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P7_KG ====================================
+  id: 42033819651110226
+  identification: 
+    name: P7_KG
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Custom Range Slider # 42033759257110225
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_CM ====================================
+  id: 42034071165110228
+  identification: 
+    name: P7_CM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Custom Range Slider # 42033759257110225
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_VASEN =================================
+  id: 42034190872110229
+  identification: 
+    name: P7_VASEN
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Custom Range Slider # 42033759257110225
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_OIKEA =================================
+  id: 42034239725110230
+  identification: 
+    name: P7_OIKEA
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Custom Range Slider # 42033759257110225
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Save ========================================
+  id: 42034684538110234
+  identification: 
+    button-name: Save
+    label: Save
+
+  layout: 
+    sequence: 20
+    region: Custom Range Slider # 42033759257110225
+    slot: CLOSE
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Kg ==========================================
+  id: 42034760116110235
+  identification: 
+    button-name: Kg
+    label: Kg
+
+  layout: 
+    sequence: 30
+    region: Custom Range Slider # 42033759257110225
+    slot: ABOVE_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Cm ==========================================
+  id: 42035029467110238
+  identification: 
+    button-name: Cm
+    label: Cm
+
+  layout: 
+    sequence: 40
+    region: Custom Range Slider # 42033759257110225
+    slot: ABOVE_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Bi ==========================================
+  id: 42035107811110239
+  identification: 
+    button-name: Bi
+    label: Bi
+
+  layout: 
+    sequence: 50
+    region: Custom Range Slider # 42033759257110225
+    slot: ABOVE_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Tyhjää ======================================
+  id: 42123064569380701
+  identification: 
+    button-name: Tyhjää
+    label: Tyhjää
+
+  layout: 
+    sequence: 60
+    region: Custom Range Slider # 42033759257110225
+    slot: ABOVE_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Cancel ======================================
+  id: 42123343637380704
+  identification: 
+    button-name: Cancel
+    label: Cancel
+
+  layout: 
+    sequence: 10
+    region: Custom Range Slider # 42033759257110225
+    slot: HELP
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:7::'
+      page: 8 # Uusi
+      clear-cache: 7
+
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 42034373426110231
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 42034480143110232
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        begin
+        select paino*10 into 
+        :p7_kg 
+        from paino 
+        where pvm_ = (select max(pvm_) from paino);
+        
+        select vatsa*10 into 
+        :p7_cm
+        from paino 
+        where pvm_ = (select max(pvm_) from paino where vatsa is not null);
+        
+        select vasen*10 into 
+        :P7_VASEN
+        from paino 
+        where pvm_ = (select max(pvm_) from paino where vasen is not null);
+        
+        select oikea*10 into 
+        :P7_OIKEA 
+        from paino 
+        where pvm_ = (select max(pvm_) from paino where oikea is not null);
+        end;
+      items-to-return: 
+      - P7_KG
+      - P7_CM
+      - P7_VASEN
+      - P7_OIKEA
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New # 42034373426110231
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42034570428110233
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var s = document.getElementById('kg');
+                    s.value = apex.item( "P7_KG" ).getValue()
+        var s1 = document.getElementById('vkg'); 
+                    s1.innerHTML = apex.item( "P7_KG" ).getValue() / 10
+
+    execution: 
+      sequence: 20
+      event: New # 42034373426110231
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_1 ===============================
+  id: 42034857837110236
+  identification: 
+    name: New_1
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Kg # 42034760116110235
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42034908258110237
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |2
+            var s = document.getElementById('kg');
+            s.value = apex.item( "P7_KG" ).getValue()
+            var s1 = document.getElementById('vkg'); 
+            s1.innerHTML = apex.item( "P7_KG" ).getValue() / 10
+        
+
+    execution: 
+      sequence: 10
+      event: New_1 # 42034857837110236
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_2 ===============================
+  id: 42035223397110240
+  identification: 
+    name: New_2
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Cm # 42035029467110238
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42035325584110241
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var s = document.getElementById('cm');
+            s.value = apex.item( "P7_CM" ).getValue()
+            var s1 = document.getElementById('vcm'); 
+                    s1.innerHTML = apex.item( "P7_CM" ).getValue() / 10
+        
+
+    execution: 
+      sequence: 10
+      event: New_2 # 42035223397110240
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_3 ===============================
+  id: 42035478726110242
+  identification: 
+    name: New_3
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bi # 42035107811110239
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42035517383110243
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |2
+                    
+        var s = document.getElementById('vasen');
+            s.value = apex.item( "P7_VASEN" ).getValue()
+            var s1 = document.getElementById('vvasen'); 
+            s1.innerHTML = apex.item( "P7_VASEN" ).getValue() / 10
+            var s = document.getElementById('oikea');
+            s.value = apex.item( "P7_OIKEA" ).getValue()
+            var s1 = document.getElementById('voikea'); 
+            s1.innerHTML = apex.item( "P7_OIKEA" ).getValue() / 10
+        
+        
+
+    execution: 
+      sequence: 10
+      event: New_3 # 42035478726110242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Talleta =============================
+  id: 42035636118110244
+  identification: 
+    name: Talleta
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Save # 42034684538110234
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42035790437110245
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |2
+            var kg = document.getElementById('kg');
+            var cm = document.getElementById('cm');
+            var vas = document.getElementById('vasen');
+            var oikea = document.getElementById('oikea');
+           
+            apex.item( "P7_KG" ).setValue (kg.value);
+            apex.item( "P7_CM" ).setValue (cm.value);
+            apex.item( "P7_VASEN" ).setValue (vasen.value);
+            apex.item( "P7_OIKEA" ).setValue (oikea.value);
+            
+        
+
+    execution: 
+      sequence: 10
+      event: Talleta # 42035636118110244
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 42036154708110249
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        
+        IF :P7_VASEN = 0 THEN
+            :P7_VASEN := NULL;
+        else
+            :P7_VASEN := :P7_VASEN/10;
+        END IF;
+        IF :P7_OIKEA = 0 THEN
+            :P7_OIKEA := NULL;
+        else
+                :P7_OIKEA := :P7_OIKEA /10;
+        END IF;
+        IF :P7_CM = 0 THEN
+            :P7_CM := NULL;
+        else
+            :P7_CM := :P7_CM /10;
+        END IF;
+        
+        INSERT INTO PAINO (PAINO, VATSA, VASEN, OIKEA)
+        VALUES (:p7_KG/10, :P7_CM, :P7_VASEN, :P7_OIKEA);
+        
+        END;
+        
+      items-to-submit: 
+      - P7_KG
+      - P7_CM
+      - P7_VASEN
+      - P7_OIKEA
+
+    execution: 
+      sequence: 20
+      event: Talleta # 42035636118110244
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Submit Page =================================
+    id: 42036268176110250
+    identification: 
+      action: Submit Page
+
+    settings: 
+      request-/-button-name: Save
+      show-processing: true
+
+    execution: 
+      sequence: 30
+      event: Talleta # 42035636118110244
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_4 ===============================
+  id: 42123190942380702
+  identification: 
+    name: New_4
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Tyhjää # 42123064569380701
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42123275161380703
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |2
+                    
+        var s = document.getElementById('vasen');
+            s.value = '0';
+        var s1 = document.getElementById('oikea'); 
+            s1.value = '0';
+        var s2 = document.getElementById('cm'); 
+            s2.value = '0';
+        
+
+    execution: 
+      sequence: 10
+      event: New_4 # 42123190942380702
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+branches: 
+- # ====== Branch: Go To Page 8 ================================
+  id: 42048250719170463
+  identification: 
+    name: Go To Page 8
+
+  execution: 
+    sequence: 1
+    point: After Submit
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:RP,::&success_msg=#SUCCESS_MSG#'
+      page: 8 # Uusi
+      clear-cache: RP
+
+  server-side-condition: 
+    when-button-pressed: Save # 42034684538110234
+

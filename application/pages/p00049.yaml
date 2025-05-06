@@ -1,0 +1,1764 @@
+---
+# ====== Page: Pv kk raportti ================================
+id: 49
+identification: 
+  name: Pv kk raportti
+  alias: PV-KK-RAPORTTI
+  title: Pv kk raportti
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+  - ui-dialog--stretch
+
+dialog: 
+  chained: true
+  resizable: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Pvm =========================================
+  id: 28104351153629506
+  identification: 
+    name: Pvm
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes (No Grid)
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Raportti2 avg(kk) ===========================
+  id: 31581845289095241
+  identification: 
+    name: Raportti2 avg(kk)
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_
+        from PAINO
+         where trim(to_char(pvm_, 'DAY')) = 'MONDAY'
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 31581946775095242
+    chart: 
+      type: Area
+
+    title: 
+      title: Rapo  kg cm keskiarvo / kk  (min)
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Valitse
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Paino =======================================
+      id: 31582046422095243
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 min(nvl(PAINO_omron,paino)) kg,
+                 min(VATSA) cm,
+                 (min(VASEN) + min(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: KG
+
+      appearance: 
+        color: '#e32d2d'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Vatsa =======================================
+      id: 31582113419095244
+      identification: 
+        name: Vatsa
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 min(nvl(PAINO_omron,paino)) kg,
+                 min(VATSA) cm,
+                 (min(VASEN) + min(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: CM
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Kädet (v+o) =================================
+      id: 31582206438095245
+      identification: 
+        name: Kädet (v+o)
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 min(nvl(PAINO_omron,paino)) kg,
+                 min(VATSA) cm,
+                 (min(VASEN) + min(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: HCM
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 31582331239095246
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: MMM
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 31582427925095247
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Hauis cm ka. / vko ==========================
+  id: 35414356209103314
+  identification: 
+    name: Hauis cm ka. / vko
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_
+        from PAINO
+         where trim(to_char(pvm_, 'DAY')) = 'MONDAY'
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35414441852103315
+    chart: 
+      type: Line
+
+    title: 
+      title: Hauis cm keskiarvo / vko
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Valitse
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Vasen =======================================
+      id: 35414596849103316
+      identification: 
+        name: Vasen
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 trunc(PVM_, 'IW') month ,
+                 avg(VASEN),
+                 avg(OIKEA)
+            from PAINO
+             where --trim(to_char(pvm_, 'DAY')) = 'MONDAY' AND
+          pvm_ >= (to_date(:p49_from)-90)
+          AND vasen is not null and oikea is not null
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'IW')  
+          order by 1
+          
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: AVG(VASEN)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Oikea =======================================
+      id: 35414663324103317
+      identification: 
+        name: Oikea
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 trunc(PVM_, 'IW') month ,
+                 avg(VASEN),
+                 avg(OIKEA)
+            from PAINO
+             where --trim(to_char(pvm_, 'DAY')) = 'MONDAY' AND
+          pvm_ >= (to_date(:p49_from)-90)
+          AND vasen is not null and oikea is not null
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'IW')  
+          order by 1
+          
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: AVG(OIKEA)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 35414755469103318
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: MMM
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 35414892040103319
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Raportti / pv ===============================
+  id: 47052853763923558
+  identification: 
+    name: Raportti / pv
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_
+        from PAINO
+         where --trim
+         (to_char(pvm_, 'DAY')) = 'MONDAY'
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 28526051096610020
+    chart: 
+      type: Line
+
+    title: 
+      title: Raportti / pv
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Valitse
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Arvio kg ====================================
+      id: 28528317579610027
+      identification: 
+        name: Arvio kg
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with ranges as (
+            select to_date(:p49_from) start_date, 
+                    sysdate+2 end_date 
+            from   dual
+          ),
+           painomax as (
+              select max(paino_omron) kg from paino 
+              where trunc(pvm_) = :p49_from
+          )
+          ,
+          luvut as (
+              SELECT rownum id, case rownum when 1 then p.kg else p.kg-(LEVEL*.11) end luku
+                FROM DUAL d, painomax p
+          CONNECT BY LEVEL <= 200
+          ),
+          pvmt as ( 
+            select rownum id, start_date + level - 1 dt 
+            from   ranges r
+            connect by level <= (
+              trunc ( end_date ) - trunc ( start_date ) + 1
+              )
+              order by 1
+          )
+          select p.id, trunc(p.dt) pvm_, round(l.luku,1) luku from pvmt p, luvut l
+          where p.id = l.id 
+          and (exists (select 1 from paino where trunc(pvm_) = p.dt 
+          and paino_omron is not null)
+           or trunc(p.dt) > sysdate)
+          --order by trunc(p.dt) 
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: LUKU
+
+      appearance: 
+        color: '#b687f4'
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Dashed
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Paino =======================================
+      id: 28528927769610029
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select ID,
+                 nvl (paino_omron, PAINO) paino,
+                 VATSA,
+                 VASEN,
+                 OIKEA,
+                 trunc(PVM_) pvm_,
+                 CHEER,
+                 USER_ID
+            from PAINO
+          WHERE pvm_ >= :p49_from
+          and upper(user_id) = :app_user
+          and paino_omron is not null 
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: PAINO
+
+      appearance: 
+        color: '#e32d2d'
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Vatsa =======================================
+      id: 28529506456610029
+      identification: 
+        name: Vatsa
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select VATSA,
+                 trunc(PVM_) pvm_/*,
+                 ID,
+                 PAINO,
+                 VASEN,
+                 OIKEA,
+                 CHEER,
+                 USER_ID*/
+            from PAINO
+             where 
+          pvm_ >= :p49_from
+          and upper(user_id) = :app_user
+          and vatsa is not null
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: VATSA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Arvio cm ====================================
+      id: 31577808460095201
+      identification: 
+        name: Arvio cm
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with ranges as (
+            select to_date(:p49_from) start_date, 
+                    sysdate+2 end_date 
+            from   dual
+          ),
+           vatsamax as (
+              select max(vatsa) cm from paino 
+              where trunc(pvm_) = :p49_from
+          )
+          ,
+          luvut as (
+              SELECT rownum id, case rownum when 1 then p.cm else p.cm-(LEVEL*.11) end luku
+                FROM DUAL d, vatsamax p
+          CONNECT BY LEVEL <= 200
+          ),
+          pvmt as ( 
+            select rownum id, start_date + level - 1 dt 
+            from   ranges r
+            connect by level <= (
+              trunc ( end_date ) - trunc ( start_date ) + 1
+              )
+              order by 1
+          )
+          select p.id, trunc(p.dt) pvm_, round(l.luku,1) luku 
+          from pvmt p, luvut l
+          where p.id = l.id 
+          and (exists (select 1 from paino where trunc(pvm_) = p.dt
+          and paino_omron is not null) or trunc(p.dt) > sysdate)
+          --order by trunc(p.dt) 
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: LUKU
+
+      appearance: 
+        color: '#b687f4'
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Dashed
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: y2 ============================================
+      id: 28526579166610023
+      identification: 
+        name: y2
+        show-axis: false
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+      dual-y-axes: 
+        show: Automatic
+
+    - # ====== Axis: y =============================================
+      id: 28527101946610025
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+    - # ====== Axis: x =============================================
+      id: 28527703191610025
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: MMM dd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+- # ====== Region: Hauis cm ka / kk ============================
+  id: 47059846614926719
+  identification: 
+    name: Hauis cm ka / kk
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_
+        from PAINO
+         where trim(to_char(pvm_, 'DAY')) = 'MONDAY'
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 28534283391613188
+    chart: 
+      type: Line
+
+    title: 
+      title: Hauis kk cm keskiarvo / kk
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Valitse
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    advanced: 
+      initialization-javascript-function: |
+        
+        
+        function(options) {
+        
+         var myColors = ["#de3b3b", "#e6564f", 
+                         "#ed6e63", "#f38378", 
+                         "#f8988d", "#fcada3", 
+                         "#ffc2b9", "#ffd6d0", 
+                         "#ffebe7", "#ffffff"];
+            
+            options.dataFilter = function( data ) {
+                for ( i = 0; i < data.series.length; i++ ) {
+                    data.series[i].color = myColors [i];
+                }
+                return data;
+            };
+            
+            options.styleDefaults = {
+               barGapRatio:"0.1"
+            }
+            
+            options.legend = {
+               backgroundColor:"#e8f1f4",
+               symbolWidth:"25",
+               borderColor:"#dd5252",
+               maxSize:"200",
+               symbolHeight:"25"
+            }
+            
+            options.plotArea = {
+               backgroundColor:"#e8f1f4",
+               borderWidth:"3",
+               borderColor:"#dd5252"
+            }
+            
+         return options;
+        }
+
+    series: 
+    - # ====== Series: Vasen =======================================
+      id: 28535958930613190
+      identification: 
+        name: Vasen
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 trunc(PVM_, 'MM') month ,
+                 avg(VASEN),
+                 avg(OIKEA)
+            from PAINO
+             where --trim(to_char(pvm_, 'DAY')) = 'MONDAY' AND
+          pvm_ >= (to_date(:p49_from)-90)
+          AND vasen is not null and oikea is not null
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')  
+          order by 1
+          
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: AVG(VASEN)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Oikea =======================================
+      id: 28536599047613191
+      identification: 
+        name: Oikea
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 trunc(PVM_, 'MM') month ,
+                 avg(VASEN),
+                 avg(OIKEA)
+            from PAINO
+             where --trim(to_char(pvm_, 'DAY')) = 'MONDAY' AND
+          pvm_ >= (to_date(:p49_from)-90)
+          AND vasen is not null and oikea is not null
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')  
+          order by 1
+          
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: AVG(OIKEA)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 28534790872613189
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: MMM
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 28535328267613190
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Raportti avg(kk) ============================
+  id: 86857558609102897
+  identification: 
+    name: Raportti avg(kk)
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             PAINO,
+             VATSA,
+             VASEN,
+             OIKEA,
+             PVM_
+        from PAINO
+         where trim(to_char(pvm_, 'DAY')) = 'MONDAY'
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 28530410974611349
+    chart: 
+      type: Area
+
+    title: 
+      title: 'Rapo  kg cm keskiarvo / kk '
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Valitse
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Kädet (v+o) =================================
+      id: 28532150622611351
+      identification: 
+        name: Kädet (v+o)
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) kg,
+                 avg(VATSA) cm,
+                 (avg(VASEN) + avg(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: HCM
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Vatsa =======================================
+      id: 28532785404611352
+      identification: 
+        name: Vatsa
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) kg,
+                 avg(VATSA) cm,
+                 (avg(VASEN) + avg(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: CM
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Paino =======================================
+      id: 28533335325611352
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(nvl(PAINO_omron,paino)) kg,
+                 avg(VATSA) cm,
+                 (avg(VASEN) + avg(OIKEA)) hcm,
+                 trunc(PVM_, 'MM') month 
+          
+            from PAINO
+          WHERE pvm_ >= (to_date(:p49_from)-120)
+          and upper(user_id) = :app_user
+          group by trunc(PVM_, 'MM')
+        page-items-to-submit: 
+        - P49_FROM
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: MONTH
+        value: KG
+
+      appearance: 
+        color: '#e32d2d'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 28530996235611350
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: MMM
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 28531596645611350
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P49_FROM =================================
+  id: 28541354660667379
+  identification: 
+    name: P49_FROM
+    type: Date Picker
+
+  label: 
+    label: From
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: Pvm # 28104351153629506
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 15
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      --select trunc(sysdate,'YY') from dual
+      select  '18.07.2023' --'05.06.2023' --sysdate-7
+       from dual
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: true
+    label-1: Dieetin alusta
+    value-1: 05.06.2023
+    label-2: Crossfit
+    value-2: 18.07.2023
+    label-3: Viikko sitten
+    value-3: '&P49_7PV.'
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  help: 
+    help-text: Select month
+
+- # ====== Page Item: P49_7PV ==================================
+  id: 33778274051068337
+  identification: 
+    name: P49_7PV
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Pvm # 28104351153629506
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: to_char(sysdate-7,'DD.MM.YYYY')
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Pvm muuttuu =========================
+  id: 28104458470629507
+  identification: 
+    name: Pvm muuttuu
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P49_FROM
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 28104580206629508
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Raportti / pv # 47052853763923558
+
+    execution: 
+      sequence: 10
+      event: Pvm muuttuu # 28104458470629507
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 28104644102629509
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Raportti avg(kk) # 86857558609102897
+
+    execution: 
+      sequence: 20
+      event: Pvm muuttuu # 28104458470629507
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 28104772229629510
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Hauis cm ka / kk # 47059846614926719
+
+    execution: 
+      sequence: 30
+      event: Pvm muuttuu # 28104458470629507
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

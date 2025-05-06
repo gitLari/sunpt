@@ -1,0 +1,2103 @@
+---
+# ====== Page: Strength repo =================================
+id: 48
+identification: 
+  name: Strength repo
+  alias: STRENGTH-REPO
+  title: Strength repo
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Ylätalja ====================================
+  id: 17210692787759012
+  identification: 
+    name: Ylätalja
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 22 AND
+      treeni_id in ( 188,181,343)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Ylätalja # 17435560544657106
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17210786212759013
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17210883043759014
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17211133771759017
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17211272768759018
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Ylätalja2 ===================================
+  id: 17211302524759019
+  identification: 
+    name: Ylätalja2
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 22 AND
+      treeni_id in ( 221,222,
+      184,185)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Ylätalja # 17435560544657106
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17211476226759020
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17211543107759021
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17211688856759022
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17211706653759023
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Pystypunnerrus ==============================
+  id: 17211801439759024
+  identification: 
+    name: Pystypunnerrus
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 110 AND
+      treeni_id in ( 188,181,343)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Pystypunnerrus # 17435469325657105
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17211993963759025
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17212011333759026
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17212140023759027
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17212208051759028
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Pystypunnerrus2 =============================
+  id: 17212385459759029
+  identification: 
+    name: Pystypunnerrus2
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 110 AND
+      treeni_id in ( 221,222,
+      184,185)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Pystypunnerrus # 17435469325657105
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17212439543759030
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17212569346759031
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17212633147759032
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17212738726759033
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Maastaveto ==================================
+  id: 17212872020759034
+  identification: 
+    name: Maastaveto
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 141 AND
+      treeni_id in ( 188,181,343)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Maastaveto # 17435636427657107
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17212945326759035
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17213091584759036
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17213159473759037
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17213253093759038
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Maastaveto2 =================================
+  id: 17213335636759039
+  identification: 
+    name: Maastaveto2
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 141 AND
+      treeni_id in ( 221,222,
+      184,185)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Maastaveto # 17435636427657107
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17213431900759040
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17213513635759041
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17213635030759042
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17213724858759043
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Penkki2 =====================================
+  id: 17213823205759044
+  identification: 
+    name: Penkki2
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 47 AND
+      treeni_id in ( 221,222,
+      184,185)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: Penkki # 17435709087657108
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17213921909759045
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17214096159759046
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17214178457759047
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17214290052759048
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Penkki ======================================
+  id: 17214383328759049
+  identification: 
+    name: Penkki
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 47 AND
+      treeni_id in ( 188,181,343)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Penkki # 17435709087657108
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17214426382759050
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17435043965657101
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17435110472657102
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17435252132657103
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Breadcrumb ==================================
+  id: 17376703421333792
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 41826348772081464
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Valitse =====================================
+  id: 17435345621657104
+  identification: 
+    name: Valitse
+    type: Region Display Selector
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      mode: View Single Region
+      display-region-icons: false
+      include-'show-all': true
+      remember-selection: By User
+
+- # ====== Region: Pystypunnerrus ==============================
+  id: 17435469325657105
+  identification: 
+    name: Pystypunnerrus
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Ylätalja ====================================
+  id: 17435560544657106
+  identification: 
+    name: Ylätalja
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Maastaveto ==================================
+  id: 17435636427657107
+  identification: 
+    name: Maastaveto
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Penkki ======================================
+  id: 17435709087657108
+  identification: 
+    name: Penkki
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Kyykky ======================================
+  id: 17435881528657109
+  identification: 
+    name: Kyykky
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--stacked
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Kyykky ======================================
+  id: 17435960327657110
+  identification: 
+    name: Kyykky
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 142 AND
+      treeni_id in ( 188,181,343)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: Kyykky # 17435881528657109
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17436093161657111
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17436129559657112
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17436267257657113
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17436357091657114
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Kyykky2 =====================================
+  id: 17436448028657115
+  identification: 
+    name: Kyykky2
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+        max(kg), max(toistot), kuvaus, treenin_kerta
+        from treenikerta tk, treeni t
+      where tk.treeni_id = t.id AND
+      liike = 142 AND
+      treeni_id in ( 221,222,
+      184,185)
+      group by kuvaus, treenin_kerta
+      order by 3
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Kyykky # 17435881528657109
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17436560184657116
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 200
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Block
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: mesot =======================================
+      id: 17436606289657117
+      identification: 
+        name: mesot
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Region Source
+
+      column-mapping: 
+        series-name: KUVAUS
+        label: TREENIN_KERTA
+        value-aggregation: No Aggregation
+        value: MAX(KG)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17436790680657118
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17436872600657119
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+

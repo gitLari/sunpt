@@ -1,0 +1,1239 @@
+---
+# ====== Page: harris-bendedict ==============================
+id: 47
+identification: 
+  name: harris-bendedict
+  alias: HARRIS-BENDEDICT
+  title: harris-bendedict
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+css: 
+  file-urls: 
+  - .korosta
+  - '{background-color: lightblue !important;'
+  - '}'
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: New =========================================
+  id: 8420953609003141
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Breadcrumb ==================================
+  id: 11873398290216842
+  identification: 
+    name: Breadcrumb
+    type: Breadcrumb
+
+  source: 
+    breadcrumb: Breadcrumb # 41826348772081464
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Title Bar
+    template-options: 
+    - '#DEFAULT#'
+    - t-BreadcrumbRegion--useBreadcrumbTitle
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      breadcrumb-template: Breadcrumb
+      template-options: 
+      - '#DEFAULT#'
+
+- # ====== Region: Ruoka =======================================
+  id: 11879365901283119
+  identification: 
+    name: Ruoka
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: New # 8420953609003141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Dieetti =====================================
+  id: 11879436403283120
+  identification: 
+    name: Dieetti
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: New # 8420953609003141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P47_PAINO ================================
+  id: 8421082832003142
+  identification: 
+    name: P47_PAINO
+    type: Text Field
+
+  label: 
+    label: Paino
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'select paino from paino where id = (select max(id) from paino where user_id = :app_user)'
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_AKTIIVISUUS ==========================
+  id: 8421328688003145
+  identification: 
+    name: P47_AKTIIVISUUS
+    type: Radio Group
+
+  label: 
+    label: Aktiivisuus
+    alignment: Left
+
+  settings: 
+    number-of-columns: 3
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 50
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-none
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC2(,):Erittäin pieni arkiaktiisuus1,2Hieman arkiaktiivuutta1,3Pieni, 3-4 kovempaa treeniä / vko1,5Kohtalainen arkiaktiisuus, 2-3 treeniä / vko1,5Kohtalainen, 3-4 kovempaa treeniä / vko1,7Kohtalainen, 5-6 kovaa treeniä / vko1,9Iso arkiaktiivisuus, haastavaa päivittäistä treeniä2,1Iso arkiaktiivisuus, kovaa päivittäistä treeniä2,2'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 1,5
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_KALORIT ==============================
+  id: 8421431597003146
+  identification: 
+    name: P47_KALORIT
+    type: Text Field
+
+  label: 
+    label: Peruskalorit
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_IKA ==================================
+  id: 8421545295003147
+  identification: 
+    name: P47_IKA
+    type: Text Field
+
+  label: 
+    label: Ika
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 50
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_PITUUS ===============================
+  id: 11877569930283101
+  identification: 
+    name: P47_PITUUS
+    type: Text Field
+
+  label: 
+    label: Pituus
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 181
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_KALORIT_AKTIIVISUUS ==================
+  id: 11877681027283102
+  identification: 
+    name: P47_KALORIT_AKTIIVISUUS
+    type: Text Field
+
+  label: 
+    label: Kalorit min
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_SUKUPUOLI ============================
+  id: 11877817633283104
+  identification: 
+    name: P47_SUKUPUOLI
+    type: Radio Group
+
+  label: 
+    label: Sukupuoli
+    alignment: Left
+
+  settings: 
+    number-of-columns: 1
+    page-action-on-selection: None
+
+  layout: 
+    sequence: 40
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - margin-right-none
+    - t-Form-fieldContainer--radioButtonGroup
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC:Mies;1,Nainen;2'
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 1
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    escape-special-characters: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_KALORIT_AKTIIVISUUS_MAX ==============
+  id: 11877933175283105
+  identification: 
+    name: P47_KALORIT_AKTIIVISUUS_MAX
+    type: Text Field
+
+  label: 
+    label: Kalorit max
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: New # 8420953609003141
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_PROTEIINI ============================
+  id: 11878239815283108
+  identification: 
+    name: P47_PROTEIINI
+    type: Text Field
+
+  label: 
+    label: Proteiini
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Ruoka # 11879365901283119
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_RASVA ================================
+  id: 11878375376283109
+  identification: 
+    name: P47_RASVA
+    type: Text Field
+
+  label: 
+    label: Rasva
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Ruoka # 11879365901283119
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_HIILARI ==============================
+  id: 11878450074283110
+  identification: 
+    name: P47_HIILARI
+    type: Text Field
+
+  label: 
+    label: Hiilari
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Ruoka # 11879365901283119
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_HIILARI_DIEETTI ======================
+  id: 11878966108283115
+  identification: 
+    name: P47_HIILARI_DIEETTI
+    type: Text Field
+
+  label: 
+    label: Hiilari dieetti
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Dieetti # 11879436403283120
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - u-bold
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - korosta
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_KALORIT_DIEETTI ======================
+  id: 11879160654283117
+  identification: 
+    name: P47_KALORIT_DIEETTI
+    type: Text Field
+
+  label: 
+    label: Kalorit dieetti
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Dieetti # 11879436403283120
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - u-bold
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: LASKE =======================================
+  id: 8421627988003148
+  identification: 
+    button-name: LASKE
+    label: Laske
+
+  layout: 
+    sequence: 60
+    region: New # 8420953609003141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - w600
+    - null
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 8421763484003149
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: LASKE # 8421627988003148
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8421885918003150
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        case when :p47_sukupuoli = 2 then 
+        9.55*:P47_PAINO + 1.85 * :P47_PITUUS - 4.68 * :P47_IKA + 655.1
+        else
+        13.75 *:P47_PAINO + 5 * :P47_PITUUS - 6.76 * :P47_IKA + 66.47
+        end
+      items-to-submit: 
+      - P47_PAINO
+      - P47_IKA
+      - P47_PITUUS
+      - P47_SUKUPUOLI
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_KALORIT
+
+    execution: 
+      sequence: 10
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11877793159283103
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: 'round(:p47_kalorit * :p47_aktiivisuus)'
+      items-to-submit: 
+      - P47_KALORIT
+      - P47_AKTIIVISUUS
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_KALORIT_AKTIIVISUUS
+
+    execution: 
+      sequence: 20
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11878176415283107
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: 'round(:p47_kalorit * (:p47_aktiivisuus+.1))'
+      items-to-submit: 
+      - P47_KALORIT
+      - P47_AKTIIVISUUS
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_KALORIT_AKTIIVISUUS_MAX
+
+    execution: 
+      sequence: 30
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11878689040283112
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: 'round(:p47_paino * case when :p47_paino > 100 then .6 * 1 else 1 end)'
+      items-to-submit: 
+      - P47_PAINO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_RASVA
+
+    execution: 
+      sequence: 60
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11878797136283113
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: 'round(:p47_paino * case when :p47_paino > 100 then .7 * 2 else 2 end)'
+      items-to-submit: 
+      - P47_PAINO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_PROTEIINI
+
+    execution: 
+      sequence: 50
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11878826414283114
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: '(:p47_KALORIT_AKTIIVISUUS - 4*:P47_PROTEIINI - :p47_RASVA * 9) / 4'
+      items-to-submit: 
+      - P47_KALORIT_AKTIIVISUUS
+      - P47_PROTEIINI
+      - P47_RASVA
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_HIILARI
+
+    execution: 
+      sequence: 70
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11879067869283116
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: '(:p47_KALORIT_AKTIIVISUUS -1000 - 4*:P47_PROTEIINI - :p47_RASVA * 9) / 4'
+      items-to-submit: 
+      - P47_KALORIT_AKTIIVISUUS
+      - P47_PROTEIINI
+      - P47_RASVA
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_HIILARI_DIEETTI
+
+    execution: 
+      sequence: 80
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 11879297375283118
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: 'round(:p47_kalorit * (:p47_aktiivisuus) -1000)'
+      items-to-submit: 
+      - P47_KALORIT
+      - P47_AKTIIVISUUS
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_KALORIT_DIEETTI
+
+    execution: 
+      sequence: 40
+      event: New # 8421763484003149
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+

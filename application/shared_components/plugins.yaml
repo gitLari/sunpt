@@ -1,0 +1,416 @@
+---
+- # ====== Plugin: custom-cards ================================
+  id: 171152027488458399
+  identification: 
+    name: custom-cards
+    internal-name: CUSTOM-CARDS
+    type: Region
+
+  advanced: 
+    quick-pick: false
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    pl/sql-code: |
+      function render_custom_card (
+        p_region              in apex_plugin.t_region,  
+        p_plugin              in apex_plugin.t_plugin,
+        p_is_printer_friendly in boolean
+      ) return apex_plugin.t_region_render_result
+      as
+      
+        l_result            apex_plugin.t_region_render_result;
+        l_column_value_list apex_plugin_util.t_column_value_list;
+      
+        l_ajax_identifier   varchar2(32700);
+        l_region_id         varchar2(100);
+        l_otsikko           varchar2(100);
+        l_otsikko_old       varchar2(100);
+      begin
+      
+      -- debug information (if app is being run in debug mode)
+        if apex_application.g_debug
+        then
+          apex_plugin_util.debug_region(
+            p_plugin => p_plugin
+            ,p_region => p_region
+            ,p_is_printer_friendly => p_is_printer_friendly
+          );
+        end if;
+      
+        l_ajax_identifier := apex_plugin.get_ajax_identifier;
+      
+        l_region_id :=
+          case when p_region.static_id is not null
+            then p_region.static_id
+            else 'R' || p_region.id
+          end
+        ;
+      
+        l_column_value_list := apex_plugin_util.get_data(
+          p_sql_statement   => p_region.source
+          ,p_min_columns    => 6
+          ,p_max_columns    => 8 --lisätty tähän 
+          ,p_component_name => p_region.name
+          ,p_max_rows       => p_region.fetched_rows
+        );
+      
+        sys.htp.p('<div class="u-colors">');
+      
+        for i in 1 .. l_column_value_list(1).count
+        loop
+      
+          l_otsikko :=  nvl(l_column_value_list(2)(i),null);
+          if l_otsikko != l_otsikko_old or i = 1 THEN
+              sys.htp.p(
+            '<div class="x-region">'
+            || '<div class="x-region-header u-color">'
+            ||  apex_string.format(
+                  p_message => '<span class="x-region-title">%s</span>'  --h2
+                  ,p0 => l_column_value_list(2)(i)
+                )  
+                 || ' '
+      		   ||  apex_string.format(
+                  p_message => '<button class="%2">%1</button>'
+                  ,p0 => 'RIR'
+                  ,p1 => l_column_value_list(7)(i)
+                  ,p2 => 'btn'
+                  
+                )
+                    ||  apex_string.format(
+                  p_message => '<button class="%2">%1</button>' --disabled
+                  ,p0 => 'TOISTOT'
+                  ,p1 => l_column_value_list(8)(i)
+                  ,p2 => 'btn'
+                  
+                ) 
+                 ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1" id="%0" title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Icon fa %4"></span></button>'
+                  ,p0 => 'KATSO'
+                  ,p1 => i
+                  ,p2 => 'Katso'
+                  ,p3 => 't-Button t-Button--noLabel t-Button--icon u-color'
+                  ,p4 => 'fa-arrow-up-right-alt'
+                ) 
+              
+                 ||      
+                 apex_string.format(
+                  p_message => '<div><span class="x-region-sub-title">%s</span>'
+                  ,p0 => ''||l_column_value_list(6)(i)
+                )
+                
+                
+                   || '</div>'
+            || '</div>'
+            || '<div class="x-region-container">'
+           
+           
+             
+              ); --||'</div>'
+      
+         ELSE 
+              sys.htp.p(
+            '<div class="x-region">'
+            || '<div class="x-region-container">'
+              );
+         END IF;    
+            sys.htp.p(
+      
+             '<div class="x-region-body">'
+                 --toistot lisätty
+            ||  apex_string.format(  
+                  p_message => '<b>Kg</b><input type="number" name="%s" class="x-num" id="%s_num%s_%s" value="%s" maxlength="6" min="-100" max="499">'
+                  ,p0 => 'f03'
+                  ,p1 => l_region_id
+                  ,p2 => '1'
+                  ,p3 => i
+                  ,p4 => l_column_value_list(3)(i)
+                )
+      
+      --	  ||'<div class="btn-group">'
+      		 ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1"title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Button-label">--</span></button>'
+                  ,p0 => 'MINUS1MAX'
+                  ,p1 => i
+                  ,p2 => p_plugin.attribute_01
+                  ,p3 => 't-Button t-Button--simple'
+                )  
+                ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1"title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Button-label">-</span></button>'
+                  ,p0 => 'MINUS1'
+                  ,p1 => i
+                  ,p2 => p_plugin.attribute_01
+                  ,p3 => 't-Button t-Button--simple'
+                )
+            ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1"title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Button-label">++</span></button>'
+                  ,p0 => 'PLUS1MAX'
+                  ,p1 => i
+                  ,p2 => p_plugin.attribute_02
+                  ,p3 => 't-Button t-Button--simple'
+                )
+      
+      --	   ||'</div>'
+      		  
+      	  || '<span class="x-sep"></span>' --/ pois TOISTOT
+            ||  apex_string.format(
+                  p_message => '<b>x</b><input type="number" name="%s" class="x-num" id="%s_num%s_%s" value="%s" maxlength="2" min="1" max="50">'
+                  ,p0 => 'f04'
+                  ,p1 => l_region_id
+                  ,p2 => '2'
+                  ,p3 => i
+                  ,p4 => l_column_value_list(4)(i)
+                )
+      		  
+      	  ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1"title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Button-label">-</span></button>'
+                  ,p0 => 'MINUS2'
+                  ,p1 => i
+                  ,p2 => p_plugin.attribute_01
+                  ,p3 => 't-Button t-Button--simple'
+                  --,p4 => 'fa-minus'
+                )
+      
+            ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1"title="%2" aria-label="%2" class="%3"><span aria-hidden="true" class="t-Button-label">+</span></button>'
+                  ,p0 => 'PLUS2'
+                  ,p1 => i
+                  ,p2 => p_plugin.attribute_02
+                  ,p3 => 't-Button t-Button--simple'
+                  --,p4 => 'fa-plus'
+                )
+      
+            ||  apex_string.format(
+                  p_message => '<button type="button" data-btn-action="%0" data-row-id="%1" data-seq-id="%2" data-ajax-identifier="%3" title="%4" aria-label="%4" class="%5"><span aria-hidden="true" class="t-Icon fa %6"></span></button>'
+                  ,p0 => 'SAVE'
+                  ,p1 => i 
+                  ,p2 => l_column_value_list(1)(i)
+                  ,p3 => l_ajax_identifier
+                  ,p4 => p_plugin.attribute_03
+                  ,p5 => 't-Button t-Button--noLabel t-Button--icon'
+                  ,p6 => 'fa-check'
+                )
+      
+            ||  apex_string.format(
+                  p_message => '<input type="hidden" name="%s" class="x-num" id="%s_num%s_%s" value="%s">'
+                  ,p0 => 'f05'
+                  ,p1 => l_region_id
+                  ,p2 => '3'
+                  ,p3 => i
+                  ,p4 => l_column_value_list(5)(i)
+                )                     
+            || '</div>' --region body kiinni
+            || '<div class="x-region-footer">'
+             
+            || '</div>'  --footer kiinni
+            ||  apex_string.format(
+                  p_message => '<input type="hidden" name="%s" value="%s">'
+                  ,p0 => 'f01'
+                  ,p1 => l_column_value_list(1)(i)
+                )
+            ||  apex_string.format(
+                  p_message => '<input type="hidden" name="%s" value="%s">'
+                  ,p0 => 'f02'
+                  ,p1 => l_column_value_list(2)(i)
+                )
+            ||  apex_string.format(
+                  p_message => '<input type="hidden" name="%s" value="%s">'
+                  ,p0 => 'f05'
+                  ,p1 => i
+                )
+            
+            || '</div>' --container kiinni
+            || '</div>' --?? kiinni
+          );
+      
+          l_otsikko_old := l_otsikko;
+        end loop;
+      
+        --if l_otsikko != l_otsikko_old THEN
+        sys.htp.p('</div>');
+          --END IF;
+        apex_javascript.add_onload_code(
+          p_code => 'init_custom_card("' || l_region_id || '");'
+        );
+      
+        return l_result;
+        
+      end render_custom_card;
+      
+      function ajax_custom_card(
+        p_region in apex_plugin.t_region,
+        p_plugin in apex_plugin.t_plugin
+      ) return apex_plugin.t_region_ajax_result
+      as 
+        l_result apex_plugin.t_region_ajax_result;
+      begin
+      
+      update treenikerta set kg = 
+      replace(apex_application.g_x02,'.',','), toistot = replace(apex_application.g_x03,'.',',')
+      where id = apex_application.g_x01;
+      
+      
+      /*
+        apex_collection.update_member_attribute(
+          p_collection_name => 'P58_TEST_DATA'
+          ,p_seq            => apex_application.g_x01
+          ,p_attr_number    => 3
+          ,p_number_value   => apex_application.g_x02
+        );
+      
+        apex_collection.update_member_attribute(
+          p_collection_name => 'P58_TEST_DATA'
+          ,p_seq            => apex_application.g_x01
+          ,p_attr_number    => 4 --2
+          ,p_number_value   => apex_application.g_x03
+        );
+      */
+      
+        htp.p( '{"status" : "ok"}' );
+        
+        return l_result;
+      
+      exception when others then
+        htp.p( '{"status" : "nok"}' );
+        
+      end ajax_custom_card;
+      
+
+  callbacks: 
+    api-interface: Function
+    render-procedure/function-name: render_custom_card
+    ajax-procedure/function-name: ajax_custom_card
+
+  standard-attributes: 
+    attributes: 
+    - Region Source supports different Data Sources
+    - Has "Page Items to Submit" Attribute
+    - Has "Number of Fetched Rows" Attribute
+    - Has "No Data Found Message" Attribute
+
+  custom-attributes: 
+    substitute-attribute-values: true
+
+  css: 
+    file-urls: 
+    - '#PLUGIN_FILES#custom_cards#MIN#.css'
+
+  javascript: 
+    file-urls: 
+    - '#PLUGIN_FILES#custom_cards#MIN#.js'
+
+  information: 
+    version: 1.0
+
+  standard-attributes: 
+  - # ====== Standard Attribute: SOURCE_LOCATION =================
+    id: 171164664872544027
+    identification: 
+      name: SOURCE_LOCATION
+
+    value: 
+      required: true
+
+  custom-attributes: 
+  - # ====== Custom Attribute: Decrease button label =============
+    id: 116462773070297186
+    identification: 
+      static-id: attribute_01
+      attribute: 1
+      name: Decrease button label
+      scope: Component
+
+    layout: 
+      sequence: 10
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: true
+
+    default: 
+      value: Vähennä
+
+  - # ====== Custom Attribute: Increase button label =============
+    id: 116463399934301083
+    identification: 
+      static-id: attribute_02
+      attribute: 2
+      name: Increase button label
+      scope: Component
+
+    layout: 
+      sequence: 20
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: true
+
+    default: 
+      value: Lisää
+
+  - # ====== Custom Attribute: Save button label =================
+    id: 116463968150304370
+    identification: 
+      static-id: attribute_03
+      attribute: 3
+      name: Save button label
+      scope: Component
+
+    layout: 
+      sequence: 30
+
+    settings: 
+      type: Text
+      common: true
+      show-in-wizard: true
+      required: true
+      translatable: true
+
+    default: 
+      value: Tallenna
+
+  files: 
+  - # ====== File: custom_cards.min.css ==========================
+    id: 43429925953745734
+    identification: 
+      file-name: custom_cards.min.css
+
+    attributes: 
+      mime-type: text/css
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: custom_cards.min.js ===========================
+    id: 86160903802166429
+    identification: 
+      file-name: custom_cards.min.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: custom_cards.js ===============================
+    id: 171152597090464528
+    identification: 
+      file-name: custom_cards.js
+
+    attributes: 
+      mime-type: text/javascript
+      file-character-set: Unicode UTF-8
+
+  - # ====== File: custom_cards.css ==============================
+    id: 171153860525468125
+    identification: 
+      file-name: custom_cards.css
+
+    attributes: 
+      mime-type: text/css
+      file-character-set: Unicode UTF-8
+

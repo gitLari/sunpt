@@ -1,0 +1,294 @@
+---
+# ====== Page: Treeni ========================================
+id: 18
+identification: 
+  name: Treeni
+  alias: TREENI
+  title: Treeni
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: var htmldb_delete_message='"DELETE_CONFIRM_MSG"';
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: New =========================================
+  id: 22759624200148028
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P18_NEW ==================================
+  id: 22759898587148030
+  identification: 
+    name: P18_NEW
+    type: Select List
+
+  label: 
+    label: Block
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: New # 22759624200148028
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: WORKOUT_PROGRAM_LOV # 22596992233583595
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P18_NEW_1 ================================
+  id: 22759992728148031
+  identification: 
+    name: P18_NEW_1
+    type: Select List
+
+  label: 
+    label: Weekday
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: New # 22759624200148028
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: 'select WORKOUT_DAY D, workout_day_id r from WORKOUT_DAYS where WORKOUT_PROGRAM_ID = :p18_new'
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P18_NEW
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: P18_MAKE_ROWS ===============================
+  id: 22759713817148029
+  identification: 
+    button-name: P18_MAKE_ROWS
+    label: Make Rows
+
+  layout: 
+    sequence: 10
+    region: New # 22759624200148028
+    slot: BELOW_BOX
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    horizontal-alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: inserts =============================
+  id: 22760193608148033
+  identification: 
+    name: inserts
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: P18_MAKE_ROWS # 22759713817148029
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 22760253018148034
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        null;
+        /*INSERT INTO WORKOUT_SETSREPS (WORKOUT_ID, I_ROW_NO, WORKOUT_MOVE , WORKOUT_REPS, WORKOUT_RIR)
+        SELECT "WORKOUT_ID"  , 
+        	"WORKOUT_MOVE" , "WORKOUT_SETS" , 
+        	"WORKOUT_REPS" , "WORKOUT_RIR"  FROM WORKOUTS where workout_day_id = :p18_new_1;*/
+      items-to-submit: 
+      - P18_NEW_1
+
+    execution: 
+      sequence: 10
+      event: inserts # 22760193608148033
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+branches: 
+- # ====== Branch: Go To Page 17 ===============================
+  id: 21917111675384754
+  identification: 
+    name: Go To Page 17
+
+  execution: 
+    sequence: 1
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.&success_msg=#SUCCESS_MSG#'
+      page: 17 # Workout planning
+

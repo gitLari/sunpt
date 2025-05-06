@@ -1,0 +1,1696 @@
+---
+# ====== Page: Crossfit vertailu =============================
+id: 53
+identification: 
+  name: Crossfit vertailu
+  alias: CROSSFIT-VERTAILU
+  title: Crossfit vertailu
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+  resizable: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Arvot bodaus + PN + skills + kreatiini 3 ====
+  id: 31928111898521924
+  identification: 
+    name: Arvot bodaus + PN + skills + kreatiini 3
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with viimeisin as  (
+          select round(max(PAINO_OMRON),1) as weight,
+           round(max( FAT_VISCERAL),1) as visceral,
+           round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+           round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+          
+          round(max(vatsa),1) as cm,
+          round(max(vasen+oikea),1) as haba,   
+          round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 
+          )
+          ,1) rasvat,
+           round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas
+          from PAINO
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) =
+         (select trunc(max(pvm_)) from paino 
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) <= to_date('16.10.2023')  )
+          ),
+         
+      lahto as (select round(max(PAINO_OMRON),2) weight,
+              round(max(FAT_VISCERAL),1) as visceral,
+              round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+               round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+              round(max(vatsa),1) cm,
+              round(max(vasen+oikea),1) as haba,
+              round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 ),1) rasvat ,
+              round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas  
+              from paino
+      
+          where trunc(pvm_) = '15.09.2023' --:P53_FROM
+          and upper(user_id) = upper(:app_user)
+          )
+      
+      select v.weight - l.weight   kg,
+      v.visceral - l.visceral   visceral ,
+      v.muscle - l.muscle   muscle ,
+      v.fat - l.fat   fat ,
+      v.cm -l.cm   cm ,
+      (v.haba -l.haba)/2   haba, 
+      v.rasvat - l.rasvat fat_us ,
+      v.lihas - l.lihas lean_us ,
+      round((v.weight - l.weight) / (to_date('16.10.2023') - to_date('16.09.2023')),2) miinusta,
+      round((to_date('16.10.2023') - to_date('16.09.2023'))) paivia 
+      from lahto l, viimeisin v
+    page-items-to-submit: 
+    - P53_FROM
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - u-colors
+      - t-BadgeList--large
+      - t-BadgeList--circular
+      - t-BadgeList--cols t-BadgeList--3cols
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: KG ==========================================
+    id: 31928219881521925
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAIVIA ======================================
+    id: 31928336367521926
+    identification: 
+      column-name: PAIVIA
+      type: Plain Text
+
+    heading: 
+      heading: Päiviä
+      alignment: end
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MIINUSTA ====================================
+    id: 31928400678521927
+    identification: 
+      column-name: MIINUSTA
+      type: Plain Text
+
+    heading: 
+      heading: Miinusta / pv
+      alignment: end
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S999G999G999G999G990D00
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CM ==========================================
+    id: 31928575004521928
+    identification: 
+      column-name: CM
+      type: Plain Text
+
+    heading: 
+      heading: Cm
+      alignment: end
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: HABA ========================================
+    id: 31928691880521929
+    identification: 
+      column-name: HABA
+      type: Hidden
+
+    layout: 
+      sequence: 50
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VISCERAL ====================================
+    id: 31928727233521930
+    identification: 
+      column-name: VISCERAL
+      type: Hidden
+
+    layout: 
+      sequence: 60
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT_US ======================================
+    id: 31928868298521931
+    identification: 
+      column-name: FAT_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasva kg (US)
+      alignment: end
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LEAN_US =====================================
+    id: 31928920850521932
+    identification: 
+      column-name: LEAN_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasvaton (US)
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT =========================================
+    id: 31929070272521933
+    identification: 
+      column-name: FAT
+      type: Hidden
+
+    layout: 
+      sequence: 90
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MUSCLE ======================================
+    id: 31929188414521934
+    identification: 
+      column-name: MUSCLE
+      type: Hidden
+
+    layout: 
+      sequence: 100
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Yhteenveto ==================================
+  id: 31930316958521946
+  identification: 
+    name: Yhteenveto
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with viimeisin as  (
+          select round(max(PAINO_OMRON),1) as weight,
+           round(max( FAT_VISCERAL),1) as visceral,
+           round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+           round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+          
+          round(max(vatsa),1) as cm,
+          round(max(vasen+oikea),1) as haba,   
+          round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 
+          )
+          ,1) rasvat,
+           round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas
+          from PAINO
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) =
+         (select trunc(max(pvm_)) from paino 
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) <= to_date('16.10.2023')  )
+          ),
+         
+      lahto as (select round(max(PAINO_OMRON),2) weight,
+              round(max(FAT_VISCERAL),1) as visceral,
+              round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+               round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+              round(max(vatsa),1) cm,
+              round(max(vasen+oikea),1) as haba,
+              round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 ),1) rasvat ,
+              round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas  
+              from paino
+      
+          where trunc(pvm_) = to_date('18.07.2023','dd.mm.yyyy')
+          and upper(user_id) = upper(:app_user)
+          )
+      
+      select v.weight - l.weight   kg,
+      v.visceral - l.visceral   visceral ,
+      v.muscle - l.muscle   muscle ,
+      v.fat - l.fat   fat ,
+      v.cm -l.cm   cm ,
+      (v.haba -l.haba)/2   haba, 
+      v.rasvat - l.rasvat fat_us ,
+      v.lihas - l.lihas lean_us ,
+      round((v.weight - l.weight) / (case when sysdate < to_date('16.10.2023') then sysdate - to_date('18.07.2023')
+                              else  to_date('16.10.2023') - to_date('18.07.2023') end),2) miinusta,
+      round((case when sysdate < to_date('16.10.2023') then sysdate - to_date('18.07.2023')
+                              else  to_date('16.10.2023') - to_date('18.07.2023') end)) paivia 
+      from lahto l, viimeisin v
+    page-items-to-submit: 
+    - P53_FROM
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - u-colors
+      - t-BadgeList--large
+      - t-BadgeList--circular
+      - t-BadgeList--cols t-BadgeList--3cols
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: KG ==========================================
+    id: 31930408215521947
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAIVIA ======================================
+    id: 31930514802521948
+    identification: 
+      column-name: PAIVIA
+      type: Plain Text
+
+    heading: 
+      heading: Päiviä
+      alignment: end
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MIINUSTA ====================================
+    id: 31930647848521949
+    identification: 
+      column-name: MIINUSTA
+      type: Plain Text
+
+    heading: 
+      heading: Miinusta / pv
+      alignment: end
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S999G999G999G999G990D00
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CM ==========================================
+    id: 31930789693521950
+    identification: 
+      column-name: CM
+      type: Plain Text
+
+    heading: 
+      heading: Cm
+      alignment: end
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: HABA ========================================
+    id: 35413061138103301
+    identification: 
+      column-name: HABA
+      type: Hidden
+
+    layout: 
+      sequence: 50
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VISCERAL ====================================
+    id: 35413109715103302
+    identification: 
+      column-name: VISCERAL
+      type: Hidden
+
+    layout: 
+      sequence: 60
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT_US ======================================
+    id: 35413265355103303
+    identification: 
+      column-name: FAT_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasva kg (US)
+      alignment: end
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LEAN_US =====================================
+    id: 35413365285103304
+    identification: 
+      column-name: LEAN_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasvaton (US)
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT =========================================
+    id: 35413487599103305
+    identification: 
+      column-name: FAT
+      type: Hidden
+
+    layout: 
+      sequence: 90
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MUSCLE ======================================
+    id: 35413531898103306
+    identification: 
+      column-name: MUSCLE
+      type: Hidden
+
+    layout: 
+      sequence: 100
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Arvot FF 1 ==================================
+  id: 41184566061608969
+  identification: 
+    name: Arvot FF 1
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with viimeisin as  (
+          select round(max(PAINO_OMRON),1) as weight,
+           round(max( FAT_VISCERAL),1) as visceral,
+           round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+           round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+          
+          round(max(vatsa),1) as cm,
+          round(max(vasen+oikea),1) as haba,   
+          round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 
+          )
+          ,1) rasvat,
+           round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas
+          from PAINO
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) = to_date('16.08.2023','dd.mm.yyyy') 
+         -- (select trunc(max(pvm_)) from paino 
+         --where upper(user_id) = upper(:app_user) and paino_omron is not null ) 
+         ),
+         
+      lahto as (select round(max(PAINO_OMRON),2) weight,
+              round(max(FAT_VISCERAL),1) as visceral,
+              round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+               round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+              round(max(vatsa),1) cm,
+              round(max(vasen+oikea),1) as haba,
+              round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 ),1) rasvat ,
+              round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas  
+              from paino
+      
+          where trunc(pvm_) = to_date('18.07.2023','dd.mm.yyyy') --:P53_FROM
+          and upper(user_id) = upper(:app_user))
+      
+      select v.weight - l.weight   kg,
+      v.visceral - l.visceral   visceral ,
+      v.muscle - l.muscle   muscle ,
+      v.fat - l.fat   fat ,
+      v.cm -l.cm   cm ,
+      (v.haba -l.haba)/2   haba, 
+      v.rasvat - l.rasvat fat_us ,
+      v.lihas - l.lihas lean_us ,
+      round((v.weight - l.weight) / (30),2) miinusta,
+      round((30)) paivia 
+      from lahto l, viimeisin v
+    page-items-to-submit: 
+    - P53_FROM
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - u-colors
+      - t-BadgeList--large
+      - t-BadgeList--circular
+      - t-BadgeList--cols t-BadgeList--3cols
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: FAT_US ======================================
+    id: 28545706738755741
+    identification: 
+      column-name: FAT_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasva kg (US)
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S90D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 28546118611755743
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CM ==========================================
+    id: 28546558839755744
+    identification: 
+      column-name: CM
+      type: Plain Text
+
+    heading: 
+      heading: Cm
+      alignment: end
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: HABA ========================================
+    id: 28546983531755746
+    identification: 
+      column-name: HABA
+      type: Hidden
+
+    layout: 
+      sequence: 60
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LEAN_US =====================================
+    id: 28547359634755746
+    identification: 
+      column-name: LEAN_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasvaton (US)
+      alignment: end
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VISCERAL ====================================
+    id: 28547734683755748
+    identification: 
+      column-name: VISCERAL
+      type: Hidden
+
+    layout: 
+      sequence: 70
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MUSCLE ======================================
+    id: 28548120725755749
+    identification: 
+      column-name: MUSCLE
+      type: Hidden
+
+    layout: 
+      sequence: 110
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAIVIA ======================================
+    id: 28548561475755753
+    identification: 
+      column-name: PAIVIA
+      type: Plain Text
+
+    heading: 
+      heading: Päiviä
+      alignment: end
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MIINUSTA ====================================
+    id: 28548923041755753
+    identification: 
+      column-name: MIINUSTA
+      type: Plain Text
+
+    heading: 
+      heading: Miinusta / pv
+      alignment: end
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S999G999G999G999G990D00
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT =========================================
+    id: 28549370638755754
+    identification: 
+      column-name: FAT
+      type: Hidden
+
+    layout: 
+      sequence: 100
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Arvot bodaus 2 ==============================
+  id: 41188889237611168
+  identification: 
+    name: Arvot bodaus 2
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with viimeisin as  (
+          select round(max(PAINO_OMRON),1) as weight,
+           round(max( FAT_VISCERAL),1) as visceral,
+           round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+           round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+          
+          round(max(vatsa),1) as cm,
+          round(max(vasen+oikea),1) as haba,   
+          round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 
+          )
+          ,1) rasvat,
+           round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas
+          from PAINO
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) =  '15.09.2023'
+      /*   (select trunc(max(pvm_)) from paino 
+         where upper(user_id) = upper(:app_user) and paino_omron is not null
+         and trunc(pvm_) <= to_date('16.09.2023')  )*/
+          ),
+         
+      lahto as (select round(max(PAINO_OMRON),2) weight,
+              round(max(FAT_VISCERAL),1) as visceral,
+              round(max(PAINO_OMRON * MUSCLE / 100),1) as MUSCLE,
+               round(max(PAINO_OMRON * FAT / 100),1) as FAT,
+              round(max(vatsa),1) cm,
+              round(max(vasen+oikea),1) as haba,
+              round(max(PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100 ),1) rasvat ,
+              round(max(PAINO_OMRON - (PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54,1)-round(42.7/2.54,1))) - 70.041* log(10,(round(181/2.54,1))) +36.86
+          ) /100) 
+          )
+          ,1) lihas  
+              from paino
+      
+          where trunc(pvm_) = '16.08.2023' --:P53_FROM
+          and upper(user_id) = upper(:app_user))
+      
+      select v.weight - l.weight   kg,
+      v.visceral - l.visceral   visceral ,
+      v.muscle - l.muscle   muscle ,
+      v.fat - l.fat   fat ,
+      v.cm -l.cm   cm ,
+      (v.haba -l.haba)/2   haba, 
+      v.rasvat - l.rasvat fat_us ,
+      v.lihas - l.lihas lean_us ,
+      round((v.weight - l.weight) / (to_date('15.09.2023') - to_date('16.08.2023')),2) miinusta,
+      round((to_date('15.09.2023') - to_date('16.08.2023'))) paivia 
+      from lahto l, viimeisin v
+    page-items-to-submit: 
+    - P53_FROM
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Badge List
+      template-options: 
+      - '#DEFAULT#'
+      - u-colors
+      - t-BadgeList--large
+      - t-BadgeList--circular
+      - t-BadgeList--cols t-BadgeList--3cols
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: FAT_US ======================================
+    id: 28550007910757941
+    identification: 
+      column-name: FAT_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasva kg (US)
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 28550456149757943
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CM ==========================================
+    id: 28550823351757944
+    identification: 
+      column-name: CM
+      type: Plain Text
+
+    heading: 
+      heading: Cm
+      alignment: end
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: HABA ========================================
+    id: 28551213543757944
+    identification: 
+      column-name: HABA
+      type: Hidden
+
+    layout: 
+      sequence: 60
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LEAN_US =====================================
+    id: 28551634357757945
+    identification: 
+      column-name: LEAN_US
+      type: Plain Text
+
+    heading: 
+      heading: Rasvaton (US)
+      alignment: end
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S0D9
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VISCERAL ====================================
+    id: 28552050038757946
+    identification: 
+      column-name: VISCERAL
+      type: Hidden
+
+    layout: 
+      sequence: 70
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MUSCLE ======================================
+    id: 28552460452757946
+    identification: 
+      column-name: MUSCLE
+      type: Hidden
+
+    layout: 
+      sequence: 110
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAIVIA ======================================
+    id: 28552859802757947
+    identification: 
+      column-name: PAIVIA
+      type: Plain Text
+
+    heading: 
+      heading: Päiviä
+      alignment: end
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MIINUSTA ====================================
+    id: 28553251310757950
+    identification: 
+      column-name: MIINUSTA
+      type: Plain Text
+
+    heading: 
+      heading: Miinusta / pv
+      alignment: end
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: S999G999G999G999G990D00
+
+    sorting: 
+      sortable: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: FAT =========================================
+    id: 28553666494757954
+    identification: 
+      column-name: FAT
+      type: Hidden
+
+    layout: 
+      sequence: 100
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+

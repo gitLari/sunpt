@@ -1,0 +1,1758 @@
+---
+# ====== Page: liike kehitys chart ===========================
+id: 34
+identification: 
+  name: liike kehitys chart
+  alias: LIIKE-KEHITYS-CHART
+  title: Liike kehitys chart
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Ranking =====================================
+  id: 11879720680283123
+  identification: 
+    name: Ranking
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select rownum, a.* from (
+      
+      select  t.treeni_id, t.pvm, nvl(p.paino_omron, p.paino) kehonpaino, kg, rir, toistot, 
+      --max(kg + kg*toistot * .00333) 
+          max (
+              case when l.kehonpainoliike = 1 then
+                  
+                  toistot *  (nvl(p.paino_omron, p.paino) +kg)*.0333 
+                  + nvl(p.paino_omron, p.paino)+kg  
+                  else 
+                  toistot*kg*.0333+kg             
+                  end )  
+                  maxkg
+      from treenikerta t, paino p, liike l
+      where t.liike = :p34_liike and henkilo_id = :p34_HENKILO_ID
+      and toistot is not null
+      and l.id = t.liike
+      and trunc(p.pvm_) = (
+          select trunc(max(pvm_)) from paino 
+           where user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID)
+                 and trunc(pvm_) <= trunc(t.pvm)
+      ) and p.user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID) 
+      
+      group by  treeni_id, pvm, nvl(p.paino_omron, p.paino) , kg, rir, toistot
+      order by 7 desc
+      fetch first 999999999999 partition by pvm,
+        1 row only
+        
+      ) a
+      
+      /*select 
+             liike,    trunc(PVM),
+          max (
+              case when l.kehonpainoliike = 1 then
+                  (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                  else 
+                  (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                  end ) maxkg
+          
+        from TREENIKERTA t, LIIKE l, HENKILO h 
+        where (:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+         and (:p34_liike is null or liike = :p34_liike)
+         and t.liike = l.id and t.henkilo_id = h.id
+         and kg is not null
+         group by liike,pvm
+         order by pvm desc
+      */
+    page-items-to-submit: 
+    - P34_LIIKE
+    - P34_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: MAXKG =======================================
+    id: 35047228099064071
+    identification: 
+      column-name: MAXKG
+      type: Plain Text
+
+    heading: 
+      heading: Maxkg
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PVM =========================================
+    id: 35047379416064073
+    identification: 
+      column-name: PVM
+      type: Plain Text
+
+    heading: 
+      heading: Pvm
+      alignment: start
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 35047530463064074
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RIR =========================================
+    id: 35047625657064075
+    identification: 
+      column-name: RIR
+      type: Plain Text
+
+    heading: 
+      heading: Rir
+      alignment: end
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 35047688194064076
+    identification: 
+      column-name: TOISTOT
+      type: Plain Text
+
+    heading: 
+      heading: Toistot
+      alignment: end
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KEHONPAINO ==================================
+    id: 35047888438064078
+    identification: 
+      column-name: KEHONPAINO
+      type: Plain Text
+
+    heading: 
+      heading: Kehonpaino
+      alignment: end
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TREENI_ID ===================================
+    id: 35047995207064079
+    identification: 
+      column-name: TREENI_ID
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Treeni
+      alignment: end
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: TREENI_NIMI_LOV # 45789437350207699
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ROWNUM ======================================
+    id: 35048237054064081
+    identification: 
+      column-name: ROWNUM
+      type: Plain Text
+
+    heading: 
+      heading: Rank
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Rapo kaikki =================================
+  id: 35045822101064057
+  identification: 
+    name: Rapo kaikki
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select t.TREENI_ID,
+             t.HENKILO_ID,
+             t.LIIKE,
+               (
+                   
+              case when l.kehonpainoliike = 1 then
+                  (((nvl(t.rir,0)+t.toistot)*(h.paino+kg)*.0333)+(h.paino+t.kg)) 
+                  else 
+                  (((nvl(t.rir,0)+t.toistot)*t.kg*.0333)+t.kg)             
+                  end ) max,
+             t.RIR,
+             t.SARJANUMERO,
+             t.KG,
+             t.TOISTOT,
+             t.PVM, t.ID, l.kehonpainoliike, kehonosa_id
+        from TREENIKERTA T, HENKILO H, LIIKE L
+          WHERE t.liike = l.id and t.henkilo_id = h.id and h.id = :P34_HENKILO_ID
+          and t.liike = :p34_liike
+          and t.toistot is not null
+          order by 4 desc
+    page-items-to-submit: 
+    - P34_LIIKE
+    - P34_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented out # 28537406048625948
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: TREENI_ID ===================================
+    id: 35045924754064058
+    identification: 
+      column-name: TREENI_ID
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: 'Treeni '
+      alignment: end
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: TREENI_NIMI_LOV # 45789437350207699
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PVM =========================================
+    id: 35046015127064059
+    identification: 
+      column-name: PVM
+      type: Plain Text
+
+    heading: 
+      heading: Pvm
+      alignment: start
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: HENKILO_ID ==================================
+    id: 35046144982064060
+    identification: 
+      column-name: HENKILO_ID
+      type: Hidden
+
+    layout: 
+      sequence: 30
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LIIKE =======================================
+    id: 35046162786064061
+    identification: 
+      column-name: LIIKE
+      type: Hidden
+
+    layout: 
+      sequence: 40
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MAX =========================================
+    id: 35046314708064062
+    identification: 
+      column-name: MAX
+      type: Plain Text
+
+    heading: 
+      heading: Max
+      alignment: end
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RIR =========================================
+    id: 35046371961064063
+    identification: 
+      column-name: RIR
+      type: Plain Text
+
+    heading: 
+      heading: Rir
+      alignment: end
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: SARJANUMERO =================================
+    id: 35046518513064064
+    identification: 
+      column-name: SARJANUMERO
+      type: Plain Text
+
+    heading: 
+      heading: Sarjanumero
+      alignment: end
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 35046612685064065
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: end
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 35046706255064066
+    identification: 
+      column-name: TOISTOT
+      type: Plain Text
+
+    heading: 
+      heading: Toistot
+      alignment: end
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ID ==========================================
+    id: 35046801431064067
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    layout: 
+      sequence: 100
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KEHONPAINOLIIKE =============================
+    id: 35046915235064068
+    identification: 
+      column-name: KEHONPAINOLIIKE
+      type: Hidden
+
+    layout: 
+      sequence: 110
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KEHONOSA_ID =================================
+    id: 35047026469064069
+    identification: 
+      column-name: KEHONOSA_ID
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Kehonosa Id
+      alignment: end
+
+    layout: 
+      sequence: 120
+      column-alignment: end
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: KEHONOSA_LOV # 51495298061574512
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Kehitys 23 - ================================
+  id: 51287835691067047
+  identification: 
+    name: Kehitys 23 -
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 51287955886067048
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Kehitys % ===================================
+      id: 51288066497067049
+      identification: 
+        name: Kehitys %
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select 
+                 liike,   PVM, 
+                   max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+             
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where (:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+             and (:p34_liike is null or liike = :p34_liike)
+             and kg is not null
+             and t.liike = l.id and t.henkilo_id = h.id and trunc(pvm) > '01.01.2023'
+             group by liike,pvm
+             order by pvm
+          )
+          
+          
+          select to_char(sysdate,'DD.MM.YYYY') pvm, 
+          case when max(maxkg) > 0 then  
+              (max(maxkg) - min(maxkg)) / max(maxkg)
+              else 0 end 
+              erotus,
+          min(pvm)||'-'||max(pvm) ajanjakso
+             
+              from kysely
+          
+        page-items-to-submit: 
+        - P34_LIIKE
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: AJANJAKSO
+        value: EROTUS
+
+      appearance: 
+        color: '#a4d7a4'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 51288151154067050
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 51545656480163301
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Percent
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Kehitys 22 ==================================
+  id: 85093870852175719
+  identification: 
+    name: Kehitys 22
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented out # 28537406048625948
+
+  attributes: 
+    id: 45794553624227017
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Kehitys % ===================================
+      id: 45796244378227019
+      identification: 
+        name: Kehitys %
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with kysely as (select 
+                 liike,   PVM, 
+                   max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+             
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where (:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+             and (:p34_liike is null or liike = :p34_liike)
+             and kg is not null
+             and t.liike = l.id and t.henkilo_id = h.id and trunc(pvm) < '01.01.2023'
+             group by liike,pvm
+             order by pvm
+          )
+          
+          
+          select to_char(sysdate,'DD.MM.YYYY') pvm, 
+          case when max(maxkg) > 0 then  
+              (max(maxkg) - min(maxkg)) / max(maxkg)
+              else 0 end 
+              erotus,
+              min(pvm)||'-'||max(pvm) ajanjakso
+             
+              from kysely
+          
+        page-items-to-submit: 
+        - P34_LIIKE
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: AJANJAKSO
+        value: EROTUS
+
+      appearance: 
+        color: '#a4d7a4'
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 45795032981227018
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: false
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 45795643617227018
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Percent
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Voima chart =================================
+  id: 85117827253224284
+  identification: 
+    name: Voima chart
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 45791364200227011
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Volume (esitetty /10) =======================
+      id: 45793035785227015
+      identification: 
+        name: Volume (esitetty /10)
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  t.treeni_id, t.pvm, nvl(p.paino_omron, p.paino) kehonpaino, kg, rir, toistot, 
+          --max(kg + kg*toistot * .00333) 
+              sum (
+                  case when l.kehonpainoliike = 1 then
+                      
+                      toistot *  (nvl(p.paino_omron, p.paino) +kg)*.0333 
+                      + nvl(p.paino_omron, p.paino)+kg  
+                      else 
+                      toistot*kg*.0333+kg             
+                      end )   /10
+                      maxkg
+          from treenikerta t, paino p, liike l
+          where t.liike = :p34_liike and henkilo_id = :p34_HENKILO_ID
+          and toistot is not null and kg is not null
+          and l.id = t.liike
+          and trunc(p.pvm_) = (
+              select trunc(max(pvm_)) from paino 
+               where user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID)
+                     and trunc(pvm_) <= trunc(t.pvm)
+          ) and p.user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID) 
+          
+          group by  treeni_id, pvm, nvl(p.paino_omron, p.paino) , kg, rir, toistot
+          order by 7 desc
+          fetch first 999999999999 partition by pvm,
+            1 row only
+            /*
+            select 
+                 liike,   PVM, 
+               --   (sum(((toistot)*(nvl(:P34_paino,0)+kg)*.0333)+nvl(:P34_paino,0)+kg)/10) sumkg
+             sum (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) /10
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             /10
+                      end ) maxkg
+              
+            from TREENIKERTA t, HENKILO h, LIIKE l 
+            where (:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+             and (:p34_liike is null or liike = :p34_liike)
+             and kg is not null
+             and t.liike = l.id and t.henkilo_id = h.id
+             group by liike,pvm
+             order by pvm
+          */
+        page-items-to-submit: 
+        - P34_LIIKE
+        - P34_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: MAXKG
+
+      appearance: 
+        color: '#e6d4d4'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Calculated 1RM max ==========================
+      id: 45793651059227017
+      identification: 
+        name: Calculated 1RM max
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select  t.treeni_id, t.pvm, nvl(p.paino_omron, p.paino) kehonpaino, kg, rir, toistot, 
+          --max(kg + kg*toistot * .00333) 
+              max (
+                  case when l.kehonpainoliike = 1 then
+                      
+                      toistot *  (nvl(p.paino_omron, p.paino) +kg)*.0333 
+                      + nvl(p.paino_omron, p.paino)+kg  
+                      else 
+                      toistot*kg*.0333+kg             
+                      end )  
+                      maxkg
+          from treenikerta t, paino p, liike l
+          where t.liike = :p34_liike and henkilo_id = :p34_HENKILO_ID
+          and toistot is not null and kg is not null
+          and l.id = t.liike
+          and trunc(p.pvm_) = (
+              select trunc(max(pvm_)) from paino 
+               where user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID)
+                     and trunc(pvm_) <= trunc(t.pvm)
+          ) and p.user_id = (select upper (nimi) from henkilo where id = :p34_HENKILO_ID) 
+          
+          group by  treeni_id, pvm, nvl(p.paino_omron, p.paino) , kg, rir, toistot
+          order by 7 desc
+          fetch first 999999999999 partition by pvm,
+            1 row only
+            
+          
+          
+          /*select 
+                 liike,    trunc(PVM),
+              max (
+                  case when l.kehonpainoliike = 1 then
+                      (((nvl(rir,0)+toistot)*(h.paino+kg)*.0333)+(h.paino+kg)) 
+                      else 
+                      (((nvl(rir,0)+toistot)*kg*.0333)+kg)             
+                      end ) maxkg
+              
+            from TREENIKERTA t, LIIKE l, HENKILO h 
+            where (:p34_HENKILO_ID  is null or henkilo_id = :p34_HENKILO_ID)
+             and (:p34_liike is null or liike = :p34_liike)
+             and t.liike = l.id and t.henkilo_id = h.id
+             and kg is not null
+             group by liike,pvm
+             order by pvm desc
+          */
+        page-items-to-submit: 
+        - P34_LIIKE
+        - P34_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: MAXKG
+
+      appearance: 
+        color: '#c7c7de'
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 45791808880227013
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Medium
+        pattern: dd.MM.yy
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 45792453524227014
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+page-items: 
+- # ====== Page Item: P34_LIIKE ================================
+  id: 45797480147227020
+  identification: 
+    name: P34_LIIKE
+    type: Select List
+
+  label: 
+    label: Liike
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: LIIKE_LOV # 45788335313183272
+    display-extra-values: true
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P34_HENKILO_ID ===========================
+  id: 45862624102713866
+  identification: 
+    name: P34_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: LiikeMuuttuu ========================
+  id: 45797846341227020
+  identification: 
+    name: LiikeMuuttuu
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P34_LIIKE
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 11881083244283136
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Ranking # 11879720680283123
+
+    execution: 
+      sequence: 40
+      event: LiikeMuuttuu # 45797846341227020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 35047348548064072
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Rapo kaikki # 35045822101064057
+
+    execution: 
+      sequence: 50
+      event: LiikeMuuttuu # 45797846341227020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 45798363787227021
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Voima chart # 85117827253224284
+
+    execution: 
+      sequence: 10
+      event: LiikeMuuttuu # 45797846341227020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 45798887659227021
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kehitys 22 # 85093870852175719
+
+    execution: 
+      sequence: 20
+      event: LiikeMuuttuu # 45797846341227020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 51545771696163302
+    identification: 
+      name: Refresh
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Kehitys 23 - # 51287835691067047
+
+    execution: 
+      sequence: 30
+      event: LiikeMuuttuu # 45797846341227020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P34_HENKILO_ID =========================
+  id: 45862985219715076
+  identification: 
+    item-name: P34_HENKILO_ID
+
+  execution: 
+    sequence: 50
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo 
+      where lower(nimi) = lower(:app_user)
+

@@ -1,0 +1,1451 @@
+---
+- # ====== List: User Settings =================================
+  id: 8407116367767169
+  identification: 
+    name: User Settings
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    type: Static Values
+
+  configuration: 
+    build-option: 'Feature: User Settings' # 8403641330767157
+
+  entries: 
+  - # ====== Entry: Push Notifications ===========================
+    id: 8407538128767170
+    label: 
+      label: Push Notifications
+
+    icon: 
+      image/icon-css-classes: fa-bell-o
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:20010:&APP_SESSION.::&DEBUG.:::'
+        page: 20010 # Push Notifications
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      1.: Configure whether you want to receive push notifications on this device.
+      2.: <span class="a-pwaPush--state"></span>
+
+    configuration: 
+      build-option: 'Feature: Push Notifications' # 8403387749767155
+
+- # ====== List: Desktop Navigation Menu =======================
+  id: 41826802751081467
+  identification: 
+    name: Desktop Navigation Menu
+
+  subscription: 
+    version-number: 41478882427548
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: harris-bendedict =============================
+    id: 11872841765216819
+    label: 
+      label: harris-bendedict
+
+    icon: 
+      image/icon-css-classes: fa-file-o
+
+    layout: 
+      sequence: 460
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 47
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:47:&SESSION.::&DEBUG.::::'
+        page: 47 # harris-bendedict
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: min mm =======================================
+    id: 12068833906094312
+    label: 
+      label: min mm
+
+    layout: 
+      sequence: 190
+      parent-entry: Vuosi raportti # 42038776021123957
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:3:&SESSION.::&DEBUG.::::'
+        page: 3 # min kk
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Never
+
+  - # ====== Entry: menno FFMI ===================================
+    id: 13903659623384154
+    label: 
+      label: menno FFMI
+
+    layout: 
+      sequence: 1230
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 28
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:28:&SESSION.::&DEBUG.::::'
+        page: 28 # menno FFMI
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Bucket =======================================
+    id: 15509803166368801
+    label: 
+      label: Bucket
+
+    icon: 
+      image/icon-css-classes: fa-table
+
+    layout: 
+      sequence: 240
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 25
+      - 26
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:25:&SESSION.::&DEBUG.::::'
+        page: 25 # Bucket
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: "lower(:APP_USER) = 'lari'"
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Report edit ==================================
+    id: 15649963147178635
+    label: 
+      label: Report edit
+
+    layout: 
+      sequence: 220
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 4
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.::::'
+        page: 4 # Rapo edit
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Strength repo ================================
+    id: 17376299669333790
+    label: 
+      label: Strength repo
+
+    layout: 
+      sequence: 480
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 48
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:48:&SESSION.::&DEBUG.::::'
+        page: 48 # Strength repo
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: ":APP_USER = 'LARI'"
+
+  - # ====== Entry: Numbers ======================================
+    id: 18943563957334176
+    label: 
+      label: Numbers
+
+    layout: 
+      sequence: 80
+      parent-entry: Kehonkoostumus raportti # 21277638212641871
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 9
+      - 23
+      - 4
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:9:&SESSION.::&DEBUG.::::'
+        page: 9 # Numerot
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Never
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Kehonkoostumus raportti ======================
+    id: 21277638212641871
+    label: 
+      label: Kehonkoostumus raportti
+
+    icon: 
+      image/icon-css-classes: fa-heartbeat
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 11
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:11:&SESSION.::&DEBUG.::::'
+        page: 11 # Kehonkoostumus
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: per week =====================================
+    id: 21710237210795758
+    label: 
+      label: per week
+
+    layout: 
+      sequence: 100
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 12
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:12:&SESSION.::&DEBUG.::::'
+        page: 12 # per viikko
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Relative =====================================
+    id: 21770968265843395
+    label: 
+      label: Relative
+
+    layout: 
+      sequence: 110
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 14
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:14:&SESSION.::&DEBUG.::::'
+        page: 14 # Relative
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Workout planning =============================
+    id: 21920790506384775
+    label: 
+      label: Workout planning
+
+    layout: 
+      sequence: 120
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 17
+      - 18
+      - 19
+      - 20
+      - 13
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:17:&SESSION.::&DEBUG.::::'
+        page: 17 # Workout planning
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: 1=2
+
+  - # ====== Entry: Exercises ====================================
+    id: 22008242914283826
+    label: 
+      label: Exercises
+
+    layout: 
+      sequence: 130
+      parent-entry: Workout planning # 21920790506384775
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 19
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:19:&APP_SESSION.::&DEBUG.:::'
+        page: 19 # Exercises
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: bodyparts ====================================
+    id: 22018854789325855
+    label: 
+      label: bodyparts
+
+    layout: 
+      sequence: 140
+      parent-entry: Workout planning # 21920790506384775
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 20
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:20:&APP_SESSION.::&DEBUG.:::'
+        page: 20 # bodyparts
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Weekdays =====================================
+    id: 22607572393660916
+    label: 
+      label: Weekdays
+
+    layout: 
+      sequence: 150
+      parent-entry: Workout planning # 21920790506384775
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 13
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:13:&APP_SESSION.::&DEBUG.:::'
+        page: 13 # Weekdays
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Single session ===============================
+    id: 22930835904494193
+    label: 
+      label: Single session
+
+    layout: 
+      sequence: 160
+      parent-entry: Workouts page # 23033472744035104
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 16
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:16:&SESSION.::&DEBUG.::::'
+        page: 16 # Workout
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Workouts page ================================
+    id: 23033472744035104
+    label: 
+      label: Workouts page
+
+    layout: 
+      sequence: 170
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 21
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:21:&SESSION.::&DEBUG.::::'
+        page: 21 # Workouts page
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: 1=2
+
+  - # ====== Entry: Workout types ================================
+    id: 23881106909713784
+    label: 
+      label: Workout types
+
+    layout: 
+      sequence: 180
+      parent-entry: Workout planning # 21920790506384775
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:27:&SESSION.::&DEBUG.::::'
+        page: 27 # Workout types
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: VoMAX raportti ===============================
+    id: 26770724817614922
+    label: 
+      label: VoMAX raportti
+
+    icon: 
+      image/icon-css-classes: fa-heart-o
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 50
+      - 51
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:50:&SESSION.::&DEBUG.::::'
+        page: 50 # VoMAXs
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Kalorit ======================================
+    id: 35178047575560023
+    label: 
+      label: Kalorit
+
+    icon: 
+      image/icon-css-classes: fa-table-pointer
+
+    layout: 
+      sequence: 1240
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 54
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:54:&APP_SESSION.::&DEBUG.:::'
+        page: 54 # Kalorit
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Koti =========================================
+    id: 41977185562081708
+    label: 
+      label: Koti
+
+    icon: 
+      image/icon-css-classes: fa-home
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:'
+        page: 1 # Home
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Dashboard ====================================
+    id: 41978607795081712
+    label: 
+      label: Dashboard
+
+    icon: 
+      image/icon-css-classes: fa-window-user
+
+    layout: 
+      sequence: 20
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.::::'
+        page: 2 # Dashboard
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: 1=2
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Vuosi raportti ===============================
+    id: 42038776021123957
+    label: 
+      label: Vuosi raportti
+
+    icon: 
+      image/icon-css-classes: fa-calendar
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 6
+      - 4
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:6:&SESSION.::&DEBUG.::::'
+        page: 6 # chartti
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: insert =======================================
+    id: 42044273716170066
+    label: 
+      label: insert
+
+    layout: 
+      sequence: 60
+      parent-entry: Numbers # 18943563957334176
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 7
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:7:&SESSION.::&DEBUG.::::'
+        page: 7 # syota
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: 1=2
+
+  - # ====== Entry: Aloita treeni ================================
+    id: 45711369730922441
+    label: 
+      label: Aloita treeni
+
+    icon: 
+      image/icon-css-classes: fa-play
+
+    layout: 
+      sequence: 70
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 29
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:29:&SESSION.::&DEBUG.::::'
+        page: 29 # Aloita treeni
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: Treeniliike facet ============================
+    id: 45743704162080770
+    label: 
+      label: Treeniliike facet
+
+    layout: 
+      sequence: 290
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 24
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:24:&SESSION.::&DEBUG.::::'
+        page: 24 # Treeniliike facet
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Liikkeet =====================================
+    id: 45756787196090206
+    label: 
+      label: Liikkeet
+
+    layout: 
+      sequence: 260
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 30
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:30:&SESSION.::&DEBUG.::::'
+        page: 30 # Liikkeet
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: liike kehitys chart ==========================
+    id: 45790351442227006
+    label: 
+      label: liike kehitys chart
+
+    layout: 
+      sequence: 310
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 34
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.::::'
+        page: 34 # liike kehitys chart
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Yleis raportti ===============================
+    id: 45803252323251715
+    label: 
+      label: Yleis raportti
+
+    layout: 
+      sequence: 320
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 35
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:35:&SESSION.::&DEBUG.::::'
+        page: 35 # Yleis raportti
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Syötä vanha ==================================
+    id: 45830933710580079
+    label: 
+      label: Syötä vanha
+
+    layout: 
+      sequence: 340
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 36
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:36:&SESSION.::&DEBUG.::::'
+        page: 36 # Syötä vanha
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Treenikerta raportti =========================
+    id: 46949156001297695
+    label: 
+      label: Treenikerta raportti
+
+    icon: 
+      image/icon-css-classes: fa-calendar-check-o
+
+    layout: 
+      sequence: 250
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 31
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:31:&SESSION.::&DEBUG.::::'
+        page: 31 # Treenikerta
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    security: 
+      authorization-scheme: Must Not Be Public User
+
+  - # ====== Entry: 1RM ==========================================
+    id: 47777158449013286
+    label: 
+      label: 1RM
+
+    icon: 
+      image/icon-css-classes: fa-table-pointer
+
+    layout: 
+      sequence: 1250
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 55
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:55:&APP_SESSION.::&DEBUG.:::'
+        page: 55 # 1RM
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Treenit edit =================================
+    id: 49937574290496484
+    label: 
+      label: Treenit edit
+
+    layout: 
+      sequence: 360
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 40
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.::::'
+        page: 40 # Treenit eidt
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: "lower(:app_user) = 'lari'"
+
+  - # ====== Entry: Kehonosa kehitys chart =======================
+    id: 50284431932453356
+    label: 
+      label: Kehonosa kehitys chart
+
+    layout: 
+      sequence: 370
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 38
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:38:&APP_SESSION.::&DEBUG.:::'
+        page: 38 # Kehonosa kehitys chart
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Meso =========================================
+    id: 50340332097133253
+    label: 
+      label: Meso
+
+    layout: 
+      sequence: 380
+      parent-entry: Treenikerta raportti # 46949156001297695
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 39
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:39:&APP_SESSION.::&DEBUG.:::'
+        page: 39 # Meso
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Testi kädet sarjat ===========================
+    id: 51952377618634579
+    label: 
+      label: Testi kädet sarjat
+
+    icon: 
+      image/icon-css-classes: fa-area-chart
+
+    layout: 
+      sequence: 390
+      parent-entry: Testeja # 52153695633313431
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 42
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:42:&SESSION.::&DEBUG.::::'
+        page: 42 # testi kädet sarjat
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Test aloita treeni ===========================
+    id: 52116088055619252
+    label: 
+      label: Test aloita treeni
+
+    layout: 
+      sequence: 400
+      parent-entry: Testeja # 52153695633313431
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 43
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.::::'
+        page: 43 # Test aloita treeni
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Testeja ======================================
+    id: 52153695633313431
+    label: 
+      label: Testeja
+
+    layout: 
+      sequence: 410
+
+    is-current: 
+      type: Target Page
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Never
+
+  - # ====== Entry: Aloita treenisi ==============================
+    id: 58268941917327290
+    label: 
+      label: Aloita treenisi
+
+    layout: 
+      sequence: 440
+      parent-entry: Testeja # 52153695633313431
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 45
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:45:&APP_SESSION.::&DEBUG.:::'
+        page: 45 # Treeni päällä
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: meso treenit =================================
+    id: 59661483726232121
+    label: 
+      label: meso treenit
+
+    icon: 
+      image/icon-css-classes: fa-file-o
+
+    layout: 
+      sequence: 450
+      parent-entry: Testeja # 52153695633313431
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 46
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:46:&SESSION.::&DEBUG.::::'
+        page: 46 # meso treenit
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Kädet vertailu ===============================
+    id: 61136177636293749
+    label: 
+      label: Kädet vertailu
+
+    layout: 
+      sequence: 1260
+
+    is-current: 
+      type: Pages
+      pages: 
+      - 57
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:57:&APP_SESSION.::&DEBUG.:::'
+        page: 57 # Kädet vertailu
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+- # ====== List: Desktop Navigation Bar ========================
+  id: 41966288948081619
+  identification: 
+    name: Desktop Navigation Bar
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Settings =====================================
+    id: 8409940866767179
+    label: 
+      label: Settings
+
+    icon: 
+      image/icon-css-classes: fa-gear
+
+    layout: 
+      sequence: 1
+      parent-entry: '&APP_USER.' # 42028838567082465
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:20000:&APP_SESSION.::&DEBUG.:::'
+        page: 20000 # Settings
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    configuration: 
+      build-option: 'Feature: User Settings' # 8403641330767157
+
+  - # ====== Entry: Login ========================================
+    id: 14922724485990774
+    label: 
+      label: Login
+
+    icon: 
+      image/icon-css-classes: fa-key
+
+    layout: 
+      sequence: 2
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:9999:&APP_SESSION.::&DEBUG.:'
+        page: 9999 # Login Page
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Install App ==================================
+    id: 14987686465092897
+    label: 
+      label: Install App
+
+    icon: 
+      image/icon-css-classes: fa-cloud-download
+
+    layout: 
+      sequence: 1
+
+    is-current: 
+      type: Never
+
+    link: 
+      target: '#'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      2.: a-pwaInstall
+
+  - # ====== Entry: &APP_USER. ===================================
+    id: 42028838567082465
+    label: 
+      label: '&APP_USER.'
+
+    icon: 
+      image/icon-css-classes: fa-user
+
+    layout: 
+      sequence: 10
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: '#'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+      2.: has-username
+
+  - # ====== Entry: --- ==========================================
+    id: 42029363192082465
+    label: 
+      label: '---'
+
+    layout: 
+      sequence: 20
+      parent-entry: '&APP_USER.' # 42028838567082465
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: separator
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Sign Out =====================================
+    id: 42029746638082466
+    label: 
+      label: Sign Out
+
+    icon: 
+      image/icon-css-classes: fa-sign-out
+
+    layout: 
+      sequence: 30
+      parent-entry: '&APP_USER.' # 42028838567082465
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: '&LOGOUT_URL.'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+- # ====== List: Page Navigation ===============================
+  id: 42026956495082463
+  identification: 
+    name: Page Navigation
+
+  subscription: 
+    version-number: 1
+
+  source: 
+    type: Static Values
+
+  entries: 
+  - # ====== Entry: Asetukset ====================================
+    id: 8411045163782472
+    label: 
+      label: Asetukset
+
+    icon: 
+      image/icon-css-classes: fa-tools
+
+    layout: 
+      sequence: 80
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:20000:&SESSION.::&DEBUG.::::'
+        page: 20000 # Settings
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Aloita treeni ================================
+    id: 23582774382879887
+    label: 
+      label: Aloita treeni
+
+    icon: 
+      image/icon-css-classes: fa-play
+
+    layout: 
+      sequence: 50
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:29:&SESSION.::&DEBUG.::::'
+        page: 29 # Aloita treeni
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Syötä VoMAX ==================================
+    id: 23583001110881239
+    label: 
+      label: Syötä VoMAX
+
+    icon: 
+      image/icon-css-classes: fa-table-edit
+
+    layout: 
+      sequence: 60
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:50:&SESSION.::&DEBUG.::::'
+        page: 50 # VoMAXs
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Expression
+      language: PL/SQL
+      pl/sql-expression: ":app_user = 'LARI'"
+
+  - # ====== Entry: Syötä cm & kg ================================
+    id: 42027747221082463
+    label: 
+      label: Syötä cm & kg
+
+    icon: 
+      image/icon-css-classes: fa-table-edit
+
+    layout: 
+      sequence: 30
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:9:&SESSION.::&DEBUG.::::'
+        page: 9 # Numerot
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+  - # ====== Entry: Aloita treeni2 ===============================
+    id: 42028179685082464
+    label: 
+      label: Aloita treeni2
+
+    icon: 
+      image/icon-css-classes: fa-table
+
+    layout: 
+      sequence: 40
+
+    is-current: 
+      type: Target Page
+
+    link: 
+      target: 'https://spz1xen6628ne0v-miracle.adb.eu-frankfurt-1.oraclecloudapps.com/ords/r/apexi/a1196/treenit?session=&SESSION.'
+
+    click-counting: 
+      count-clicks: false
+
+    user-defined-attributes: 
+      translatable: false
+
+    server-side-condition: 
+      type: Never
+

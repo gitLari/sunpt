@@ -1,0 +1,439 @@
+---
+# ====== Page: Katso treeni ==================================
+id: 37
+identification: 
+  name: Katso treeni
+  alias: KATSO-TREENI
+  title: Katso treeni
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+  resizable: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Katso treeni ================================
+  id: 49923884608356048
+  identification: 
+    name: Katso treeni
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select TREENI_ID,
+             LIIKE_ID,
+             ID,
+             RIR,
+             SARJAKUVAUS,
+             SARJAT,
+             TOISTOT,
+             JARJESTYS
+        from TREENILIIKE
+       where treeni_id = :p37_treeni_id
+       order by jarjestys
+    page-items-to-submit: 
+    - P37_TREENI_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--hideHeader js-addHiddenHeadingRoleDesc
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 50
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--stretch
+      - t-Report--staticRowColors
+      - t-Report--rowHighlight
+      - t-Report--inline
+      - t-Report--hideNoPagination
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 500
+
+    messages: 
+      when-no-data-found: no data found
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: TREENI_ID ===================================
+    id: 49164996596350726
+    identification: 
+      column-name: TREENI_ID
+      type: Hidden
+
+    layout: 
+      sequence: 10
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LIIKE_ID ====================================
+    id: 49165013596350727
+    identification: 
+      column-name: LIIKE_ID
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Liike Id
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: RIR =========================================
+    id: 49165132968350728
+    identification: 
+      column-name: RIR
+      type: Plain Text
+
+    heading: 
+      heading: Rir
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: SARJAKUVAUS =================================
+    id: 49165255100350729
+    identification: 
+      column-name: SARJAKUVAUS
+      type: Plain Text
+
+    heading: 
+      heading: Sarjakuvaus
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: SARJAT ======================================
+    id: 49165312336350730
+    identification: 
+      column-name: SARJAT
+      type: Hidden
+
+    layout: 
+      sequence: 50
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 49165416229350731
+    identification: 
+      column-name: TOISTOT
+      type: Plain Text
+
+    heading: 
+      heading: Toistot
+      alignment: center
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: JARJESTYS ===================================
+    id: 49165594849350732
+    identification: 
+      column-name: JARJESTYS
+      type: Hidden
+
+    layout: 
+      sequence: 70
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: ID ==========================================
+    id: 49924556916356236
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    layout: 
+      sequence: 0
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+page-items: 
+- # ====== Page Item: P37_TREENI_ID ============================
+  id: 49165680818350733
+  identification: 
+    name: P37_TREENI_ID
+    type: Select List
+
+  label: 
+    label: Treeni
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Katso treeni # 49923884608356048
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: TREENI_NIMI_LOV # 45789437350207699
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Item
+    item: P29_TREENI
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click ===============================
+  id: 51286908293067038
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P37_TREENI_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 51287040489067039
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Katso treeni # 49923884608356048
+
+    execution: 
+      sequence: 10
+      event: Click # 51286908293067038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

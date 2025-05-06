@@ -1,0 +1,1242 @@
+---
+# ====== Page: Laske =========================================
+id: 52
+identification: 
+  name: Laske
+  alias: LASKE
+  title: Laske
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+  resizable: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: New =========================================
+  id: 31578222742095205
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: New =========================================
+  id: 31582556656095248
+  identification: 
+    name: New
+    type: Static Content
+
+  source: 
+    html-code: |
+      Body Fat Categories Table<bR>
+      <bR>			
+      
+      Category				Men (% fat)<bR>
+      Essential Fat			2%-5%<bR>
+      Athletic				6%-13%<bR>
+      Fit			            14%-17%<bR>
+      Acceptable				18%-25%<bR>
+      Obese				    26% +<bR>
+      <br>
+      Category		Women (% fat)<bR>
+      Essential Fat	10%-13%		<bR>
+      Athletic		14%-20%		<bR>
+      Fit		        21%-24%		<bR>
+      Acceptable		25%-31%		<bR>
+      Obese		    32% +		<bR>
+      <br>
+      https://www.bizcalcs.com/body-fat-navy/
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P52_PAINO ================================
+  id: 31578321294095206
+  identification: 
+    name: P52_PAINO
+    type: Number Field
+
+  label: 
+    label: Paino
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 10
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      select max(nvl(paino_omron, paino)) from PAINO
+      where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO
+      where  lower(user_id) = lower(:app_user)
+      )
+      and lower(user_id) = lower(:app_user)
+       
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_CM ===================================
+  id: 31578470045095207
+  identification: 
+    name: P52_CM
+    type: Number Field
+
+  label: 
+    label: Cm
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      select max(vatsa) from PAINO
+      where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO
+      where  lower(user_id) = lower(:app_user))
+      and lower(user_id) = lower(:app_user)
+       
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_KAULA ================================
+  id: 31578556967095208
+  identification: 
+    name: P52_KAULA
+    type: Text Field
+
+  label: 
+    label: Kaula
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      select max(kaula) from PAINO
+      where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO where kaula is not null
+                      and lower(user_id) = lower(:app_user))
+      and lower(user_id) = lower(:app_user) 
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_RASVA_PROSSA =========================
+  id: 31578612976095209
+  identification: 
+    name: P52_RASVA_PROSSA
+    type: Text Field
+
+  label: 
+    label: Rasva %
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_RASVA ================================
+  id: 31578773426095210
+  identification: 
+    name: P52_RASVA
+    type: Text Field
+
+  label: 
+    label: Rasvat
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_LIHASMASSA ===========================
+  id: 31578814066095211
+  identification: 
+    name: P52_LIHASMASSA
+    type: Text Field
+
+  label: 
+    label: Lihasmassa
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_RASVA_OMRON ==========================
+  id: 31926679385521909
+  identification: 
+    name: P52_RASVA_OMRON
+    type: Text Field
+
+  label: 
+    label: Rasva (Omron) %
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: New # 31578222742095205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      
+      select max(nvl(fat,31.6)) from PAINO
+      where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO
+      where  lower(user_id) = lower(:app_user)
+      )
+      and lower(user_id) = lower(:app_user)
+       
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: THAI ========================================
+  id: 31580087562095223
+  identification: 
+    button-name: THAI
+    label: Thai
+
+  layout: 
+    sequence: 80
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: WEST ========================================
+  id: 31580301162095226
+  identification: 
+    button-name: WEST
+    label: West
+
+  layout: 
+    sequence: 90
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: 2023 ========================================
+  id: 31581060767095233
+  identification: 
+    button-name: 2023
+    label: 2023
+
+  layout: 
+    sequence: 100
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: 2024 ========================================
+  id: 31581307161095236
+  identification: 
+    button-name: 2024
+    label: 28.2.2024
+
+  layout: 
+    sequence: 110
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Palauta =====================================
+  id: 31582645755095249
+  identification: 
+    button-name: Palauta
+    label: Palauta
+
+  layout: 
+    sequence: 130
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: 2024_3 ======================================
+  id: 31926818246521911
+  identification: 
+    button-name: 2024_3
+    label: Vappu
+
+  layout: 
+    sequence: 120
+    region: New # 31578222742095205
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: kg ==================================
+  id: 31579330723095216
+  identification: 
+    name: kg
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P52_PAINO
+    - P52_CM
+    - P52_KAULA
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31579478164095217
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        select        round 
+        (
+                86.01 * log(10,(round(to_number(:P52_CM)/2.54,1)-round(to_number(:P52_KAULA)/2.54,1))) - 70.041*
+                 log(10,(round(181/2.54,1))) +36.86
+                 ,1)
+               
+             into :P52_RASVA_PROSSA from dual
+             
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_KAULA
+      items-to-return: 
+      - P52_RASVA_PROSSA
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: kg # 31579330723095216
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31579547144095218
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        select   round (    :P52_PAINO *     
+                                (
+                86.01 * log(10,(round(to_number(:P52_CM)/2.54,1)-round(to_number(:P52_KAULA)/2.54,1))) - 70.041*
+                 log(10,(round(181/2.54,1))) +36.86
+                                )/100,1)
+             into :P52_RASVA from dual
+             
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_KAULA
+      items-to-return: 
+      - P52_RASVA
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: kg # 31579330723095216
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31579641940095219
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        select    round(:P52_PAINO - (:P52_PAINO *    round (
+                86.01 * log(10,(round(to_number(:P52_CM)/2.54,1)-round(to_number(:P52_KAULA)/2.54,1))) - 70.041*
+                 log(10,(round(181/2.54,1))) +36.86,1)/100),1)
+             into :P52_LIHASMASSA from dual
+             
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_KAULA
+      items-to-return: 
+      - P52_LIHASMASSA
+      suppress-change-event: false
+
+    execution: 
+      sequence: 50
+      event: kg # 31579330723095216
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New =================================
+  id: 31580117126095224
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: THAI # 31580087562095223
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31580234247095225
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            paivia number;
+        
+        begin
+            select to_date('04.11.2023','dd.mm.yyyy') -trunc(sysdate) into paivia from dual;
+        :P52_PAINO  := :P52_PAINO - (paivia * .11);
+        
+        :P52_CM := :P52_CM - (paivia * .11);
+        
+        :P52_RASVA_OMRON := round(
+        (    (:P52_RASVA_OMRON * :p52_paino /100) - (paivia * .0722) ) / :P52_PAINO *100
+            ,1);
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New # 31580117126095224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: WestDA ==============================
+  id: 31580510342095228
+  identification: 
+    name: WestDA
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: WEST # 31580301162095226
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31580499367095227
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            paivia number;
+        
+        begin
+            select to_date('22.09.2023','dd.mm.yyyy') -trunc(sysdate) into paivia from dual;
+        :P52_PAINO  := :P52_PAINO - (paivia * .11);
+        
+        :P52_CM := :P52_CM - (paivia * .11);
+        
+        :P52_RASVA_OMRON := round(
+        (    (:P52_RASVA_OMRON * :p52_paino /100) - (paivia * .0722) ) / :P52_PAINO *100
+            ,1);
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: WestDA # 31580510342095228
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Y2023DA =============================
+  id: 31581162474095234
+  identification: 
+    name: Y2023DA
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: 2023 # 31581060767095233
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31581259044095235
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            paivia number;
+        
+        begin
+            select to_date('31.12.2023','dd.mm.yyyy') -trunc(sysdate) into paivia from dual;
+        :P52_PAINO  := :P52_PAINO - (paivia * .11);
+        
+        :P52_CM := :P52_CM - (paivia * .11);
+        
+        :P52_RASVA_OMRON := round(
+        (    (:P52_RASVA_OMRON * :p52_paino /100) - (paivia * .0722) ) / :P52_PAINO *100
+            ,1);
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Y2023DA # 31581162474095234
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: 2024DA ==============================
+  id: 31581652697095239
+  identification: 
+    name: 2024DA
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: 2024 # 31581307161095236
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31581542563095238
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            paivia number;
+        
+        begin
+            select to_date('28.02.2024','dd.mm.yyyy') -trunc(sysdate) into paivia from dual;
+        :P52_PAINO  := :P52_PAINO - (paivia * .11);
+        
+        :P52_CM := :P52_CM - (paivia * .11);
+        
+        :P52_RASVA_OMRON := round(
+        (    (:P52_RASVA_OMRON * :p52_paino /100) - (paivia * .0722) ) / :P52_PAINO *100
+            ,1);
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: 2024DA # 31581652697095239
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: PalautaDA ===========================
+  id: 31582744426095250
+  identification: 
+    name: PalautaDA
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Palauta # 31582645755095249
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31925977814521902
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |2
+         begin
+        select max(paino_omron) into :P52_PAINO from PAINO 
+        where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO where lower(user_id) = lower(:app_user))
+        and lower(user_id) = lower(:app_user);
+        
+         select max(vatsa) into :P52_CM from PAINO 
+        where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO where lower(user_id) = lower(:app_user))
+        and lower(user_id) = lower(:app_user);
+        
+        
+        select max(kaula) into :P52_KAULA from PAINO
+        where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO where kaula is not null
+                        and lower(user_id) = lower(:app_user))
+        and lower(user_id) = lower(:app_user) ;
+        
+        select max(nvl(fat,31.6)) into :P52_RASVA_OMRON from PAINO
+        where trunc(pvm_) = (select trunc(max(pvm_)) from PAINO
+        where  lower(user_id) = lower(:app_user)
+        )
+        and lower(user_id) = lower(:app_user);
+         
+         end;
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_KAULA
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: PalautaDA # 31582744426095250
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New_1 ===============================
+  id: 31926915998521912
+  identification: 
+    name: New_1
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: 2024_3 # 31926818246521911
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 31927096918521913
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            paivia number;
+        
+        begin
+            select to_date('30.04.2024','dd.mm.yyyy') -trunc(sysdate) into paivia from dual;
+        :P52_PAINO  := :P52_PAINO - (paivia * .11);
+        
+        :P52_CM := :P52_CM - (paivia * .11);
+        
+        :P52_RASVA_OMRON := round(
+        (    (:P52_RASVA_OMRON * :p52_paino /100) - (paivia * .0722) ) / :P52_PAINO *100
+            ,1);
+        end;
+      items-to-submit: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      items-to-return: 
+      - P52_PAINO
+      - P52_CM
+      - P52_RASVA_OMRON
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New_1 # 31926915998521912
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P52_RASVA_PROSSA =======================
+  id: 31578925399095212
+  identification: 
+    item-name: P52_RASVA_PROSSA
+
+  execution: 
+    sequence: 10
+    point: After Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      round( 
+              (
+              86.01 * log(10,(round(to_number(:P52_CM)/2.54)-round(to_number(:P52_KAULA)/2.54))) - 70.041*
+               log(10,(round(181/2.54))) +36.86
+          ) ,1) 
+
+- # ====== Computation: P52_RASVA ==============================
+  id: 31579055694095213
+  identification: 
+    item-name: P52_RASVA
+
+  execution: 
+    sequence: 30
+    point: After Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      round(to_number(:P52_PAINO) * 
+              (
+              86.01 * log(10,(round(to_number(:P52_CM)/2.54)-round(to_number(:P52_KAULA)/2.54))) - 70.041*
+               log(10,(round(181/2.54))) +36.86
+          ) /100,1) 
+
+- # ====== Computation: P52_LIHASMASSA =========================
+  id: 31579152628095214
+  identification: 
+    item-name: P52_LIHASMASSA
+
+  execution: 
+    sequence: 40
+    point: After Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      :P52_PAINO - round(to_number(:P52_PAINO) * 
+              (
+              86.01 * log(10,(round(to_number(:P52_CM)/2.54)-round(to_number(:P52_KAULA)/2.54))) - 70.041*
+               log(10,(round(181/2.54))) +36.86
+          ) /100,1) 
+

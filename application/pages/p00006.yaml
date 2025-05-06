@@ -1,0 +1,2314 @@
+---
+# ====== Page: chartti =======================================
+id: 6
+identification: 
+  name: chartti
+  alias: CHARTTI
+  title: chartti
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Kg :t keskiarvo/ kk (US) ====================
+  id: 17438417672657135
+  identification: 
+    name: 'Kg :t keskiarvo/ kk (US)'
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17438574953657136
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Rasva % ka. =================================
+      id: 17438671622657137
+      identification: 
+        name: Rasva % ka.
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'MON') week, --pvm_ week, -- 
+          avg( --PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(vatsa/2.54)-round(43/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) --/100 
+          as us_fat
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) and vatsa is not null 
+              -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+                and trunc(pvm_) >= to_date('01.03.2022','dd.mm.yyyy')
+                group by  trunc(PVM_, 'MON') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_FAT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+      configuration: 
+        build-option: Commented out # 28537406048625948
+
+    - # ====== Series: Rasva kg  ka. ===============================
+      id: 17439075214657141
+      identification: 
+        name: Rasva kg  ka.
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'MON') week, --pvm_ week, -- 
+          avg( nvl(PAINO_OMRON,paino) * 
+              (
+              86.01 * log(10,(round(vatsa/2.54)-round(43/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100 
+          as us_muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) and vatsa is not null 
+                and trunc(pvm_) >= to_date('01.05.2023','dd.mm.yyyy')
+                -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             group by  trunc(PVM_, 'MON') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Lihas kg  ka. ===============================
+      id: 17439108035657142
+      identification: 
+        name: Lihas kg  ka.
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'MON') week, --pvm_ week, -- 
+          avg( nvl(PAINO_OMRON,paino) - (
+               nvl(PAINO_OMRON,paino) * 
+              (
+              86.01 * log(10,(round(vatsa/2.54)-round(43/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100 )
+          as us_muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) and vatsa is not null 
+             --and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             and trunc(pvm_) >= to_date('01.05.2023','dd.mm.yyyy')
+             group by  trunc(PVM_, 'MON') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 17438886908657139
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: DateTime - Short
+        pattern: MMMd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 17438925768657140
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Dieetin kg:t / pv (Omron) ===================
+  id: 17439550173657146
+  identification: 
+    name: 'Dieetin kg:t / pv (Omron)'
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17439651058657147
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: lean kg  avg ================================
+      id: 17439734053657148
+      identification: 
+        name: lean kg  avg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           pvm_, --trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) - (
+               avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100 )*/
+          (paino_omron - paino_omron * fat /100) 
+          as us_muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) 
+             and fat  is not null --and vatsa is not null 
+             --and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+             --group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: US_MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: fat kg  avg =================================
+      id: 17439893620657149
+      identification: 
+        name: fat kg  avg
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           pvm_, --trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100*/
+          paino_omron * fat /100
+          as us_fat
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+                and fat is not null
+                -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             --group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: US_FAT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: fat % avg ===================================
+      id: 17439904773657150
+      identification: 
+        name: fat % avg
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+          pvm_,  trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( --PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) --/100*/ 
+          fat as fatper
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and fat  is not null
+              -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+               -- group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: FATPER
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 25291895044212101
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: DateTime - Short
+        pattern: MMMd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 25291909806212102
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Dieetin kg:t keskiarvo / vko (Omron) ========
+  id: 35413623519103307
+  identification: 
+    name: 'Dieetin kg:t keskiarvo / vko (Omron)'
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35413704065103308
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: lean kg  avg ================================
+      id: 35413866299103309
+      identification: 
+        name: lean kg  avg
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) - (
+               avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100 )*/
+          avg (paino_omron - paino_omron * fat /100) 
+          as us_muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) 
+             and fat  is not null --and vatsa is not null 
+             --and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+             group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: fat kg  avg =================================
+      id: 35413983614103310
+      identification: 
+        name: fat kg  avg
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100*/
+          avg(paino_omron * fat /100)
+          as us_fat
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+                and fat is not null
+                -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_FAT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: fat % avg ===================================
+      id: 35414041862103311
+      identification: 
+        name: fat % avg
+
+      execution: 
+        sequence: 50
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+          trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( --PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) --/100*/ 
+          avg(fat) as fatper
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and fat  is not null
+              -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+               group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: FATPER
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: muscle Omron ================================
+      id: 35417286133103343
+      identification: 
+        name: muscle Omron
+
+      execution: 
+        sequence: 40
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'IW') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100*/
+          avg(paino_omron * muscle /100)
+          as muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+                and muscle is not null
+                -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             group by  trunc(PVM_, 'IW') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 35414197391103312
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: DateTime - Short
+        pattern: MMMd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 35414204475103313
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Dieetin kg:t / kk (Omron) ===================
+  id: 35415577978103326
+  identification: 
+    name: 'Dieetin kg:t / kk (Omron)'
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35415607593103327
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: lean kg  avg ================================
+      id: 35415751027103328
+      identification: 
+        name: lean kg  avg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'MON') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) - (
+               avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100 )*/
+          avg(paino_omron - paino_omron * fat /100) 
+          as us_muscle
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) 
+             and fat  is not null --and vatsa is not null 
+             --and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+             group by  trunc(PVM_, 'MON') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_MUSCLE
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: fat kg  avg =================================
+      id: 35415853466103329
+      identification: 
+        name: fat kg  avg
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+           trunc(PVM_, 'mon') week, --pvm_ week, -- 
+          /*( avg(nvl(PAINO_OMRON,paino)) * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) /100*/
+          avg(paino_omron * fat /100)
+          as us_fat
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+                and fat is not null
+                -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+             group by  trunc(PVM_, 'mon') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: US_FAT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: fat % avg ===================================
+      id: 35415952281103330
+      identification: 
+        name: fat % avg
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+          trunc(PVM_, 'mon') week, --pvm_ week, -- 
+          /*( --PAINO_OMRON * 
+              (
+              86.01 * log(10,(round(avg(vatsa)/2.54)-round(42.7/2.54))) - 70.041* log(10,(round(181/2.54))) +36.86
+              )
+          ) --/100*/ 
+          avg(fat) as fatper
+          
+            from PAINO
+          
+          
+             where upper(user_id) = upper(:app_user) --and vatsa is not null 
+                and fat  is not null
+              -- and trunc(pvm_) >= to_date('01.06.2022','dd.mm.yyyy')
+                and trunc(pvm_) >= to_date('29.05.2023','dd.mm.yyyy')
+               group by  trunc(PVM_, 'mon') 
+             order by 1
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: WEEK
+        value: FATPER
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+      configuration: 
+        build-option: Commented out # 28537406048625948
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 35416031733103331
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: DateTime - Short
+        pattern: MMMd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 35416187923103332
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: paino avg KK ================================
+  id: 37919976282899025
+  identification: 
+    name: paino avg KK
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 18961916328466141
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Series 1 ====================================
+      id: 18963644682466144
+      identification: 
+        name: Series 1
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select avg(paino) painoo, TRUNC(pvm_, 'MON') viikko --TRUNC(pvm_, 'WW') viikko 
+          from paino  
+          where pvm_ > sysdate-360 and user_id = lower(:app_user)
+          GROUP BY TRUNC(pvm_, 'MON')
+          order by TRUNC(pvm_, 'MON')
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: PAINOO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Series 1_1 ==================================
+      id: 41479875397253835
+      identification: 
+        name: Series 1_1
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select avg(vatsa) masuu, TRUNC(pvm_, 'MON') viikko from paino  
+          where pvm_ > sysdate-360  and user_id = lower(:app_user)
+          GROUP BY TRUNC(pvm_, 'MON');
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: VIIKKO
+        value: MASUU
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 18962455145466143
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: DateTime - Short
+        pattern: MMMd
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 18963099514466143
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Cm & kg keskiarvo / kk  =====================
+  id: 42032053971110208
+  identification: 
+    name: 'Cm & kg keskiarvo / kk '
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 42032175315110209
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: paino  ======================================
+      id: 42032219155110210
+      identification: 
+        name: 'paino '
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(nvl (paino_omron, PAINO)) paino,
+                      to_char(pvm_,'YY/MM')
+            from PAINO
+            where  lower(user_id) = lower(:app_user)
+          group by to_char(pvm_,'YY/MM')
+          order by to_char(pvm_,'YY/MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Vatsa =======================================
+      id: 42032511521110213
+      identification: 
+        name: Vatsa
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(vatsa) vatsa,
+                      to_char(pvm_,'YY/MM')
+            from PAINO
+            where  lower(user_id) = lower(:app_user)
+          group by to_char(pvm_,'YY/MM')
+          order by to_char(pvm_,'YY/MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: VATSA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Straight
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: y =============================================
+      id: 42032310020110211
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: false
+
+    - # ====== Axis: x =============================================
+      id: 42032463091110212
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 2
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+- # ====== Region: Kg cm / pv ==================================
+  id: 42039141955123958
+  identification: 
+    name: Kg cm / pv
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 42039566578123958
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: false
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: Masu ========================================
+      id: 42032613146110214
+      identification: 
+        name: Masu
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                  nvl(vatsa ,
+                   (select vatsa from paino where pvm_ = (select max(pvm_) from paino 
+                   where pvm_ < p.pvm_ and vatsa is not null and lower(user_id) = lower(:app_user))
+                   and lower(user_id) = lower(:app_user)
+                   ))
+                  vatsaa, PVM_, id
+            from PAINO p
+            where  lower(user_id) = lower(:app_user) and vatsa is not null
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: VATSAA
+        label-tooltip: PVM_
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Curved
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Paino =======================================
+      id: 42041261637123959
+      identification: 
+        name: Paino
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 nvl(paino_omron,PAINO) paino,
+                 PVM_
+            from PAINO
+          where (paino is not null or paino_omron is not null)
+          and lower(user_id) = lower(:app_user) and vatsa is not null
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: PAINO
+        label-tooltip: PVM_
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 42040043004123958
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 42040612194123959
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Hauis / pvm =================================
+  id: 44559244647544803
+  identification: 
+    name: Hauis / pvm
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 44559340833544804
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: vasen =======================================
+      id: 44559495756544805
+      identification: 
+        name: vasen
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                
+                 VASEN,
+                 PVM_
+            from PAINO
+          where vasen is not null and oikea is not null
+          and lower(user_id) = lower(:app_user)
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: VASEN
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: oikea =======================================
+      id: 44559734838544808
+      identification: 
+        name: oikea
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                
+                  OIKEA,
+                 PVM_
+            from PAINO
+          where vasen is not null and oikea is not null
+          and lower(user_id) = lower(:app_user)
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM_
+        value: OIKEA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 44559589471544806
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 44559642423544807
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: valitse =====================================
+  id: 44723205250404201
+  identification: 
+    name: valitse
+    type: Region Display Selector
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      mode: View Single Region
+      display-region-icons: false
+      include-'show-all': true
+      remember-selection: By Session
+
+- # ====== Region: Hauis ka / kk ===============================
+  id: 44723315840404202
+  identification: 
+    name: Hauis ka / kk
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 44723439392404203
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: vasen =======================================
+      id: 44723559778404204
+      identification: 
+        name: vasen
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(VASEN),
+                 to_char(PVM_,'YY/MM')
+            from PAINO
+          where vasen is not null and lower(user_id) = lower(:app_user)
+          group by to_char(PVM_,'YY/MM')
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: AVG(VASEN)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: oikea =======================================
+      id: 44723646489404205
+      identification: 
+        name: oikea
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(oikea),
+                 to_char(PVM_,'YY/MM')
+            from PAINO
+          where oikea is not null and lower(user_id) = lower(:app_user)
+          group by to_char(PVM_,'YY/MM')
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: AVG(OIKEA)
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 44723763537404206
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 44723801365404207
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+

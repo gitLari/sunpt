@@ -1,0 +1,398 @@
+---
+# ====== Page: Home ==========================================
+id: 1
+identification: 
+  name: Home
+  alias: HOME
+  title: Sports
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Is Public
+  deep-linking: Application Default
+  page-access-protection: Unrestricted
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-meta-tags: false
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Calendar ====================================
+  id: 8985598246245303
+  identification: 
+    name: Calendar
+    type: Calendar
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+            distinct (trunc(tk.pvm)), t.kuvaus, tk.treeni_id,
+            case when t.henkilo_id = 21 then 'apex-cal-brown' else 'apex-cal-green' end css_class
+            from treenikerta tk, treeni t where
+            t.id = tk.treeni_id and
+            tk.henkilo_id =:p1_henkilo_id 
+            --and trunc(pvm, 'MM') > trunc(sysdate-1,'YY')
+            
+    page-items-to-submit: 
+    - P1_HENKILO_ID
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P1_HENKILO_ID
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      display-column: KUVAUS
+      start-date-column: (TRUNC(TK.PVM))
+      event-sorting: Automatic
+      show-time: false
+      multiple-line-events: true
+      show-tooltip: true
+      additional-calendar-views: 'list:navigation'
+      create-link: 
+        url: 'f?p=&APP_ID.:31:&SESSION.::&DEBUG.::P31_TREENI:'
+        page: 31 # Treenikerta
+        values: 
+
+      view-/-edit-link: 
+        url: 'f?p=&APP_ID.:31:&SESSION.::&DEBUG.::P31_TREENI,P31_PVM:&TREENI_ID.,&"(TRUNC(TK.PVM))".'
+        page: 31 # Treenikerta
+        values: 
+          p31_treeni: '&TREENI_ID.'
+          p31_pvm: '&"(TRUNC(TK.PVM))".'
+
+      maximum-events-/-day: 10
+      show-weekend: true
+      css-class: CSS_CLASS
+
+    performance: 
+      lazy-loading: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function ( pOptions) {
+            //pOptions.titleFormat      = "[Conference Schedule]";                                // custom title
+           // pOptions.slotMinTime      = "07:00:00";                                             // hide slots before minTime
+            //pOptions.slotMaxTime      = "18:00:00";                                             // hide slots after maxTime
+            //pOptions.dayHeaderFormat  = { weekday: 'short', month: 'numeric', day: 'numeric' }; // week view column headings
+            //pOptions.slotDuration     = "00:15:00";                                             // custom slot duration
+            pOptions.weekNumbers      = true;                                                   // show week numbers
+            pOptions.weekText         = "";                                    
+            return pOptions;
+        }
+
+- # ====== Region: Note ========================================
+  id: 23571515618714304
+  identification: 
+    name: Note
+    type: Static Content
+
+  source: 
+    html-code: <h2>No new users accepted at the moment</h2>
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: User is the Public User (user has not authenticated)
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Sports ======================================
+  id: 41978013722081711
+  identification: 
+    name: Sports
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Hero
+    template-options: 
+    - '#DEFAULT#'
+    icon: app-icon
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Page Navigation =============================
+  id: 42028400952082464
+  identification: 
+    name: Page Navigation
+    type: List
+
+  source: 
+    list: Page Navigation # 42026956495082463
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    appearance: 
+      list-template: Cards
+      template-options: 
+      - '#DEFAULT#'
+      - u-colors
+      - t-Cards--featured t-Cards--block force-fa-lg
+      - t-Cards--displayIcons
+      - t-Cards--4cols
+      - t-Cards--hideBody
+      - t-Cards--animColorFill
+
+- # ====== Region: Calendar2open ===============================
+  id: 46982109111862503
+  identification: 
+    name: Calendar2open
+    type: Calendar
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select 
+            distinct (trunc(tk.pvm)), t.kuvaus, tk.treeni_id ,
+            case t.henkilo_id  
+                  when 21 then 'apex-cal-brown' 
+                  when 3 then 'apex-cal-lime'
+                  else 'apex-cal-green' end css_class
+            from treenikerta tk, treeni t where
+            t.id = tk.treeni_id 
+           -- tk.henkilo_id =:p1_henkilo_id 
+         and trunc(pvm, 'MM') > trunc(sysdate-45,'MM')
+            
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P1_HENKILO_ID
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      display-column: KUVAUS
+      start-date-column: (TRUNC(TK.PVM))
+      event-sorting: Automatic
+      show-time: false
+      multiple-line-events: true
+      show-tooltip: true
+      additional-calendar-views: 'list:navigation'
+      maximum-events-/-day: 10
+      show-weekend: true
+      css-class: CSS_CLASS
+
+    performance: 
+      lazy-loading: false
+
+page-items: 
+- # ====== Page Item: P1_HENKILO_ID ============================
+  id: 23571685221714305
+  identification: 
+    name: P1_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Note # 23571515618714304
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+computations: 
+- # ====== Computation: P1_HENKILO_ID ==========================
+  id: 23571700080714306
+  identification: 
+    item-name: P1_HENKILO_ID
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo
+      where lower(nimi) = lower(:app_user)
+

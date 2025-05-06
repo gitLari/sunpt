@@ -1,0 +1,2554 @@
+---
+# ====== Page: Yleis raportti ================================
+id: 35
+identification: 
+  name: Yleis raportti
+  alias: YLEIS-RAPORTTI
+  title: Yleis raportti
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Sarjat lkm chart ============================
+  id: 49162618333350703
+  identification: 
+    name: Sarjat lkm chart
+    type: Chart
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select l.kehonosa,
+              to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'WW') viikko,
+              count(t.SARJANUMERO) sarjoja
+      
+      
+        from TREENIKERTA t, liike l
+       where henkilo_id = :P35_HENKILO_ID 
+            AND (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+            AND  t.liike = l.id --and t.rir is not null
+      group by l.kehonosa,  to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'WW') 
+      
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_SUNDAY
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 49163114698350708
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: New =========================================
+      id: 49163294597350709
+      identification: 
+        name: New
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select * from 
+              (select l.kehonosa,
+                  to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'WW') viikko,
+                  t.SARJANUMERO sarjoja
+          
+              from TREENIKERTA t, liike l
+              where henkilo_id = :P35_HENKILO_ID 
+                AND (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+                AND  t.liike = l.id --and t.rir is not null
+              )
+          pivot 
+          (
+             count(sarjoja)
+             for kehonosa in ('selkä','rinta','hauis','ojentaja','sivu olkapää')
+          )
+          order by viikko 
+          
+          
+        page-items-to-submit: 
+        - P35_TREENI
+        - P35_SUNDAY
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: VIIKKO
+        label: VIIKKO
+        value: "'selkä'"
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 49163308808350710
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 49163422834350711
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: 2022 kehitys % ==============================
+  id: 50130384002109803
+  identification: 
+    name: 2022 kehitys %
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with kysely as (select 
+             liike,   PVM, 
+          max (
+              case when l.kehonpainoliike = 1 then
+                  (((nvl(rir,0)+toistot)*(h.paino+nvl(kg,0))*.0333)+(h.paino+kg)) 
+                  else 
+                  (((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg)             
+                  end ) maxkg
+        from TREENIKERTA t, henkilo h, liike l
+        where (:p35_HENKILO_ID  is null or henkilo_id = :p35_HENKILO_ID)
+        and  (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+         and kg is not null --and rir is not null
+         and h.id = t.henkilo_id and l.id = t.liike
+         --ekaa treeniä ei lasketa
+        and trunc(pvm) > '01-01-2022' and trunc(pvm) < '01-01-2023'
+         group by t.liike,pvm
+         order by pvm
+      )
+      select liike, 
+          round(nvl((max(maxkg) - min(maxkg)) / max(maxkg)*100,0)) 
+          as erotus
+          from kysely
+          where maxkg > 0
+          group by liike
+          order by 2 desc
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 50
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--staticRowColors
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: LIIKE =======================================
+    id: 50130402914109804
+    identification: 
+      column-name: LIIKE
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Liike
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: false
+
+  - # ====== Column: EROTUS ======================================
+    id: 50130521643109805
+    identification: 
+      column-name: EROTUS
+      type: Plain Text
+
+    heading: 
+      heading: Kehitys %
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: '#EROTUS#%'
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: 2023 kehitys % ==============================
+  id: 50131155306109811
+  identification: 
+    name: 2023 kehitys %
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with kysely as (select 
+             liike,   PVM, 
+          max (
+              case when l.kehonpainoliike = 1 then
+                  (((nvl(rir,0)+toistot)*(h.paino+nvl(kg,0))*.0333)+(h.paino+kg)) 
+                  else 
+                  (((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg)             
+                  end ) maxkg
+        from TREENIKERTA t, henkilo h, liike l
+        where (:p35_HENKILO_ID  is null or henkilo_id = :p35_HENKILO_ID)
+        and  (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+         and kg is not null --and rir is not null
+         and h.id = t.henkilo_id and l.id = t.liike
+         --ekaa treeniä ei lasketa
+        and trunc(pvm) > '01-01-2023'
+         group by t.liike,pvm
+         order by pvm
+      )
+      select liike, 
+          round(nvl((max(maxkg) - min(maxkg)) / max(maxkg)*100,0)) 
+          as erotus
+          from kysely
+          where maxkg > 0
+          group by liike
+          order by 2 desc
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 50
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--staticRowColors
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: LIIKE =======================================
+    id: 50131271164109812
+    identification: 
+      column-name: LIIKE
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Liike
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: false
+
+  - # ====== Column: EROTUS ======================================
+    id: 50131363328109813
+    identification: 
+      column-name: EROTUS
+      type: Plain Text
+
+    heading: 
+      heading: Kehitys %
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: '#EROTUS#%'
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Per meso ====================================
+  id: 60573654067061214
+  identification: 
+    name: Per meso
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 60573701043061215
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Horizontal
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: kehonosittain ===============================
+      id: 60573815245061216
+      identification: 
+        name: kehonosittain
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select kl.kehonosa,
+                  to_char(pvm,'YY.WW') viikko,
+                  count(t.SARJANUMERO) sarjoja
+          
+          
+            from TREENIKERTA t, liike l, kehonosa_lookup kl
+           where henkilo_id = :P35_HENKILO_ID 
+                AND (:p35_TREENI  is null or meso_id = (select distinct meso_id from treenikerta where treeni_id = :p35_TREENI))
+                AND  t.liike = l.id --and t.rir is not null
+                and l.kehonosa_id = kl.kehonosa_id
+                --and t.pvm > to_Date('04.04.2023','dd.mm.yyyy') and t.toistot is not null
+          group by kl.kehonosa,  to_char(pvm,'YY.WW') 
+          order by kl.kehonosa, to_char(pvm,'YY.WW')
+          
+        page-items-to-submit: 
+        - P35_TREENI
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: VIIKKO
+        label: KEHONOSA
+        value: SARJOJA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+      performance: 
+        maximum-rows-to-process: 100
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 60573928624061217
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 60574030060061218
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: 2022-> Kehitys % ============================
+  id: 85107552098200433
+  identification: 
+    name: 2022-> Kehitys %
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      with kysely as (select 
+             liike,   PVM, 
+          max (
+              case when l.kehonpainoliike = 1 then
+                  (((nvl(rir,0)+toistot)*(h.paino+nvl(kg,0))*.0333)+(h.paino+kg)) 
+                  else 
+                  (((nvl(rir,0)+toistot)*nvl(kg,0)*.0333)+kg)             
+                  end ) maxkg
+        from TREENIKERTA t, henkilo h, liike l
+        where (:p35_HENKILO_ID  is null or henkilo_id = :p35_HENKILO_ID)
+        and  (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+         and kg is not null --and rir is not null
+         and h.id = t.henkilo_id and l.id = t.liike
+         --ekaa treeniä ei lasketa
+        -- and trunc(pvm) > '01-01-2023'
+         group by t.liike,pvm
+         order by pvm
+      )
+      select liike, 
+          round(nvl((max(maxkg) - min(maxkg)) / max(maxkg)*100,0)) 
+          as erotus
+          from kysely
+          where maxkg > 0
+          group by liike
+          order by 2 desc
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_HENKILO_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 50
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--staticRowColors
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: LIIKE =======================================
+    id: 45806759284251764
+    identification: 
+      column-name: LIIKE
+      type: Plain Text (based on List of Values)
+
+    heading: 
+      heading: Liike
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: false
+
+  - # ====== Column: EROTUS ======================================
+    id: 45807134532251765
+    identification: 
+      column-name: EROTUS
+      type: Plain Text
+
+    heading: 
+      heading: Kehitys %
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    column-formatting: 
+      html-expression: '#EROTUS#%'
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Tonnage =====================================
+  id: 85109822179200456
+  identification: 
+    name: Tonnage
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select l.kehonosa_id,
+              to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW') viikko,
+              --sum(t.toistot*t.kg) voluumi
+      sum (case when l.kehonpainoliike = 1 then
+                  (t.toistot*(h.paino+kg)) 
+                  else 
+                  (t.toistot*t.kg)             
+                  end ) voluumi
+      
+        from TREENIKERTA t, liike l, henkilo h
+       where t.henkilo_id = :P35_HENKILO_ID and t.henkilo_id = h.id
+            AND (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+            AND  t.liike = l.id --and t.rir is not null
+      group by l.kehonosa_id,  to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW')
+      
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_SUNDAY
+
+  layout: 
+    sequence: 130
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 85109913270200457
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 85703950368746563
+      identification: 
+        name: Primary Report
+        alias: 399011
+
+    columns: 
+    - # ====== Column: VIIKKO ======================================
+      id: 45804295508251736
+      identification: 
+        column-name: VIIKKO
+        type: Plain Text
+
+      heading: 
+        heading: Viikko
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: VOLUUMI =====================================
+      id: 45804665530251737
+      identification: 
+        column-name: VOLUUMI
+        type: Plain Text
+
+      heading: 
+        heading: Voluumi
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      column-formatting: 
+        html-expression: '#VOLUUMI#kg'
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: KEHONOSA_ID =================================
+      id: 51287650950067045
+      identification: 
+        column-name: KEHONOSA_ID
+        type: Plain Text (based on List of Values)
+
+      list-of-values: 
+        list-of-values: KEHONOSA_LOV # 51495298061574512
+
+      heading: 
+        heading: Kehonosa
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Use Named List of Values to Filter Exact Match
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Tonnage
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Raportit ====================================
+  id: 85706586380753930
+  identification: 
+    name: Raportit
+    type: Region Display Selector
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      mode: View Single Region
+      display-region-icons: false
+      include-'show-all': true
+      remember-selection: By Session
+
+- # ====== Region: Toistot lkm =================================
+  id: 85707166852753936
+  identification: 
+    name: Toistot lkm
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select l.kehonosa_id,
+              to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW') viikko,
+              sum(t.toistot) toistoja
+      
+      
+        from TREENIKERTA t, liike l
+       where henkilo_id = :P35_HENKILO_ID 
+            AND (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+            AND  t.liike = l.id --and t.rir is not null
+      group by l.kehonosa_id,  to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW')
+      
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_SUNDAY
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 85707243369753937
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: Row Ranges X to Y
+      display-position: Bottom - Right
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 85906919993975916
+      identification: 
+        name: Primary Report
+        alias: 401041
+
+    columns: 
+    - # ====== Column: VIIKKO ======================================
+      id: 45812517146251786
+      identification: 
+        column-name: VIIKKO
+        type: Plain Text
+
+      heading: 
+        heading: Viikko
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: TOISTOJA ====================================
+      id: 45812985958251787
+      identification: 
+        column-name: TOISTOJA
+        type: Plain Text
+
+      heading: 
+        heading: Toistoja
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: KEHONOSA_ID =================================
+      id: 51287591964067044
+      identification: 
+        column-name: KEHONOSA_ID
+        type: Plain Text (based on List of Values)
+
+      list-of-values: 
+        list-of-values: KEHONOSA_LOV # 51495298061574512
+
+      heading: 
+        heading: Kehonosa
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Use Named List of Values to Filter Exact Match
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Toistot lkm
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+- # ====== Region: Toteutunut sarjoja viikkotasolla ============
+  id: 102754433252305128
+  identification: 
+    name: Toteutunut sarjoja viikkotasolla
+    type: Chart
+
+  source: 
+    location: None
+    page-items-to-submit: 
+    - P35_MESO_ID
+    - P35_HENKILO_ID
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 51470071630238120
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: kysely ======================================
+      id: 51471687384238123
+      identification: 
+        name: kysely
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |2
+           select   
+           kehonosa, -- meso_id, block,, block_treeni_nro, --tk.treeni_id,
+           to_char(pvm,'WW') viikko,
+            count(kehonosa) 
+                          from TREENIKERTA TK, LIIKE L
+                              WHERE MESO_ID = :P35_MESO_ID AND TK.LIIKE = L.ID 
+                              AND tk.henkilo_id = :P35_HENKILO_ID and deload is null
+              group by  kehonosa, to_char(pvm,'WW')
+              order by 1,2,3
+          
+        page-items-to-submit: 
+        - P35_MESO_ID
+        - P35_HENKILO_ID
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        series-name: VIIKKO
+        label: KEHONOSA
+        value: COUNT(KEHONOSA)
+        custom-tooltip: VIIKKO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 51470483308238121
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 51471050683238122
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 0
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Log
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: &P35_OTSIKKO. ===============================
+  id: 157752922505457411
+  identification: 
+    name: '&P35_OTSIKKO.'
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Sarjat lkm ==================================
+  id: 157754711250457429
+  identification: 
+    name: Sarjat lkm
+    type: Interactive Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select l.kehonosa_id,
+              to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW') viikko,
+              count(t.SARJANUMERO) sarjoja
+      
+      
+        from TREENIKERTA t, liike l
+       where henkilo_id = :P35_HENKILO_ID 
+            AND (:p35_TREENI  is null or treeni_id = :p35_TREENI)
+            AND  t.liike = l.id --and t.rir is not null
+      group by l.kehonosa_id,  to_char(pvm+nvl(case when :p35_sunday = 'Y' then 1 end,0),'YY.WW') 
+      order by l.kehonosa_id
+      
+    page-items-to-submit: 
+    - P35_TREENI
+    - P35_SUNDAY
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 83763891947241231
+    link: 
+      link-column: Exclude Link Column
+
+    pagination: 
+      type: None
+
+    performance: 
+      lazy-loading: false
+      maximum-rows-to-process: 1000000
+
+    search-bar: 
+      include-search-bar: true
+      search-field: true
+      finder-drop-down: true
+      reports-select-list: true
+      rows-per-page-selector: false
+
+    actions-menu: 
+      include-actions-menu: true
+      filter: true
+      select-columns: true
+      rows-per-page: true
+      sort: true
+      control-break: true
+      highlight: true
+      compute: true
+      aggregate: true
+      chart: true
+      group-by: true
+      pivot: true
+      flashback: true
+      save-report: true
+      save-public-report: false
+      reset: true
+      help: true
+      download: true
+      subscription: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 83952185028326319
+      identification: 
+        name: Primary Report
+        alias: 381493
+
+    columns: 
+    - # ====== Column: VIIKKO ======================================
+      id: 45808535039251773
+      identification: 
+        column-name: VIIKKO
+        type: Plain Text
+
+      heading: 
+        heading: Viikko
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 20
+        column-alignment: start
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: SARJOJA =====================================
+      id: 45808934570251776
+      identification: 
+        column-name: SARJOJA
+        type: Plain Text
+
+      heading: 
+        heading: Sarjoja
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 30
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Default Based on Column Type
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+      security: 
+        escape-special-characters: true
+
+    - # ====== Column: KEHONOSA_ID =================================
+      id: 51287765891067046
+      identification: 
+        column-name: KEHONOSA_ID
+        type: Plain Text (based on List of Values)
+
+      list-of-values: 
+        list-of-values: KEHONOSA_LOV # 51495298061574512
+
+      heading: 
+        heading: Kehonosa
+        alignment: center
+
+      single-row-view: 
+        use-column-heading: true
+
+      layout: 
+        sequence: 40
+        column-alignment: end
+
+      accessibility: 
+        value-identifies-row: false
+
+      source: 
+        primary-key: false
+
+      column-filter: 
+        type: Use Named List of Values to Filter Exact Match
+
+      enable-users-to: 
+        hide: true
+        sort: true
+        filter: true
+        highlight: true
+        control-break: true
+        aggregate: true
+        compute: true
+        chart: true
+        group-by: true
+        pivot: true
+
+    printing: 
+      output: 
+        layout: Default Report Layout
+        view-file-as: Attachment
+
+      page: 
+        size: Letter
+        orientation: Landscape
+        units: Inches
+        width: 11
+        height: 8.5
+        border-width: 0.5
+        border-color: '#666666'
+
+      page-header: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+        page-header-text: Sarjat lkm
+
+      column-headings: 
+        font: Helvetica
+        font-weight: Bold
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#EEEEEE'
+
+      columns: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 10
+        font-color: '#000000'
+        background-color: '#FFFFFF'
+
+      page-footer: 
+        font: Helvetica
+        font-weight: Normal
+        font-size: 12
+        font-color: '#000000'
+        alignment: center
+
+page-items: 
+- # ====== Page Item: P35_HENKILO_ID ===========================
+  id: 45285456952380141
+  identification: 
+    name: P35_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: '&P35_OTSIKKO.' # 157752922505457411
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_OTSIKKO ==============================
+  id: 45285900787380146
+  identification: 
+    name: P35_OTSIKKO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: '&P35_OTSIKKO.' # 157752922505457411
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_TREENI ===============================
+  id: 45811471797251782
+  identification: 
+    name: P35_TREENI
+    type: Select List
+
+  label: 
+    label: Treeni
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: '&P35_OTSIKKO.' # 157752922505457411
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select t.meso_id||'.'||block||' '||t.kuvaus d, t.id r from treeni t, henkilo h where 
+      henkilo_id = h.id
+      and lower(h.nimi) = lower(:app_user)
+      and   exists (select treeni_id from treenikerta where henkilo_id = :P35_HENKILO_ID and treeni_id = t.id)
+      order by 1 desc
+    display-extra-values: false
+    display-null-value: true
+    null-display-value: '- kaikki -'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_SUNDAY ===============================
+  id: 46984696373862528
+  identification: 
+    name: P35_SUNDAY
+    type: Switch
+
+  label: 
+    label: Treeniviikko alkaa sunnuntai
+    alignment: Left
+
+  settings: 
+    use-defaults: true
+
+  layout: 
+    sequence: 40
+    region: '&P35_OTSIKKO.' # 157752922505457411
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Hidea ===============================
+  id: 45286043162380147
+  identification: 
+    name: Hidea
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45286156209380148
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(".a-IRR-controlsContainer").hide()
+
+    execution: 
+      sequence: 10
+      event: Hidea # 45286043162380147
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Valittu =============================
+  id: 45814755514251796
+  identification: 
+    name: Valittu
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P35_TREENI
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 45815251297251797
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Per meso # 60573654067061214
+
+    execution: 
+      sequence: 20
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 45815747121251801
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Tonnage # 85109822179200456
+
+    execution: 
+      sequence: 80
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 45816276503251802
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: 2022-> Kehitys % # 85107552098200433
+
+    execution: 
+      sequence: 50
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 45816725302251804
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Toistot lkm # 85707166852753936
+
+    execution: 
+      sequence: 40
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 50130694052109806
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: 2022 kehitys % # 50130384002109803
+
+    execution: 
+      sequence: 60
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 50131421693109814
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: 2023 kehitys % # 50131155306109811
+
+    execution: 
+      sequence: 70
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 60574129601061219
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Sarjat lkm # 157754711250457429
+
+    execution: 
+      sequence: 30
+      event: Valittu # 45814755514251796
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Päivitä =============================
+  id: 46984724226862529
+  identification: 
+    name: Päivitä
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P35_SUNDAY
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 46984891615862530
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Sarjat lkm # 157754711250457429
+
+    execution: 
+      sequence: 10
+      event: Päivitä # 46984724226862529
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 46984969710862531
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Toistot lkm # 85707166852753936
+
+    execution: 
+      sequence: 20
+      event: Päivitä # 46984724226862529
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 46985053639862532
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Tonnage # 85109822179200456
+
+    execution: 
+      sequence: 30
+      event: Päivitä # 46984724226862529
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P35_HENKILO_ID =========================
+  id: 45285681852380143
+  identification: 
+    item-name: P35_HENKILO_ID
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo 
+      where lower(nimi) = lower(:app_user)
+
+- # ====== Computation: P35_OTSIKKO ============================
+  id: 45858313571681759
+  identification: 
+    item-name: P35_OTSIKKO
+
+  execution: 
+    sequence: 40
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: "select initcap(:app_user)||' treeniraportit' from dual"
+
+processes: 
+- # ====== Process: SeuraavaTreeni - Save Interactive Grid Data 
+  id: 45810332328251780
+  identification: 
+    name: SeuraavaTreeni - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Sarjat lkm # 157754711250457429
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

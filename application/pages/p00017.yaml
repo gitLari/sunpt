@@ -1,0 +1,2407 @@
+---
+# ====== Page: Workout planning ==============================
+id: 17
+identification: 
+  name: Workout planning
+  alias: WORKOUT-PLANNING
+  title: Workout planning
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Blocks ======================================
+  id: 21918672564384762
+  identification: 
+    name: Blocks
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select WORKOUT_PROGRAM_ID,
+             WORKOUT_BLOCK,
+             WORKOUT_WEEK, WORKOUT_WEEK_ID
+        from WORKOUT_PROGRAM
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: Programs # 23887255760507433
+
+  advanced: 
+    static-id: workouts_grid
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21797444098090516
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 21923642332404889
+      identification: 
+        name: Primary Report
+        alias: 219237
+
+  columns: 
+  - # ====== Column: WORKOUT_BLOCK ===============================
+    id: 21797879739090520
+    identification: 
+      column-name: WORKOUT_BLOCK
+      type: Number Field
+
+    heading: 
+      heading: Workout Block
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_BLOCK
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_WEEK ================================
+    id: 21797918589090521
+    identification: 
+      column-name: WORKOUT_WEEK
+      type: Number Field
+
+    heading: 
+      heading: Workout Week
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_WEEK
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 21798050418090522
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 21798109435090523
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: false
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: WORKOUT_PROGRAM_ID ==========================
+    id: 22679421392826430
+    identification: 
+      column-name: WORKOUT_PROGRAM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 80
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_PROGRAM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    master-detail: 
+      master-column: PROGRAM_ID # 23962441652555802
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+
+  - # ====== Column: WORKOUT_WEEK_ID =============================
+    id: 23888047755507441
+    identification: 
+      column-name: WORKOUT_WEEK_ID
+      type: Number Field
+
+    heading: 
+      heading: Workout Week Id
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_WEEK_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Blocks
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Workout days ================================
+  id: 21978330406578627
+  identification: 
+    name: Workout days
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: WORKOUT_DAYS
+    include-rowid-column: true
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: Blocks # 21918672564384762
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21978489465578628
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: true
+      controls: 
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 22598000552586355
+      identification: 
+        name: Primary Report
+        alias: 225981
+
+  columns: 
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 21978711758578631
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 21978824221578632
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: false
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: WORKOUT_DAY =================================
+    id: 21979784845578641
+    identification: 
+      column-name: WORKOUT_DAY
+      type: Select List
+
+    heading: 
+      heading: Workout Day
+      alignment: start
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: WORKOUT_WEEDAYS_LOV # 22605588786645225
+      display-extra-values: true
+      display-null-value: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_DAY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_DAY_ID ==============================
+    id: 21979893033578642
+    identification: 
+      column-name: WORKOUT_DAY_ID
+      type: Number Field
+
+    heading: 
+      heading: Workout Day Id
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_DAY_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_PROGRAM_ID ==========================
+    id: 22679586317826431
+    identification: 
+      column-name: WORKOUT_PROGRAM_ID
+      type: Display Only
+
+    heading: 
+      heading: WORKOUT_PROGRAM_ID
+      alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_PROGRAM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: WORKOUT_PROGRAM_ID # 22679421392826430
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_WEEK_ID =============================
+    id: 23888155037507442
+    identification: 
+      column-name: WORKOUT_WEEK_ID
+      type: Display Only
+
+    heading: 
+      heading: WORKOUT_WEEK_ID
+      alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_WEEK_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: WORKOUT_WEEK_ID # 23888047755507441
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ROWID =======================================
+    id: 23888232067507443
+    identification: 
+      column-name: ROWID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 80
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ROWID
+      data-type: ROWID
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Workout days
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Workouts ====================================
+  id: 22761879118148050
+  identification: 
+    name: Workouts
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ROWID,
+             WORKOUT_row_ID,
+             WORKOUT_DAY_ID,
+      workout_type,
+             WORKOUT_MOVE,
+             WORKOUT_SETS,
+             WORKOUT_RIR,
+             WORKOUT_REPS,
+             WORKOUT_REST
+        from WORKOUT_day_rows
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: Workout days # 21978330406578627
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 22980171279742801
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 22986753751746812
+      identification: 
+        name: Primary Report
+        alias: 229868
+
+  columns: 
+  - # ====== Column: WORKOUT_DAY_ID ==============================
+    id: 22980326679742803
+    identification: 
+      column-name: WORKOUT_DAY_ID
+      type: Display Only
+
+    heading: 
+      heading: WORKOUT_DAY_ID
+      alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_DAY_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: WORKOUT_DAY_ID # 21979893033578642
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_MOVE ================================
+    id: 22980451992742804
+    identification: 
+      column-name: WORKOUT_MOVE
+      type: Select List
+
+    heading: 
+      heading: Workout Move
+      alignment: start
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: WORKOUT_EXERCISES_LOV # 22032583761457242
+      display-extra-values: false
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_MOVE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_SETS ================================
+    id: 22980521327742805
+    identification: 
+      column-name: WORKOUT_SETS
+      type: Number Field
+
+    heading: 
+      heading: Workout Sets
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_SETS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_RIR =================================
+    id: 22980648238742806
+    identification: 
+      column-name: WORKOUT_RIR
+      type: Text Field
+
+    heading: 
+      heading: Workout Rir
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_RIR
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_REPS ================================
+    id: 22981062283742810
+    identification: 
+      column-name: WORKOUT_REPS
+      type: Text Field with autocomplete
+
+    heading: 
+      heading: Workout Reps
+      alignment: start
+
+    settings: 
+      fetch-on-type: false
+
+    search: 
+      match-type: Contains & Ignore Case
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 20
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: select distinct workout_reps from workout_DAY_ROWS
+      display-extra-values: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_REPS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_REST ================================
+    id: 22981107013742811
+    identification: 
+      column-name: WORKOUT_REST
+      type: Text Field with autocomplete
+
+    heading: 
+      heading: Workout Rest
+      alignment: start
+
+    settings: 
+      fetch-on-type: false
+
+    search: 
+      match-type: Contains & Ignore Case
+
+    layout: 
+      sequence: 120
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 20
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: select distinct workout_rest from workout_DAY_ROWS
+      display-extra-values: true
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_REST
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ROWID =======================================
+    id: 22981282229742812
+    identification: 
+      column-name: ROWID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 130
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ROWID
+      data-type: ROWID
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 22981637278742816
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 22981724379742817
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: WORKOUT_ROW_ID ==============================
+    id: 23575024798714339
+    identification: 
+      column-name: WORKOUT_ROW_ID
+      type: Number Field
+
+    heading: 
+      heading: Workout Row Id
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 140
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_ROW_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: WORKOUT_TYPE ================================
+    id: 23575178192714340
+    identification: 
+      column-name: WORKOUT_TYPE
+      type: Select List
+
+    heading: 
+      heading: Workout Type
+      alignment: start
+
+    layout: 
+      sequence: 150
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: WORKOUT_TYPE_LOV # 23580408288752135
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: WORKOUT_TYPE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Workouts
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Programs ====================================
+  id: 23887255760507433
+  identification: 
+    name: Programs
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: WORKOUT_PROGRAMS
+    include-rowid-column: true
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 23887364540507434
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 23932827768718763
+      identification: 
+        name: Primary Report
+        alias: 239329
+
+  columns: 
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 23887657101507437
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 23887702294507438
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: ROWID =======================================
+    id: 23887999566507440
+    identification: 
+      column-name: ROWID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ROWID
+      data-type: ROWID
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+  - # ====== Column: PROGRAM_ID ==================================
+    id: 23962441652555802
+    identification: 
+      column-name: PROGRAM_ID
+      type: Number Field
+
+    heading: 
+      heading: Program Id
+      alignment: end
+
+    settings: 
+      number-alignment: End
+      virtual-keyboard: Text
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: PROGRAM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: PROGRAM_NAME ================================
+    id: 23962520005555803
+    identification: 
+      column-name: PROGRAM_NAME
+      type: Textarea
+
+    heading: 
+      heading: Program Name
+      alignment: start
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: PROGRAM_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Programs
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P17_CUSTOMER =============================
+  id: 21798303610090525
+  identification: 
+    name: P17_CUSTOMER
+    type: Select List
+
+  label: 
+    label: Customer
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 70
+    region: Workouts # 22761879118148050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: APEX_USERS # 23960634512415153
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P17_TRAIN_DAY ============================
+  id: 22757569127148007
+  identification: 
+    name: P17_TRAIN_DAY
+    type: Text Field
+
+  label: 
+    label: Train Day
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Workouts # 22761879118148050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P17_NEW ==================================
+  id: 23041051333054345
+  identification: 
+    name: P17_NEW
+    type: Text Field
+
+  label: 
+    label: Lisää kopiointi mistä ja mihin
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Workout days # 21978330406578627
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P17_TRAIN_BLOCK ==========================
+  id: 23962857667555806
+  identification: 
+    name: P17_TRAIN_BLOCK
+    type: Display Only
+
+  label: 
+    label: Train block
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Workouts # 22761879118148050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: APEX_USERS # 23960634512415153
+    display-extra-values: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: false
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CREATE ======================================
+  id: 21921560329384780
+  identification: 
+    button-name: CREATE
+    label: Create
+
+  layout: 
+    sequence: 30
+    region: Blocks # 21918672564384762
+    slot: RIGHT_OF_IR_SEARCH_BAR
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:18:&SESSION.::&DEBUG.:18'
+      page: 18 # Treeni
+      clear-cache: 18
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Duplikoi_yksi_treeni ========================
+  id: 22757401157148006
+  identification: 
+    button-name: Duplikoi_yksi_treeni
+    label: Duplikoi valittu treeni muille päiville
+
+  layout: 
+    sequence: 40
+    region: Workouts # 22761879118148050
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Generate ====================================
+  id: 22981354759742813
+  identification: 
+    button-name: Generate
+    label: Generate 1 chosen week workouts
+
+  layout: 
+    sequence: 80
+    region: Workouts # 22761879118148050
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: New_IG ==============================
+  id: 22757671508148008
+  identification: 
+    name: New_IG
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Workout days # 21978330406578627
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22757731317148009
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var i_valittu,
+        
+        model = this.data.model;
+        
+        for ( i = 0; i < this.data.selectedRecords.length; i++ ) {
+            
+            i_valittu= model.getValue( this.data.selectedRecords[0], "WORKOUT_DAY_ID");
+                
+        }
+        
+        apex.item( "P17_TRAIN_DAY" ).setValue (i_valittu);
+        
+
+    execution: 
+      sequence: 10
+      event: New_IG # 22757671508148008
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 22757922983148011
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Duplikoi_yksi_treeni # 22757401157148006
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 22758073440148012
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        
+        begin
+        
+         FOR c IN (SELECT WORKOUT_DAY_ID
+                from workout_DAYS where WORKOUT_WEEK_ID = 
+                (SELECT WORKOUT_WEEK_ID FROM workout_DAYS WHERE workout_day_id = :P17_TRAIN_DAY)
+                AND  workout_day_id != :P17_TRAIN_DAY) 
+        LOOP 
+                
+            insert into WORKOUT_DAY_ROWS  
+                (	--SEQ provides "WORKOUT_ROW_ID" NUMBER, 
+        	    "WORKOUT_DAY_ID" , 
+        	    "WORKOUT_MOVE" , 
+        	    "WORKOUT_SETS" , 
+        	    "WORKOUT_RIR" , 
+        	    "WORKOUT_REPS" , 
+        	    "WORKOUT_REST" , 
+        	    "WORKOUT_TYPE" , 
+        	    "DURATIONTIME" , 
+        	    "KM" , 
+        	    "PACE" , 
+        	    "DATE_"  )
+            
+            select 
+            
+                C.WORKOUT_DAY_ID , --looppi
+        	    "WORKOUT_MOVE" , 
+        	    "WORKOUT_SETS" , 
+        	    "WORKOUT_RIR" , 
+        	    "WORKOUT_REPS" , 
+        	    "WORKOUT_REST" , 
+        	    "WORKOUT_TYPE" , 
+        	    "DURATIONTIME" , 
+        	    "KM" , 
+        	    "PACE" , 
+        	    "DATE_"       
+                from WORKOUT_DAY_ROWS
+                where 
+                WORKOUT_DAY_ID = :P17_TRAIN_DAY;
+        END LOOP;
+        :p17_TRAIN_DAY :='valmis';
+        commit;
+        end;
+      items-to-submit: 
+      - P17_TRAIN_DAY
+      items-to-return: 
+      - P17_TRAIN_DAY
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New # 22757922983148011
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New_2 ===============================
+  id: 22981491301742814
+  identification: 
+    name: New_2
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Generate # 22981354759742813
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 22981547608742815
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+        l_workout_sets  number;
+        l_counter number;
+        l_workouts number;
+        l_last_workout_id number;
+        begin
+        
+        select count(*) into l_workouts from workouts where user_id = :p17_customer;
+        if l_workouts = 0 then 
+            insert into workouts (user_id) values (:p17_customer);
+        end if;
+        
+        for c1 in 
+            (select (select WORKOUTS_ID from workouts where user_id = :p17_customer) customers_id,
+             a.WORKOUT_BLOCK, a.WORKOUT_WEEK, b.WORKOUT_DAY, b.WORKOUT_DAY_ID,
+            c.PROGRAM_NAME, a.WORKOUT_WEEK_ID
+             
+            from WORKOUT_PROGRAM a, WORKOUT_DAYS b, WORKOUT_PROGRAMS c where a.WORKOUT_WEEK_ID = b.WORKOUT_WEEK_ID
+            and a.WORKOUT_WEEK_ID = :P17_TRAIN_BLOCK and a.WORKOUT_PROGRAM_ID = c.PROGRAM_ID )
+        
+            LOOP
+        
+            --workout header
+            insert into WORKOUT 
+                (	--"WORKOUT_ID" NUMBER, 
+        	    "WORKOUTS_ID" , 
+        	    --"WORKOUT_YEAR" NUMBER, 
+        	    "WORKOUT_BLOCK" , 
+        	    "WORKOUT_WEEK" , 
+            	"WORKOUT_DAY",
+                workout_name)
+                VALUES (   c1.customers_id,
+             c1.WORKOUT_BLOCK, c1.WORKOUT_WEEK, c1.WORKOUT_DAY, c1.PROGRAM_NAME);
+        
+        l_last_workout_id := WORKOUT_SEQ.currval;
+        
+            --workout rows
+            FOR c2 IN (SELECT 
+            "WORKOUT_ROW_ID" , 
+        	"WORKOUT_DAY_ID" , 
+        	"WORKOUT_MOVE" , 
+        	"WORKOUT_SETS" , 
+        	"WORKOUT_RIR" , 
+        	"WORKOUT_REPS" , 
+        	"WORKOUT_REST" , 
+        	"WORKOUT_TYPE", 
+        	"DURATIONTIME", 
+        	"KM", 
+        	"PACE" 
+                from WORKOUT_DAY_ROWS where  WORKOUT_DAY_ID = c1.WORKOUT_DAY_ID) loop 
+                
+                l_workout_sets := c2.WORKOUT_SETS;
+                FOR l_counter IN 1..l_workout_sets LOOP
+                insert into WORKOUT_ROW 
+                (WORKOUT_ID,
+                WORKOUT_SET,
+                WORKOUT_MOVE,
+                WORKOUT_REPS,
+                WORKOUT_RIR,
+                WORKOUT_REST,
+                WORKOUT_TYPE)
+               values
+                (l_last_workout_id,
+                l_counter,
+                c2.WORKOUT_MOVE,
+                c2.WORKOUT_REPS,
+                c2.WORKOUT_RIR,
+                c2.WORKOUT_REST,
+                C2.WORKOUT_TYPE);
+            END LOOP;
+            END LOOP;
+        end loop;
+        end;
+      items-to-submit: 
+      - P17_CUSTOMER
+      - P17_TRAIN_BLOCK
+
+    execution: 
+      sequence: 10
+      event: New_2 # 22981491301742814
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Alert =======================================
+    id: 23967274262555850
+    identification: 
+      action: Alert
+
+    settings: 
+      message: Ok!
+      style: Default
+
+    execution: 
+      sequence: 20
+      event: New_2 # 22981491301742814
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_IG2 =============================
+  id: 23962679517555804
+  identification: 
+    name: New_IG2
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Blocks # 21918672564384762
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 23962791086555805
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var i_valittu,
+        
+        model = this.data.model;
+        
+        for ( i = 0; i < this.data.selectedRecords.length; i++ ) {
+            
+            i_valittu= model.getValue( this.data.selectedRecords[0], "WORKOUT_WEEK_ID");
+                
+        }
+        
+        apex.item( "P17_TRAIN_BLOCK" ).setValue (i_valittu);
+        
+
+    execution: 
+      sequence: 10
+      event: New_IG2 # 23962679517555804
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Report 1 - Save Interactive Grid Data ======
+  id: 21798242442090524
+  identification: 
+    name: Report 1 - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Blocks # 21918672564384762
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: Workout day - Save Interactive Grid Data ===
+  id: 21978910394578633
+  identification: 
+    name: Workout day - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Workout days # 21978330406578627
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: Workouts - Save Interactive Grid Data ======
+  id: 22981875545742818
+  identification: 
+    name: Workouts - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Workouts # 22761879118148050
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 40
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: Programs - Save Interactive Grid Data ======
+  id: 23887831180507439
+  identification: 
+    name: Programs - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Programs # 23887255760507433
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

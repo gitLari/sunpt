@@ -1,0 +1,2956 @@
+---
+# ====== Page: Treenit eidt ==================================
+id: 40
+identification: 
+  name: Treenit eidt
+  alias: TREENIT-EDIT
+  title: Treenit edit
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    // create a namespace for sortable IG
+    var sortableIG = {};
+    
+    ( function( $, region, sortableIG ) {
+    
+      // Set defaults
+      sortableIG.options = {
+        region: {
+          defaultModelOptions: {
+            sequenceStep: 10
+          }
+          ,defaultGridViewOptions: {
+            reorderColumns: false
+          }
+        }
+        ,handleColumn: {
+          defaultGridColumnOptions: {
+            noHeaderActivate: true
+          }
+          ,layout: {
+            columnAlignment: "center"
+            ,noStretch: true
+          }
+        }
+        ,sequenceColumn: {
+          features: {
+          	sort: true
+            ,canHide: false
+            ,aggregate: false
+            ,compute: false
+            ,controlBreak: false
+            ,groupBy: false
+            ,highlight: false
+            ,pivot: false
+          }
+        }
+      }
+    
+      // sortable IG handle column Initialization code
+      // call function in IG column Advanced: Column JavaScript Initialization Code
+      sortableIG.initHandleColumn = function( options ) {
+    
+        return $.extend( true, options, sortableIG.options.handleColumn );
+    
+      }
+    
+      // sortable IG sequence column Initialization code
+      // call function in IG column Advanced: Column JavaScript Initialization Code
+      sortableIG.initSequenceColumn = function( options ) {
+    
+    		// get sequence column name and store it for region Initialization JavaScript Function
+        sortableIG.options.region.defaultModelOptions.sequenceField = options.name;
+    
+        return $.extend( true, options, sortableIG.options.sequenceColumn );
+    
+      }
+    
+      // sortable IG initialization code
+      // call function in IG region Advanced: JavaScript Initialization Code
+      sortableIG.initRegion = function( options ) {
+    
+        $( $x( options.regionStaticId ) ).on( "interactivegridviewchange interactivegridreportsettingschange", function( _event, ui ) {
+    
+          var view          = region( this.id ).call( "getViews", "grid" )
+            , sortableArea$ = view.view$.find( ".a-GV-w-scroll tbody" )
+            , helperBgClass = "u-color-29-bg"
+          ;
+    
+          // https://api.jqueryui.com/sortable/
+          sortableArea$.sortable({
+            handle:       ".z-sortable--handle"
+            ,items:       "tr:has(.z-sortable--handle)"
+            ,axis:        "y"
+            ,tolerance:   "pointer"
+            ,scrollSpeed: 8
+            ,placeholder: "a-GV-cell u-color-1-bg"
+            
+            ,helper: function( _event, ui ){
+              ui.children().each( function(){
+                $( this ).width( $( this ).width() ).addClass( helperBgClass )
+              })
+              return ui;
+            }
+            
+            ,update: function( _event, ui ){
+              
+              var model = view.model
+                , item$ = $( ui.item )
+                // get moved record
+                , item = ( item$.length ) ? model.getRecord( item$.data( "id" ) ) : null
+                // get next or previous row from visible table depending is record moved up or down
+                , after$ = ( ui.originalPosition.top > ui.position.top ) ? item$.next() : item$.prev()
+                , after = ( after$.length ) ? model.getRecord( after$.data( "id" ) ) : null
+              ;
+              
+              // remove helper background class, if row isn't actually moved
+              item$.children().removeClass( helperBgClass );
+              // check if we have found record and place where record is moved
+              if( item && after ){
+                // if record is moved upwards, we need get previous record from model
+                after = ( ui.originalPosition.top > ui.position.top ) ? model.recordAt( model.indexOf( after ) - 1 ) : after;
+                // move record
+                 if( item !== after ){
+                  model.moveRecords( [item], null, after );
+                }
+              }
+              
+            }
+          
+          });
+    
+        });
+    
+        return $.extend( true, options, sortableIG.options.region );
+    
+      }
+    
+    })( apex.jQuery, apex.region, sortableIG );
+
+css: 
+  inline: |
+    .z-sortable--handle{
+      cursor: move;
+    }
+    .ui-sortable-helper{
+      display: inline-flex;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Kerta =======================================
+  id: 35417330917103344
+  identification: 
+    name: Kerta
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TREENILIIKEKERTA
+    include-rowid-column: false
+    order-by-clause: ID
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: TREENILIIKE # 94968285683440304
+
+  advanced: 
+    static-id: kertaGrid
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35417419301103345
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 46386100454533512
+      identification: 
+        name: Primary Report
+        alias: 463862
+
+  columns: 
+  - # ====== Column: ID ==========================================
+    id: 35417540187103346
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 46380833070529409
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 46380968157529410
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: KERTA =======================================
+    id: 46381594526529416
+    identification: 
+      column-name: KERTA
+      type: Number Field
+
+    heading: 
+      heading: Kerta
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: KERTA
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TREENILIIKE_ID ==============================
+    id: 46381657303529417
+    identification: 
+      column-name: TREENILIIKE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: TREENILIIKE_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: ID # 94968696643440308
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  printing: 
+    page: 
+      size: A4
+      orientation: Landscape
+      units: Millimeters
+      width: 297
+      height: 210
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Kerta
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Sarja =======================================
+  id: 35417947498103350
+  identification: 
+    name: Sarja
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TREENILIIKEKERTASARJA
+    include-rowid-column: false
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: Kerta # 35417330917103344
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 46380054028529401
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 46386806895533516
+      identification: 
+        name: Primary Report
+        alias: 463869
+
+  columns: 
+  - # ====== Column: ID ==========================================
+    id: 46380107422529402
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: PROSENTTI ===================================
+    id: 46380247815529403
+    identification: 
+      column-name: PROSENTTI
+      type: Number Field
+
+    heading: 
+      heading: Prosentti
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: PROSENTTI
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOISTOT_MIN =================================
+    id: 46380353656529404
+    identification: 
+      column-name: TOISTOT_MIN
+      type: Number Field
+
+    heading: 
+      heading: Toistot Min
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOISTOT_MIN
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOISTOT_MAX =================================
+    id: 46380435602529405
+    identification: 
+      column-name: TOISTOT_MAX
+      type: Number Field
+
+    heading: 
+      heading: Toistot Max
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOISTOT_MAX
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: RIR =========================================
+    id: 46380501854529406
+    identification: 
+      column-name: RIR
+      type: Number Field
+
+    heading: 
+      heading: Rir
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: RIR
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: SELITE ======================================
+    id: 46380626970529407
+    identification: 
+      column-name: SELITE
+      type: Text Field
+
+    heading: 
+      heading: Selite
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: SELITE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TREENIKERTLIIKESARJA_ID =====================
+    id: 46380765294529408
+    identification: 
+      column-name: TREENIKERTLIIKESARJA_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 100
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: TREENIKERTLIIKESARJA_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: ID # 35417540187103346
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 46381103831529412
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 46381207023529413
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: JARJESTYS ===================================
+    id: 46381737425529418
+    identification: 
+      column-name: JARJESTYS
+      type: Number Field
+
+    heading: 
+      heading: Järjestys
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: JARJESTYS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: A4
+      orientation: Landscape
+      units: Millimeters
+      width: 297
+      height: 210
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Sarja
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Luo rivejä ==================================
+  id: 50505113345145523
+  identification: 
+    name: Luo rivejä
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Treenit =====================================
+  id: 94967691911440298
+  identification: 
+    name: Treenit
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: TREENI
+    include-rowid-column: false
+    where-clause: ':P40_HENKILO_ID IS NULL OR HENKILO_ID = :P40_HENKILO_ID'
+    page-items-to-submit: 
+    - P40_HENKILO_ID
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 5
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: treeniGrid
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 94967764713440299
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Search Column Selection
+      - Search Field
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 95000672695518016
+      identification: 
+        name: Primary Report
+        alias: 450634
+
+  columns: 
+  - # ====== Column: HENKILO_ID ==================================
+    id: 94967883592440300
+    identification: 
+      column-name: HENKILO_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: HENKILO_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      type: Item
+      item: P40_HENKILO_ID
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: ID ==========================================
+    id: 94967918753440301
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 40
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: KUVAUS ======================================
+    id: 94968097696440302
+    identification: 
+      column-name: KUVAUS
+      type: Text Field
+
+    heading: 
+      heading: Kuvaus
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: KUVAUS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: AKTIIVINEN ==================================
+    id: 94968123844440303
+    identification: 
+      column-name: AKTIIVINEN
+      type: Number Field
+
+    heading: 
+      heading: Aktiivinen
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: AKTIIVINEN
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 94969243505440314
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 94969317830440315
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  - # ====== Column: MESO_ID =====================================
+    id: 96923314678359024
+    identification: 
+      column-name: MESO_ID
+      type: Text Field
+
+    heading: 
+      heading: meso
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: MESO_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK =======================================
+    id: 99099782388847183
+    identification: 
+      column-name: BLOCK
+      type: Number Field
+
+    heading: 
+      heading: Block
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BLOCK_TREENI_NRO ============================
+    id: 99099820684847184
+    identification: 
+      column-name: BLOCK_TREENI_NRO
+      type: Number Field
+
+    heading: 
+      heading: B. tr. Nro
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BLOCK_TREENI_NRO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Treenit
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: TREENILIIKE =================================
+  id: 94968285683440304
+  identification: 
+    name: TREENILIIKE
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select TREENI_ID,
+             LIIKE_ID,
+             ID,
+             RIR,
+             SARJAKUVAUS,
+             SARJAT,
+             TOISTOT,
+             JARJESTYS
+        from TREENILIIKE
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 6
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  master-detail: 
+    master-region: Treenit # 94967691911440298
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 94968361276440305
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: true
+      controls: 
+      - Actions Menu
+      - Reset Button
+      - Save Button
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 95005558303527858
+      identification: 
+        name: Primary Report
+        alias: 450683
+
+  columns: 
+  - # ====== Column: Indeksi =====================================
+    id: 29271723268786517
+    identification: 
+      column-name: Indeksi
+      type: HTML Expression
+
+    heading: 
+      heading: Indeksi
+      alignment: start
+
+    settings: 
+      html-expression: <span aria-hidden="true" class="fa fa-sort z-sortable--handle"></span>
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: None
+
+    enable-users-to: 
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: sortableIG.initHandleColumn
+
+  - # ====== Column: TREENI_ID ===================================
+    id: 94968418647440306
+    identification: 
+      column-name: TREENI_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: TREENI_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    master-detail: 
+      master-column: ID # 94967918753440301
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: LIIKE_ID ====================================
+    id: 94968502535440307
+    identification: 
+      column-name: LIIKE_ID
+      type: Select List
+
+    heading: 
+      heading: Liike
+      alignment: start
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Shared Component
+      list-of-values: LIIKE_LOV # 45788335313183272
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: LIIKE_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: ID ==========================================
+    id: 94968696643440308
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: RIR =========================================
+    id: 94968755857440309
+    identification: 
+      column-name: RIR
+      type: Text Field
+
+    heading: 
+      heading: Rir
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 20
+
+    source: 
+      type: Database Column
+      database-column: RIR
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: SARJAKUVAUS =================================
+    id: 94968829655440310
+    identification: 
+      column-name: SARJAKUVAUS
+      type: Text Field
+
+    heading: 
+      heading: Sarjakuvaus
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: SARJAKUVAUS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: SARJAT ======================================
+    id: 94968907923440311
+    identification: 
+      column-name: SARJAT
+      type: Number Field
+
+    heading: 
+      heading: Sarjat
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SARJAT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 94969033468440312
+    identification: 
+      column-name: TOISTOT
+      type: Text Field
+
+    heading: 
+      heading: Toistot
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: TOISTOT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: JARJESTYS ===================================
+    id: 94969161972440313
+    identification: 
+      column-name: JARJESTYS
+      type: Number Field
+
+    heading: 
+      heading: Jarjestys
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 100
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: JARJESTYS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 94969582846440317
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 94969611372440318
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: TREENILIIKE
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P40_HENKILO_ID ===========================
+  id: 49949655597496554
+  identification: 
+    name: P40_HENKILO_ID
+    type: Select List
+
+  label: 
+    label: Henkilö
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: HENKILO.NIMI # 45731410854922463
+    display-extra-values: false
+    display-null-value: true
+    null-display-value: Valitse
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      select id from henkilo
+      where lower(nimi) = lower(:app_user)
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_TREENI_ID ============================
+  id: 49950013238496555
+  identification: 
+    name: P40_TREENI_ID
+    type: Text Field
+
+  label: 
+    label: Valittu treeni Id
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 20
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_RIVIT ================================
+  id: 50505640733145528
+  identification: 
+    name: P40_RIVIT
+    type: Text Field
+
+  label: 
+    label: Rivit
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_PROSSAT ==============================
+  id: 50505724251145529
+  identification: 
+    name: P40_PROSSAT
+    type: Text Field
+
+  label: 
+    label: Prossat
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_TOISTOT ==============================
+  id: 50505981325145531
+  identification: 
+    name: P40_TOISTOT
+    type: Text Field
+
+  label: 
+    label: Toistot
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_TREENIKERTLIIKESARJA_ID ==============
+  id: 50506046691145532
+  identification: 
+    name: P40_TREENIKERTLIIKESARJA_ID
+    type: Text Field
+
+  label: 
+    label: Treenikertliikesarja Id
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: LUO_LIIKE ===================================
+  id: 49942930756496513
+  identification: 
+    button-name: LUO_LIIKE
+    label: Luo liike
+
+  layout: 
+    sequence: 70
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:32:&SESSION.::&DEBUG.:32::'
+      page: 32 # Liike Edit
+      clear-cache: 32
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: KOPIOI ======================================
+  id: 49948288079496527
+  identification: 
+    button-name: KOPIOI
+    label: Kopioi block ja treeni
+
+  layout: 
+    sequence: 10
+    region: Treenit # 94967691911440298
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Luo =========================================
+  id: 50505314966145525
+  identification: 
+    button-name: Luo
+    label: Luo
+
+  layout: 
+    sequence: 60
+    region: Luo rivejä # 50505113345145523
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: TehdäänHideJosTreeniUnsave ==========
+  id: 49950416896496558
+  identification: 
+    name: TehdäänHideJosTreeniUnsave
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P40_TREENI_ID
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P40_TREENI_ID").charAt(0) == 't'
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 49950995824496561
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: TREENILIIKE # 94968285683440304
+
+    execution: 
+      sequence: 10
+      event: TehdäänHideJosTreeniUnsave # 49950416896496558
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Show ========================================
+    id: 49951452449496561
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Region
+      region: TREENILIIKE # 94968285683440304
+
+    execution: 
+      sequence: 10
+      event: TehdäänHideJosTreeniUnsave # 49950416896496558
+      fire-when-event-result-is: False
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: NimiMuuttuu =========================
+  id: 49951872789496562
+  identification: 
+    name: NimiMuuttuu
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P40_HENKILO_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 49952367839496562
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenit # 94967691911440298
+
+    execution: 
+      sequence: 10
+      event: NimiMuuttuu # 49951872789496562
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: ClickKopioi =========================
+  id: 49952799523496563
+  identification: 
+    name: ClickKopioi
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: KOPIOI # 49948288079496527
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 49953201961496563
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Treenit # 94967691911440298
+
+    execution: 
+      sequence: 20
+      event: ClickKopioi # 49952799523496563
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 49953703093496564
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+         l_id number;
+        begin
+            insert into treeni (id, kuvaus, henkilo_id, meso_id, aktiivinen) 
+            select  treeni_seq.nextval, kuvaus||'_kopio', henkilo_id, meso_id, aktiivinen from treeni 
+            where id = :P40_TREENI_ID
+            ;
+        select TREENI_SEQ.currval into l_id from dual;
+        
+        --insert into pushi values (l_id); commit;
+        
+        insert into treeniliike 
+            (TREENI_ID, LIIKE_ID, RIR,SARJAKUVAUS, SARJAT, TOISTOT, JARJESTYS)
+            select 
+                l_id, LIIKE_ID, RIR,SARJAKUVAUS, SARJAT, TOISTOT, JARJESTYS
+                from treeniliike
+                where treeni_id = :P40_TREENI_ID;
+        end;
+      items-to-submit: 
+      - P40_TREENI_ID
+
+    execution: 
+      sequence: 10
+      event: ClickKopioi # 49952799523496563
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: OllaanRivilla =======================
+  id: 49954174809496564
+  identification: 
+    name: OllaanRivilla
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Treenit # 94967691911440298
+
+  actions: 
+  - # ====== Action: SetValue ====================================
+    id: 49954658768496564
+    identification: 
+      name: SetValue
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: 'apex.region("treeniGrid").widget().interactiveGrid("getViews","grid").view$.grid("getSelectedRecords") [0][1] '
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P40_TREENI_ID
+
+    execution: 
+      sequence: 10
+      event: OllaanRivilla # 49954174809496564
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: TeeSS =======================================
+    id: 51956373468635003
+    identification: 
+      name: TeeSS
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        
+        
+        var gridID = "treeniGrid";
+        var ig$ = apex.region(gridID).widget();
+        var grid = ig$.interactiveGrid("getViews","grid");
+        var selectedRecord = grid.getSelectedRecords();
+        
+        if (selectedRecord.length != 0 ) {
+            if (selectedRecord[0][0].charAt(0) != "t") {
+        	apex.item("P40_TREENI_ID").setValue(selectedRecord[0][0]);
+            }
+            else {
+                apex.item("P40_TREENI_ID").setValue("");
+            }
+
+    execution: 
+      sequence: 20
+      event: OllaanRivilla # 49954174809496564
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Never
+
+- # ====== Dynamic Action: Closed ==============================
+  id: 49955016548496565
+  identification: 
+    name: Closed
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: LUO_LIIKE # 49942930756496513
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 49955594800496565
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: TREENILIIKE # 94968285683440304
+
+    execution: 
+      sequence: 10
+      event: Closed # 49955016548496565
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: LuoRivejä ===========================
+  id: 50506397707145535
+  identification: 
+    name: LuoRivejä
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Luo # 50505314966145525
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 50506444422145536
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare riveja number;
+        begin
+        riveja := :P40_RIVIT;  
+        for x in 1..riveja loop
+            insert into TREENILIIKEKERTASARJA (PROSENTTI, TOISTOT_MIN, RIR,TREENIKERTLIIKESARJA_ID, JARJESTYS)
+            values (:P40_PROSSAT, :P40_TOISTOT,2, :P40_TREENIKERTLIIKESARJA_ID, x);
+        end loop;
+        
+        end;
+      items-to-submit: 
+      - P40_TREENIKERTLIIKESARJA_ID
+      - P40_RIVIT
+      - P40_PROSSAT
+      - P40_TOISTOT
+
+    execution: 
+      sequence: 20
+      event: LuoRivejä # 50506397707145535
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 50506577106145537
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Sarja # 35417947498103350
+
+    execution: 
+      sequence: 30
+      event: LuoRivejä # 50506397707145535
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 50506886116145540
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var gridID = "kertaGrid";
+        var ig$ = apex.region(gridID).widget();
+        var grid = ig$.interactiveGrid("getViews","grid");
+        var selectedRecord = grid.getSelectedRecords();
+        
+        if (selectedRecord.length != 0 && selectedRecord.charAt != 't') {
+        	apex.item("P40_TREENIKERTLIIKESARJA_ID").setValue(selectedRecord[0][0]);
+        }
+        else {
+            apex.item("P40_TREENIKERTLIIKESARJA_ID").setValue('')
+        }
+
+    execution: 
+      sequence: 10
+      event: LuoRivejä # 50506397707145535
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Kerta - Save Interactive Grid Data =========
+  id: 46381096785529411
+  identification: 
+    name: Kerta - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Kerta # 35417330917103344
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: Sarja - Save Interactive Grid Data =========
+  id: 46381312789529414
+  identification: 
+    name: Sarja - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Sarja # 35417947498103350
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 40
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: TREENILIIKE - Save Interactive Grid Data ===
+  id: 49943314689496519
+  identification: 
+    name: TREENILIIKE - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: TREENILIIKE # 94968285683440304
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: Treeni - Save Interactive Grid Data ========
+  id: 49948668691496528
+  identification: 
+    name: Treeni - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Treenit # 94967691911440298
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

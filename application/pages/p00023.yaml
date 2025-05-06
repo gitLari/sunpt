@@ -1,0 +1,2000 @@
+---
+# ====== Page: Laihtuu =======================================
+id: 23
+identification: 
+  name: Laihtuu
+  alias: LAIHTUU1
+  title: Laihtuu
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_IMAGES#sample-db-app.js'
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Lag =========================================
+  id: 8804589013522504
+  identification: 
+    name: Lag
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 8804650164522505
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Series
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: kg ==========================================
+      id: 8804791294522506
+      identification: 
+        name: kg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with perus as (select 
+                      trunc(pvm_,'WW') pvm
+                 ,avg(PAINO) paino
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by   trunc(pvm_,'WW')
+          ),
+           pvmt as (
+          select pvm, paino
+          , LAG(paino) OVER (ORDER BY  pvm) edellinen
+          from perus)
+          select pvm, ( paino - edellinen) as laskenut
+          from pvmt
+          order by pvm
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: LASKENUT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    - # ====== Series: cm ==========================================
+      id: 8805018456522509
+      identification: 
+        name: cm
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with perus as (select 
+                      trunc(pvm_,'WW') pvm
+                 ,avg(vatsa) vatsa
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by   trunc(pvm_,'WW')
+          ),
+           pvmt as (
+          select pvm, vatsa
+          , LAG(vatsa) OVER (ORDER BY  pvm) edellinen
+          from perus)
+          select pvm, (vatsa - edellinen ) as laskenut
+          from pvmt
+          order by pvm
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: LASKENUT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 8804879077522507
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 8804937785522508
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Lag per kk ==================================
+  id: 8805795174522516
+  identification: 
+    name: Lag per kk
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: true
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 8805811445522517
+    chart: 
+      type: Bar
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      title: Series
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    series: 
+    - # ====== Series: kg ==========================================
+      id: 8805931348522518
+      identification: 
+        name: kg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with perus as (select 
+                      trunc(pvm_,'MON') pvm
+                 ,avg(PAINO) paino
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by   trunc(pvm_,'MON')
+          ),
+           pvmt as (
+          select pvm, paino
+          , LAG(paino) OVER (ORDER BY  pvm) edellinen
+          from perus)
+          select pvm, ( paino - edellinen) as laskenut
+          from pvmt
+          order by pvm
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: LASKENUT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    - # ====== Series: cm ==========================================
+      id: 8806021339522519
+      identification: 
+        name: cm
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          with perus as (select 
+                      trunc(pvm_,'MON') pvm
+                 ,avg(vatsa) vatsa
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by   trunc(pvm_,'MON')
+          ),
+           pvmt as (
+          select pvm, vatsa
+          , LAG(vatsa) OVER (ORDER BY  pvm) edellinen
+          from perus)
+          select pvm, (vatsa - edellinen ) as laskenut
+          from pvmt
+          order by pvm
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: LASKENUT
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 8806179999522520
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        pattern: MMM
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Linear
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 8806249643522521
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Zero
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Yes
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+
+- # ====== Region: New =========================================
+  id: 8806332324522522
+  identification: 
+    name: New
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select round((sysdate - to_date('31.03.2022', 'DD.MM.YYYY'))/7,0) viikkoja,
+      round( ( min(paino) -max(paino) ) /
+      round((sysdate - to_date('31.03.2022', 'DD.MM.YYYY'))/7,0) ,1) kg,
+      round( ( min(vatsa) -max(vatsa) ) /
+      round((sysdate - to_date('31.03.2022', 'DD.MM.YYYY'))/7,0) ,1) cm 
+       from paino
+       where pvm_ > to_date('31.03.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: VIIKKOJA ====================================
+    id: 8806424912522523
+    identification: 
+      column-name: VIIKKOJA
+      type: Plain Text
+
+    heading: 
+      heading: Viikkoja
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 8806515238522524
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: CM ==========================================
+    id: 8806670479522525
+    identification: 
+      column-name: CM
+      type: Plain Text
+
+    heading: 
+      heading: Cm
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: per vko avg =================================
+  id: 11345852032949245
+  identification: 
+    name: per vko avg
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 11345994483949246
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: styleSalesByCatChart
+
+    series: 
+    - # ====== Series: per kk avg ==================================
+      id: 11346066488949247
+      identification: 
+        name: per kk avg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) paino,
+                      to_char(pvm_,'YY/WW')
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'YY/WW')
+          order by to_char(pvm_,'YY/WW') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/WW')
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: Series 1_vatsa ==============================
+      id: 11346120465949248
+      identification: 
+        name: Series 1_vatsa
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(vatsa) vatsa,
+                      to_char(pvm_,'YY/WW')
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'YY/WW')
+          order by to_char(pvm_,'YY/WW') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/WW')
+        value: VATSA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Straight
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 11346211619949249
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 2
+        format-scaling: Automatic
+        baseline-scaling: Zero
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 11346324348949250
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Laihtuu =====================================
+  id: 12873380510340171
+  identification: 
+    name: Laihtuu
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 12873710795340172
+    chart: 
+      type: Line
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      time-axis-type: Enabled
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    series: 
+    - # ====== Series: Cm ==========================================
+      id: 11344947062949236
+      identification: 
+        name: Cm
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select vatsa, TRUNC(pvm_) pvm --TRUNC(pvm_, 'WW') viikko 
+          from paino  
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY')
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: VATSA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    - # ====== Series: Kg ==========================================
+      id: 12875427226340174
+      identification: 
+        name: Kg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select paino, TRUNC(pvm_) pvm --TRUNC(pvm_, 'WW') viikko 
+          from paino  
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY')
+          
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PVM
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: false
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 12874265884340173
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Date - Short
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Linear
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+        show: false
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 12874828203340173
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: false
+
+- # ====== Region: Arvoja ======================================
+  id: 14870183535696701
+  identification: 
+    name: Arvoja
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select max(paino), min(paino), min(paino) - max(paino)  painoero, max(vatsa), min(vatsa), 
+       min(vatsa) - max(vatsa)  vatsaero 
+      from paino 
+      where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: No Pagination (Show All Rows)
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: MIN(PAINO) ==================================
+    id: 14870255309696702
+    identification: 
+      column-name: MIN(PAINO)
+      type: Plain Text
+
+    heading: 
+      heading: Min(kg)
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MAX(PAINO) ==================================
+    id: 14870398387696703
+    identification: 
+      column-name: MAX(PAINO)
+      type: Plain Text
+
+    heading: 
+      heading: Max(kg)
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MIN(VATSA) ==================================
+    id: 14870450571696704
+    identification: 
+      column-name: MIN(VATSA)
+      type: Plain Text
+
+    heading: 
+      heading: Min(cm)
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: MAX(VATSA) ==================================
+    id: 14870568108696705
+    identification: 
+      column-name: MAX(VATSA)
+      type: Plain Text
+
+    heading: 
+      heading: Max(cm)
+      alignment: center
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: PAINOERO ====================================
+    id: 14870646685696706
+    identification: 
+      column-name: PAINOERO
+      type: Plain Text
+
+    heading: 
+      heading: Ero
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: VATSAERO ====================================
+    id: 14870760654696707
+    identification: 
+      column-name: VATSAERO
+      type: Plain Text
+
+    heading: 
+      heading: Ero
+      alignment: center
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Paino per kk avg vuodet =====================
+  id: 14872244540696722
+  identification: 
+    name: Paino per kk avg vuodet
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 14872341375696723
+    chart: 
+      type: Line with Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    advanced: 
+      initialization-javascript-function: styleSalesByCatChart
+
+    series: 
+    - # ====== Series: per kk avg_22 ===============================
+      id: 14872421677696724
+      identification: 
+        name: per kk avg_22
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) paino,
+                      to_char(pvm_,'MM') pv
+            from PAINO
+          where pvm_ > to_date('1.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'MM')
+          order by to_char(pvm_,'MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PV
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: per kk avg_21 ===============================
+      id: 14872830716696728
+      identification: 
+        name: per kk avg_21
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) paino,
+                      to_char(pvm_,'MM') pv
+            from PAINO
+          where pvm_ > to_date('1.3.2021', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2021', 'DD.MM.YYYY')
+          --and pvm_ <=sysdate-365
+          group by to_char(pvm_,'MM')
+          order by to_char(pvm_,'MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PV
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 14872653716696726
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 2
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 14872750638696727
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: Vatsa per vko avg vuodet ====================
+  id: 14873517439696735
+  identification: 
+    name: Vatsa per vko avg vuodet
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 14873681339696736
+    chart: 
+      type: Line with Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: true
+      position: Automatic
+      hide-and-show-behavior: Rescale
+
+    advanced: 
+      initialization-javascript-function: styleSalesByCatChart
+
+    series: 
+    - # ====== Series: per kk avg_22 ===============================
+      id: 14873744025696737
+      identification: 
+        name: per kk avg_22
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(vatsa) paino,
+                      to_char(pvm_,'MM') pv
+            from PAINO
+          where pvm_ > to_date('1.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'MM')
+          order by to_char(pvm_,'MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PV
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: per kk avg_21 ===============================
+      id: 14873869276696738
+      identification: 
+        name: per kk avg_21
+
+      execution: 
+        sequence: 20
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(vatsa) paino,
+                      to_char(pvm_,'MM') pv
+            from PAINO
+          where pvm_ > to_date('1.3.2021', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2021', 'DD.MM.YYYY')
+          --and pvm_ <=sysdate-365
+          group by to_char(pvm_,'MM')
+          order by to_char(pvm_,'MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: PV
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        style: Solid
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 14873903657696739
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 2
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 14874019164696740
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+
+- # ====== Region: per kk avg ==================================
+  id: 56524206201966241
+  identification: 
+    name: per kk avg
+    type: Chart
+
+  source: 
+    location: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  security: 
+    escape-special-characters: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 14492466345856042
+    chart: 
+      type: Area
+
+    appearance: 
+      orientation: Vertical
+      stack: false
+
+    layout: 
+      height: 400
+
+    data-cursor: 
+      cursor: Automatic
+      behavior: Automatic
+      dim-on-hover: true
+
+    multi-series-chart-data: 
+      fill-gaps-in-chart-data: true
+      sort-order: Label - Ascending
+      render-gap-as-zero: true
+
+    settings: 
+      zoom-and-scroll: No
+
+    animation: 
+      on-display: Automatic
+      on-data-change: Automatic
+
+    tooltip: 
+      show: true
+      show-series-name: true
+      show-group-name: true
+      show-value: true
+
+    legend: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: styleSalesByCatChart
+
+    series: 
+    - # ====== Series: Series 1_vatsa ==============================
+      id: 14494175546856045
+      identification: 
+        name: Series 1_vatsa
+
+      execution: 
+        sequence: 30
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(vatsa) vatsa,
+                      to_char(pvm_,'YY/MM')
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'YY/MM')
+          order by to_char(pvm_,'YY/MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: VATSA
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Straight
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    - # ====== Series: per kk avg ==================================
+      id: 14494718742856047
+      identification: 
+        name: per kk avg
+
+      execution: 
+        sequence: 10
+
+      source: 
+        location: Local Database
+        type: SQL Query
+        sql-query: |
+          select 
+                 avg(PAINO) paino,
+                      to_char(pvm_,'YY/MM')
+            from PAINO
+          where pvm_ > to_date('30.3.2022', 'DD.MM.YYYY') and pvm_ < to_date('30.9.2022', 'DD.MM.YYYY')
+          group by to_char(pvm_,'YY/MM')
+          order by to_char(pvm_,'YY/MM') asc
+
+      order-by: 
+        type: None
+
+      column-mapping: 
+        label: TO_CHAR(PVM_,'YY/MM')
+        value: PAINO
+
+      appearance: 
+        assigned-to-y2-axis: false
+
+      line: 
+        type: Automatic
+
+      marker: 
+        show: Automatic
+        shape: Automatic
+
+      label: 
+        show: true
+        position: Automatic
+
+    axes: 
+    - # ====== Axis: x =============================================
+      id: 14492931989856043
+      identification: 
+        name: x
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 2
+        format-scaling: Automatic
+        baseline-scaling: Minimum
+        scale: Log
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+        rotation: true
+        position: Outside
+
+    - # ====== Axis: y =============================================
+      id: 14493599681856044
+      identification: 
+        name: y
+        show-axis: true
+
+      value: 
+        format: Decimal
+        decimal-places: 1
+        format-scaling: None
+        baseline-scaling: Minimum
+        scale: Linear
+
+      appearance: 
+        position: Automatic
+
+      major-ticks: 
+        show: Automatic
+
+      minor-ticks: 
+
+      tick-label: 
+        show: true
+

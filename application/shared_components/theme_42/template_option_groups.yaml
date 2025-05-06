@@ -1,0 +1,93 @@
+---
+- # ====== Template Option Group: Color Accents ================
+  id: 230766276023903
+  identification: 
+    template-type: List
+    name: Color Accents
+    identifier: COLOR_ACCENTS
+    sequence: 50
+
+  settings: 
+    null-text: Default
+    advanced: false
+
+- # ====== Template Option Group: Icon Style ===================
+  id: 232846123023907
+  identification: 
+    template-type: List
+    name: Icon Style
+    identifier: ICON_STYLE
+    sequence: 35
+
+  settings: 
+    advanced: false
+
+- # ====== Template Option Group: Display Mode =================
+  id: 235579611023912
+  identification: 
+    template-type: Page
+    name: Display Mode
+    identifier: DISPLAY_MODE
+    sequence: 30
+
+  help: 
+    help-text: Determines the default display appearance and positioning of the dialog. The default opens a floating dialog position at the center of the screen.
+
+  settings: 
+    null-text: Default
+    advanced: false
+
+- # ====== Template Option Group: Preserve Label Spacing =======
+  id: 241204736023923
+  identification: 
+    template-type: Item
+    name: Preserve Label Spacing
+    identifier: PRESERVE_LABEL_SPACING
+    sequence: 1
+
+  help: 
+    help-text: Preserves the label space and enables use of the Label Column Span property.
+
+  settings: 
+    null-text: Yes
+    advanced: false
+
+- # ====== Template Option Group: Display Mode =================
+  id: 244809185023930
+  identification: 
+    template-type: Region
+    name: Display Mode
+    identifier: DISPLAY_MODE
+    sequence: 1
+
+  help: 
+    help-text: Determines the default display appearance and positioning of the dialog. The default opens a floating dialog position at the center of the screen.
+
+  settings: 
+    null-text: Default
+    advanced: false
+
+- # ====== Template Option Group: Result Separator =============
+  id: 254687895023949
+  identification: 
+    template-type: Region
+    name: Result Separator
+    identifier: RESULT_SEPARATOR
+    sequence: 2
+
+  settings: 
+    null-text: Show
+    advanced: false
+
+- # ====== Template Option Group: Color Accents ================
+  id: 258687087023958
+  identification: 
+    template-type: Report
+    name: Color Accents
+    identifier: COLOR_ACCENTS
+    sequence: 50
+
+  settings: 
+    null-text: Default
+    advanced: false
+

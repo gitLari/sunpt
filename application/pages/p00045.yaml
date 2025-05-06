@@ -1,0 +1,1393 @@
+---
+# ====== Page: Treeni päällä =================================
+id: 45
+identification: 
+  name: Treeni päällä
+  alias: TREENI-PAALLA
+  title: Treeni päällä
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: &P45_OTSIKKO. ===============================
+  id: 56527841933442349
+  identification: 
+    name: '&P45_OTSIKKO.'
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Cards =======================================
+  id: 170992331326752486
+  identification: 
+    name: Cards
+    type: custom-cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select  id
+              ,(select nimi from liike where id = tk.liike) nimi 
+            
+              , nvl(replace(kg,',','.'), replace( sport.kgtavoite (treeni_id, liike, henkilo_id),',','.')) kgtavoite 
+              , nvl(toistot, sport.toistot_tavoite(treeni_id, liike, henkilo_id) )  toistot_tavoite 
+                    , liike
+              ,'Edellinen treeni: '||sport.edellinen_treenikerta   (treeni_id, liike, henkilo_id) edellinen
+              ,case when toistot is null then 'RIR '||rir 
+              else 'PWR' end rirluku,
+              case when toistot is not  null then to_char(toistot)
+              else (select distinct toistot from treeniliike where liike_id = tk.liike and treeni_id = tk.treeni_id) end toistot
+          from treenikerta tk 
+          where
+          henkilo_id = :P45_HENKILO_ID and trunc(pvm) = trunc(sysdate)
+          order by id, sarjanumero
+      
+    page-items-to-submit: 
+    - P45_HENKILO_ID
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 4
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Below Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      decrease-button-label: Vähennä
+      increase-button-label: Lisää
+      save-button-label: Tallenna
+
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 500
+
+- # ====== Region: Test Data in APEX Collection ================
+  id: 170992820969752491
+  identification: 
+    name: Test Data in APEX Collection
+    type: Classic Report
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      
+      select (select nimi from liike where id = tk.liike), kg, toistot, liike
+          ,sports_edellinen   (treeni_id, liike, henkilo_id) 
+           from treenikerta tk 
+          where
+          henkilo_id = :P45_HENKILO_ID 
+          order by liike, sarjanumero
+      
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Never
+
+  server-cache: 
+    caching: Disabled
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    layout: 
+      number-of-rows-type: Static Value
+      number-of-rows: 15
+
+    appearance: 
+      template-type: Theme
+      template: Standard
+      template-options: 
+      - '#DEFAULT#'
+      - t-Report--altRowsDefault
+      - t-Report--rowHighlight
+
+    pagination: 
+      type: Row Ranges X to Y (with next and previous links)
+      display-position: Bottom - Right
+      partial-page-refresh: true
+
+    performance: 
+      lazy-loading: false
+
+    break-formatting: 
+      break-columns: No Break
+
+    advanced: 
+      strip-html: false
+      sort-nulls: Last
+
+    heading: 
+      type: Custom Headings
+
+    download: 
+      csv-export-enabled: false
+
+    printing: 
+      enabled: false
+
+  columns: 
+  - # ====== Column: (SELECTNIMIFROMLIIKEWHEREID=TK.LIIKE) =======
+    id: 58323500532491510
+    identification: 
+      column-name: (SELECTNIMIFROMLIIKEWHEREID=TK.LIIKE)
+      type: Plain Text
+
+    heading: 
+      heading: (selectnimifromliikewhereid=tk.liike)
+      alignment: center
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: KG ==========================================
+    id: 58323679958491511
+    identification: 
+      column-name: KG
+      type: Plain Text
+
+    heading: 
+      heading: Kg
+      alignment: center
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: TOISTOT =====================================
+    id: 58323714990491512
+    identification: 
+      column-name: TOISTOT
+      type: Plain Text
+
+    heading: 
+      heading: Toistot
+      alignment: center
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: LIIKE =======================================
+    id: 58323822101491513
+    identification: 
+      column-name: LIIKE
+      type: Plain Text
+
+    heading: 
+      heading: Liike
+      alignment: center
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+  - # ====== Column: SPORTS_EDELLINEN(TREENI_ID,LIIKE,HENKILO_ID) 
+    id: 58323958538491514
+    identification: 
+      column-name: SPORTS_EDELLINEN(TREENI_ID,LIIKE,HENKILO_ID)
+      type: Plain Text
+
+    heading: 
+      heading: Sports Edellinen(treeni Id,liike,henkilo Id)
+      alignment: center
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+
+    accessibility: 
+      value-identifies-row: false
+
+    sorting: 
+      sortable: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    advanced: 
+      compute-sum: false
+
+    ui-defaults-reference: 
+      table-owner: Parsing Schema
+
+    security: 
+      escape-special-characters: true
+
+- # ====== Region: Katso liike =================================
+  id: 171024847556082417
+  identification: 
+    name: Katso liike
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - t-DialogRegion--noPadding
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: liike
+    region-display-selector: true
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Liike =======================================
+  id: 171374487217841312
+  identification: 
+    name: Liike
+    type: Cards
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select ID,
+             NIMI,
+           
+             KUVA,
+             KUVA_FILENAME,
+             KUVA_MIMETYPE,
+             KUVA_CHARSET,
+             KUVA_LASTUPD,
+             --'https://www.youtube.com/watch?v='||LINKKI 
+             linkki,
+             KEHONPAINOLIIKE,
+             SELITE,
+             --KEHONOSA_ID,
+             (select kehonosa from kehonosa_lookup where KEHONOSA_ID = l.KEHONOSA_ID) kehonosa
+        from LIIKE l
+        where id = :p45_liike_id
+      
+    page-items-to-submit: 
+    - P45_LIIKE_ID
+
+  order-by: 
+    type: None
+
+  layout: 
+    sequence: 20
+    parent-region: Katso liike # 171024847556082417
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    - t-CardsRegion--styleA
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 58297662382327336
+    appearance: 
+      layout: Grid
+      grid-columns: Auto
+
+    card: 
+      primary-key-column-1: ID
+
+    title: 
+      advanced-formatting: false
+      column: NIMI
+
+    subtitle: 
+      advanced-formatting: false
+      column: KEHONOSA
+      css-classes: 
+      - x-num
+
+    body: 
+      advanced-formatting: false
+      column: SELITE
+
+    secondary-body: 
+      advanced-formatting: false
+
+    icon-and-badge: 
+      icon-source: Image BLOB Column
+      image-column: KUVA
+      icon-position: Start
+
+    media: 
+      advanced-formatting: true
+      html-expression: |
+        <iframe width="380" height="280" src="https://www.youtube.com/embed/&LINKKI."?&autoplay=1"frameborder="0" 
+        allowfullscreen></iframe>
+        
+      position: Body
+
+    blob-attributes: 
+      mime-type-column: KUVA_MIMETYPE
+      last-updated-column: KUVA_LASTUPD
+
+    performance: 
+      lazy-loading: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+page-items: 
+- # ====== Page Item: P45_LIIKE_ID =============================
+  id: 58270017582327308
+  identification: 
+    name: P45_LIIKE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 1
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_HENKILO_ID ===========================
+  id: 58317690417471221
+  identification: 
+    name: P45_HENKILO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: '&P45_OTSIKKO.' # 56527841933442349
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'select id from henkilo where nimi = lower(:app_user)'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_TREENI ===============================
+  id: 58318226017476753
+  identification: 
+    name: P45_TREENI
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: '&P45_OTSIKKO.' # 56527841933442349
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_EDELLINEN_TREENI =====================
+  id: 58318536499478696
+  identification: 
+    name: P45_EDELLINEN_TREENI
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: '&P45_OTSIKKO.' # 56527841933442349
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_OTSIKKO ==============================
+  id: 58323250296491507
+  identification: 
+    name: P45_OTSIKKO
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: '&P45_OTSIKKO.' # 56527841933442349
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SUBMIT ======================================
+  id: 58269664114327303
+  identification: 
+    button-name: SUBMIT
+    label: VALMIS
+
+  layout: 
+    sequence: 10
+    region: Cards # 170992331326752486
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - u-textCenter
+    - padding-md
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text with Icon
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--iconLeft
+    css-classes: 
+    - w100p
+    - mxw240
+    icon: fa-save
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: START =======================================
+  id: 58318893066482502
+  identification: 
+    button-name: START
+    label: Luo harjoitus
+
+  layout: 
+    sequence: 70
+    region: '&P45_OTSIKKO.' # 56527841933442349
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Right
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--success
+    - t-Button--gapTop
+    css-classes: 
+    - pyorea
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  server-side-condition: 
+    type: Never
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click_start =========================
+  id: 56527934966442350
+  identification: 
+    name: Click_start
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: START # 58318893066482502
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 58322668255491501
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare 
+            l_liike number;
+            l_rir varchar2(5) ;
+            l_sarjat number;
+            l_kerta number;
+            l_meso_id number;
+            l_block number;
+            l_block_treeni_nro number;
+        --    l_pvm date := :P29_pvm;
+            l_counter number;
+            deloadi number;
+            treeni_jo_luotu number;
+        begin
+        
+        --onko treeni jo?
+        select  count(*) into treeni_jo_luotu from treenikerta where treeni_id = :P45_TREENI and
+        trunc(pvm) = trunc(sysdate);
+        
+        if treeni_jo_luotu = 0 then
+        
+            --monesko viikko 1. tai 4. normitreeniä varten
+            select  count(distinct pvm)+1 into l_kerta from treenikerta where treeni_id = :P45_TREENI;
+        
+            select meso_id, block, block_treeni_nro into l_meso_id, l_block, l_block_treeni_nro from treeni where id = :P45_TREENI;
+        
+            --liikeitä 1 - x
+            FOR recordi IN (SELECT liike_id, sarjakuvaus, rir FROM treeniliike WHERE treeni_id = :P45_TREENI  
+            order by jarjestys) loop
+        
+                --aloittelijatreeni
+                if length(recordi.sarjakuvaus) = 1 then
+        
+                    l_sarjat := nvl(substr(recordi.sarjakuvaus,0,1),0); --aina sama
+            
+                    FOR l_counter IN 1..l_sarjat loop  --(2)2340
+                        insert into treenikerta (treeni_id, liike, sarjanumero, henkilo_id, pvm, treenin_kerta,meso_id, block, block_treeni_nro)
+                        values(
+                        :p45_treeni, recordi.liike_id, l_counter, :P45_henkilo_id, sysdate,l_kerta,l_meso_id, l_block, l_block_treeni_nro);
+                    end loop;
+                
+                --normitreeniä 
+                elsif l_kerta <= length(recordi.sarjakuvaus)   THEN 
+        
+                    l_sarjat := nvl(substr(recordi.sarjakuvaus,l_kerta,1),0); --(2)234 tai null
+            
+                    if l_sarjat != 0 then
+                        FOR l_counter IN 1..l_sarjat loop  --(2)2340
+                            insert into treenikerta (treeni_id, liike, rir, sarjanumero, henkilo_id, pvm,treenin_kerta, meso_id, block, block_treeni_nro)
+                         values(
+                            :p45_treeni, recordi.liike_id, substr(recordi.rir,l_kerta,1)
+                             ,l_counter, :P45_henkilo_id, sysdate, l_kerta, l_meso_id, l_block, l_block_treeni_nro);
+                        end loop;
+                    end if;
+              
+                -- deload    
+                else
+                    deloadi := 1;
+                    FOR l_counter IN 1..2 loop  --deload = 2 sarjaa, ei treenikertaa kun deload
+                            insert into treenikerta (treeni_id, liike, rir, sarjanumero, henkilo_id, pvm,deload, meso_id, block)
+                         values(
+                            :p45_treeni, recordi.liike_id, 5
+                             ,l_counter, :P45_henkilo_id, sysdate,1, l_meso_id, l_block);
+                    end loop;
+                end if;
+            end loop;
+            if deloadi = 1 then -- laitetaan treeni loppuuntehdyksi
+                update treeni set aktiivinen = 0 where
+                id = :p45_treeni; 
+            end if;
+        
+        end if; --treeniä ei oltu luotu
+        
+        end;
+        
+      items-to-submit: 
+      - P45_HENKILO_ID
+      - P45_TREENI
+
+    execution: 
+      sequence: 10
+      event: Click_start # 56527934966442350
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Show ========================================
+    id: 58322753409491502
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Region
+      region: Cards # 170992331326752486
+
+    execution: 
+      sequence: 40
+      event: Click_start # 56527934966442350
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 58322846432491503
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: '&P45_OTSIKKO.' # 56527841933442349
+
+    execution: 
+      sequence: 30
+      event: Click_start # 56527934966442350
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Never
+
+  - # ====== Action: Refresh =====================================
+    id: 58323167881491506
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Cards # 170992331326752486
+
+    execution: 
+      sequence: 20
+      event: Click_start # 56527934966442350
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Klikkaa liike =======================
+  id: 58302219018327349
+  identification: 
+    name: Klikkaa liike
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: action-open-liike
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 58302746111327349
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Katso liike # 171024847556082417
+
+    execution: 
+      sequence: 10
+      event: Klikkaa liike # 58302219018327349
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: LaitaP45_ID =========================
+  id: 58303169759327349
+  identification: 
+    name: LaitaP45_ID
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P45_LIIKE_ID
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 58303672342327350
+    identification: 
+      action: Refresh
+
+    settings: 
+      maintain-pagination: false
+
+    affected-elements: 
+      selection-type: Region
+      region: Liike # 171374487217841312
+
+    execution: 
+      sequence: 20
+      event: LaitaP45_ID # 58303169759327349
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 58304162793327351
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':P45_LIIKE_ID'
+      items-to-submit: 
+      - P45_LIIKE_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P45_ID
+
+    execution: 
+      sequence: 10
+      event: LaitaP45_ID # 58303169759327349
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: HideCards ===========================
+  id: 58322919228491504
+  identification: 
+    name: HideCards
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 58323028996491505
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: Cards # 170992331326752486
+
+    execution: 
+      sequence: 10
+      event: HideCards # 58322919228491504
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    server-side-condition: 
+      type: Never
+
+- # ====== Dynamic Action: HloSaaArvon =========================
+  id: 58323316933491508
+  identification: 
+    name: HloSaaArvon
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P45_HENKILO_ID
+
+  server-side-condition: 
+    type: Never
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 58323489211491509
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        select distinct pvm||': '||kuvaus from treeni t, treenikerta tk
+        where t.id = tk.treeni_id
+        and tk.henkilo_id = :p45_henkilo_id
+        and trunc(tk.pvm) = 
+        (select trunc(max(pvm)) from treenikerta where henkilo_id = :p45_henkilo_id)
+      items-to-submit: 
+      - P45_HENKILO_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P45_EDELLINEN_TREENI
+
+    execution: 
+      sequence: 10
+      event: HloSaaArvon # 58323316933491508
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+validations: 
+- # ====== Validation: Validate Region Number 1 ================
+  id: 58299391392327343
+  identification: 
+    name: Validate Region Number 1
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      declare
+        l_err_msg varchar2(2000);
+      begin
+      
+        for i in 1 .. apex_application.g_f01.count  --kaikki
+        loop
+        
+      
+          if not replace(apex_application.g_f03(i),'.',',')  between -100 and 500  --jotka ei ole disabled
+          then
+      
+            l_err_msg := 
+              apex_string.format(
+                p_message => '%s ensimmäisen kentän arvo täytyy olla välillä %s ja %s (rivi %s).'
+                ,p0 => apex_application.g_f02(i)
+                ,p1 => -100
+                ,p2 => 500
+                ,p3 => i --apex_application.g_f01(i)
+              )
+            ;
+      
+            exit;
+      
+          end if;
+      
+        end loop;
+      
+        return l_err_msg;
+        
+      end;
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+
+- # ====== Validation: Validate Region Number 2 ================
+  id: 58299759063327344
+  identification: 
+    name: Validate Region Number 2
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Function Body (returning Error Text)
+    language: PL/SQL
+    pl/sql-function-body-returning-error-text: |
+      declare
+        l_err_msg varchar2(2000);
+      begin
+      
+        for i in 1 .. apex_application.g_f01.count
+        loop
+          
+          if not replace(apex_application.g_f04(i),'.',',') between 0 and 40
+          then
+      
+            l_err_msg := 
+              apex_string.format(
+                p_message => '%s toisen kentän arvo täytyy olla välillä %s ja %s (rivi %s).'
+                ,p0 => apex_application.g_f02(i)
+                ,p1 => 0
+                ,p2 => 40
+                ,p3 => i --apex_application.g_f05(i)
+              )
+            ;
+      
+            exit;
+      
+          end if;
+      
+        end loop;
+      
+        return l_err_msg;
+        
+      end;
+    always-execute: false
+
+  error: 
+    display-location: Inline with Field and in Notification
+
+computations: 
+- # ====== Computation: P45_HENKILO_ID =========================
+  id: 58317925307472997
+  identification: 
+    item-name: P45_HENKILO_ID
+
+  execution: 
+    sequence: 30
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select id from henkilo
+      where lower(nimi) = lower(:app_user)
+
+- # ====== Computation: P45_OTSIKKO ============================
+  id: 58336389855558257
+  identification: 
+    item-name: P45_OTSIKKO
+
+  execution: 
+    sequence: 30
+    point: Before Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: "select initcap(:app_user)||' treenit' from dual"
+
+processes: 
+- # ====== Process: Luo taulu ==================================
+  id: 58300005541327344
+  identification: 
+    name: Luo taulu
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare 
+          l_query varchar2(2000);
+      Begin
+          l_query := 'select (select nimi from liike where id = tk.liike), kg, toistot, liike
+          ,sports_edellinen   (treeni_id, liike, henkilo_id) 
+           from treenikerta tk 
+          where
+          henkilo_id = 3 and trunc(pvm) = ''21.04.2023'' order by liike, sarjanumero';
+      
+            if APEX_COLLECTION.COLLECTION_EXISTS (
+              p_collection_name => 'P58_TEST_DATA') = TRUE THEN
+              APEX_COLLECTION.DELETE_COLLECTION(p_collection_name => 'P58_TEST_DATA');
+            END IF;
+      
+          APEX_COLLECTION.CREATE_COLLECTION_FROM_QUERY (
+              p_collection_name => 'P58_TEST_DATA', 
+              p_query => l_query,
+              p_generate_md5 => 'YES');
+      End;
+      /*
+      apex_collection.create_collection( 'P58_TEST_DATA' );
+      
+      
+      apex_collection.add_member(
+        p_collection_name => 'P58_TEST_DATA'
+        ,p_n001 => 10
+        ,p_n002 => 10
+        ,p_c001 => 'Sarja 1'
+      );
+      
+      apex_collection.add_member(
+        p_collection_name => 'P58_TEST_DATA'
+        ,p_n001 => 9
+        ,p_n002 => 9
+        ,p_c001 => 'Sarja 2'
+      );
+      
+      apex_collection.add_member(
+        p_collection_name => 'P58_TEST_DATA'
+        ,p_n001 => 8
+        ,p_n002 => 8
+        ,p_c001 => 'Sarja 3'
+      );
+      
+      apex_collection.add_member(
+        p_collection_name => 'P58_TEST_DATA'
+        ,p_n001 => 1
+        ,p_n002 => 3
+        ,p_c001 => 'Sarja 4'
+      );
+      
+      apex_collection.add_member(
+        p_collection_name => 'P58_TEST_DATA'
+        ,p_n001 => 6
+        ,p_n002 => 4
+        ,p_c001 => 'Sarja 5'
+      );*/
+      null;
+      
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+  server-side-condition: 
+    type: Never
+
+- # ====== Process: Save =======================================
+  id: 58300423512327345
+  identification: 
+    name: Save
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      for i in 1 .. apex_application.g_f01.count
+      loop
+      
+        apex_collection.update_member_attribute(
+          p_collection_name => 'P58_TEST_DATA'
+          ,p_seq            => apex_application.g_f01(i)
+          ,p_attr_number    => 1
+          ,p_number_value   => apex_application.g_f03(i)
+        );
+      
+        apex_collection.update_member_attribute(
+          p_collection_name => 'P58_TEST_DATA'
+          ,p_seq            => apex_application.g_f01(i)
+          ,p_attr_number    => 2
+          ,p_number_value   => apex_application.g_f04(i)
+        );
+      
+      end loop;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Never
+
+branches: 
+- # ====== Branch: Go To Page 31 ===============================
+  id: 58325287428491527
+  identification: 
+    name: Go To Page 31
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:31:&SESSION.::&DEBUG.::P31_PVM,P31_TREENI:&SYSDATE.,&P45_TREENI.&success_msg=#SUCCESS_MSG#'
+      page: 31 # Treenikerta
+      values: 
+        p31_pvm: '&SYSDATE.'
+        p31_treeni: '&P45_TREENI.'
+
+  server-side-condition: 
+    when-button-pressed: SUBMIT # 58269664114327303
+
